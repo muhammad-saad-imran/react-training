@@ -1,1 +1,3 @@
-export const apiBaseUrl = "https://api-dev.adaptiveinsurance.com/api/v1"
+export const apiConfig = {
+  baseUrl: "https://api-dev.adaptiveinsurance.com/api",
+};
