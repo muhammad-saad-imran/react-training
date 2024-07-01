@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Header/navbar";
+import Navbar from "@/components/common/navbar";
 
 const dm_sans = DM_Sans({ subsets: ["latin"] });
 
@@ -17,9 +17,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={dm_sans.className + "w-screen h-screen"}>
+      <body className={dm_sans.className + "w-screen h-screen box-border"}>
         <Navbar />
-        <div className="bg-light-yellow w-full h-full pt-20">{children}</div>
+        <div className="bg-anti-white w-full h-full pt-20 overflow-auto">
+          {children}
+        </div>
       </body>
     </html>
   );

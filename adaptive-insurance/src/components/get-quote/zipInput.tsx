@@ -2,11 +2,13 @@
 import Button from "@/elements/buttons/Button";
 import Input from "@/elements/inputs/Input";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 type Props = {};
 
 const ZipInput = (props: Props) => {
+  const router = useRouter();
   return (
     <div className="w-full md:w-3/5 flex flex-col md:justify-center items-center gap-8 md:gap-16">
       <div className="w-full flex flex-col items-center gap-6 md:gap-8">
@@ -20,7 +22,12 @@ const ZipInput = (props: Props) => {
 
       <div className="w-full flex flex-col items-center gap-3 md:gap-16">
         <Input placeholder="Enter ZIP Code" />
-        <Button className="w-full md:w-2/5">Get Your Quote</Button>
+        <Button
+          className="w-full md:w-2/5"
+          onClick={() => router.push("policy-coverage")}
+        >
+          Get Your Quote
+        </Button>
       </div>
 
       <p className="text-center md:w-2/4">

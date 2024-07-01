@@ -16,7 +16,12 @@ const config: Config = {
       colors: {
         'deep-blue': "#4583FF",
         'light-blue': "#C4D7FB",
-        'light-yellow': "#F4F4F1",
+        'anti-white': "#F4F4F1",
+        'gray': "#B1B1B1",
+      },
+      screens: {
+        'near-lg': '1140px',
+        'lg': '1230px',
       }
     },
   },
