@@ -22,7 +22,7 @@ const config: Config = {
       screens: {
         'near-lg': '1140px',
         'lg': '1230px',
-      }
+      },
     },
   },
   plugins: [],
