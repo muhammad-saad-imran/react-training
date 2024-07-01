@@ -8,6 +8,7 @@ type Props = {
   coverageLimitOpts: Array<{ limit: number }>;
   coverageHourOpts: Array<{ hours: number; text: string }>;
   onPolicyChange: (name: "hours" | "limit", value: number) => void;
+  onShowModal: () => void
 };
 
 const PolicyCoverageUI = (props: Props) => {
@@ -32,7 +33,7 @@ const PolicyCoverageUI = (props: Props) => {
             props.onPolicyChange("limit", value)
           }
         />
-        <p className="font-bold underline cursor-pointer">
+        <p className="font-bold underline cursor-pointer" onClick={props.onShowModal}>
           See what this means
         </p>
       </div>

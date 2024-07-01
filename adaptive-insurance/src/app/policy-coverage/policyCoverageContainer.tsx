@@ -1,5 +1,6 @@
 "use client";
 import BottomNavBar from "@/components/common/bottomNavBar";
+import InstructionModal from "@/components/policy-coverage/instructionModal";
 import PolicyCoverageUI from "@/components/policy-coverage/policyCoverageUI";
 import React, { useState } from "react";
 
@@ -10,6 +11,8 @@ const PolicyCoverageContainer = (props: Props) => {
     hours: 12,
     limit: 15000,
   });
+
+  const [isModelHidden, setIsModelHidden] = useState(true);
 
   const coverageHourOpts = [
     {
@@ -49,14 +52,16 @@ const PolicyCoverageContainer = (props: Props) => {
   }
 
   return (
-    <div  className="pb-24">
+    <div className="pb-24">
       <PolicyCoverageUI
         coverageLimitOpts={coverageLimitOpts}
         coverageHourOpts={coverageHourOpts}
         policy={policy}
         onPolicyChange={onPolicyChange}
+        onShowModal={() => setIsModelHidden((prevState) => !prevState)}
       />
       <BottomNavBar buttonLabel="Next: Business Information" />
+      <InstructionModal hide={isModelHidden} onCloseModal={() => setIsModelHidden(true)} />
     </div>
   );
 };
