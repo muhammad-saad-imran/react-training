@@ -17,9 +17,10 @@ const CoverageLimit = (props: Props) => {
         cover operations?
       </p>
 
-      <div className="flex flex-wrap justify-center items-center md:justify-start md:items-start gap-8 mb-12">
-        {props.coverageLimitOpts.map((coverage) => (
+      <div className="flex flex-wrap justify-around items-center md:justify-start md:items-start gap-8 mb-12">
+        {props.coverageLimitOpts.map((coverage, index) => (
           <div
+            key={index}
             className={
               "border rounded-lg flex flex-col justify-center items-center p-9 w-40 md:w-36 lg:w-48 cursor-pointer " +
               (props.selectedLimit === coverage.limit

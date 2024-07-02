@@ -19,7 +19,7 @@ const Modal = (props: Props) => {
       onClick={props.onCloseModal}
     >
       <div
-        className="w-2/3 bg-white rounded-lg p-10"
+        className="bg-white rounded-lg p-10 h-full w-full md:w-fit md:h-fit"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="w-full flex justify-end">

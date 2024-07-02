@@ -10,7 +10,7 @@ type Props = {
 const InstructionModal = (props: Props) => {
   return (
     <Modal hide={props.hide} onCloseModal={props.onCloseModal}>
-      <div className="flex flex-col justify-center items-center gap-10 pb-20 px-20">
+      <div className="flex flex-col justify-center items-center gap-10  h-full w-full md:h-fit md:w-[600px] lg:w-[880px] md:pb-20 md:px-20">
         <Image
           src={require("../../../public/logo.svg")}
           alt=""
