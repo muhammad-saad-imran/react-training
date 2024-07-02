@@ -2,16 +2,21 @@ import React from "react";
 import HourCoverage from "./HourCoverage";
 import CoverageLimit from "./CoverageLimit";
 import QuoteCard from "./QuoteCard";
+import { useAppDispatch } from "@/lib/hooks";
+import {
+  changeCoverageHours,
+  changeCoverageLimit,
+} from "@/lib/feature/policy-coverage/policyCoverageSlice";
 
 type Props = {
   policy: { hours: number; limit: number };
   coverageLimitOpts: Array<{ limit: number }>;
   coverageHourOpts: Array<{ hours: number; text: string }>;
-  onPolicyChange: (name: "hours" | "limit", value: number) => void;
   onShowModal: () => void;
 };
 
 const PolicyCoverageUI = (props: Props) => {
+  const dispatch = useAppDispatch();
   return (
     <div className="flex w-full h-full px-10 py-12">
       <div className="mr-auto md:pr-10 lg:px-32">
@@ -23,14 +28,14 @@ const PolicyCoverageUI = (props: Props) => {
           coverageHourOpts={props.coverageHourOpts}
           selectedHours={props.policy.hours}
           onPolicyHoursChange={(value: number) =>
-            props.onPolicyChange("hours", value)
+            dispatch(changeCoverageHours(value))
           }
         />
         <CoverageLimit
           selectedLimit={props.policy.limit}
           coverageLimitOpts={props.coverageLimitOpts}
           onPolicyLimitChange={(value: number) =>
-            props.onPolicyChange("limit", value)
+            dispatch(changeCoverageLimit(value))
           }
         />
         <div>

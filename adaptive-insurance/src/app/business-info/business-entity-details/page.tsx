@@ -1,11 +1,22 @@
-import React from 'react'
+"use client";
+import BottomNavBar from "@/components/common/BottomNavBar";
+import { useRouter } from "next/navigation";
+import React from "react";
 
-type Props = {}
+type Props = {};
 
 const Page = (props: Props) => {
-  return (
-    <div>Business Entity Details</div>
-  )
-}
+  const router = useRouter();
 
-export default Page
+  return (
+    <div>
+      Business Entity Details
+      <BottomNavBar
+        buttonLabel="Next: Business Mailing"
+        onButtonClick={() => router.push("business-mailing-address")}
+      />
+    </div>
+  );
+};
+
+export default Page;

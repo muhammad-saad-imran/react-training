@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/common/Navbar";
+import StoreProvider from "./StoreProvider";
 
 const dm_sans = DM_Sans({ subsets: ["latin"] });
 
@@ -20,9 +21,10 @@ export default function RootLayout({
       <body className={dm_sans.className + "w-screen h-screen box-border"}>
         <Navbar />
         <div className="bg-anti-white w-full h-full pt-20 overflow-auto">
-          {children}
+          <StoreProvider>{children}</StoreProvider>
         </div>
       </body>
     </html>
   );
 }
+

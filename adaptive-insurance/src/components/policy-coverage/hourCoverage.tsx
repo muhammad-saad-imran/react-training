@@ -13,7 +13,7 @@ const HourCoverage = (props: Props) => {
       <p className="text-5xl text-center md:text-left">12-hour coverage is right for you</p>
       <p className="my-8 text-center md:text-left">
         Brooklyn, NY is at a{" "}
-        <section className="text-deep-blue inline">Medium</section> risk for
+        <span className="text-deep-blue inline">Medium</span> risk for
         experiencing power loss in the next 12 months. How long can your
         business go without power before requiring assistance?
       </p>
