@@ -32,7 +32,7 @@ const QuoteCard = (props: Props) => {
 
       <div className="hidden md:block">
         <div className="w-full border border-white border-t-gray mt-7"></div>
-        <p className="font-bold my-7">What’s included:</p>
+        <p className="font-bold my-7 text-center">What’s included:</p>
 
         <div className="flex flex-col gap-3">
           {includedInQuote.map((item) => (

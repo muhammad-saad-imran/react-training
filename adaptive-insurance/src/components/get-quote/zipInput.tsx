@@ -23,7 +23,7 @@ const ZipInput = (props: Props) => {
       <div className="w-full flex flex-col items-center gap-3 md:gap-16">
         <Input placeholder="Enter ZIP Code" />
         <Button
-          className="w-full md:w-2/5"
+          className="w-full md:w-2/5 text-sm"
           onClick={() => router.push("policy-coverage")}
         >
           Get Your Quote
