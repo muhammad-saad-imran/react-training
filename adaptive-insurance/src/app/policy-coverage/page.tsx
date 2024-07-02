@@ -1,5 +1,5 @@
 import React from "react";
-import PolicyCoverageContainer from "./policyCoverageContainer";
+import PolicyCoverageContainer from "./PolicyCoverageContainer";
 
 type Props = {};
 

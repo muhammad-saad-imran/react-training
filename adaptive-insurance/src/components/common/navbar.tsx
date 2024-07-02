@@ -1,5 +1,5 @@
-import LeftArrowIcon from "@/elements/icons/leftArrowIcon";
-import PhoneIcon from "@/elements/icons/phoneIcon";
+import LeftArrowIcon from "@/elements/icons/LeftArrowIcon";
+import PhoneIcon from "@/elements/icons/PhoneIcon";
 import Image from "next/image";
 import React from "react";
 

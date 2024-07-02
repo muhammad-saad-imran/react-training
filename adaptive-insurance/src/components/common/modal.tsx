@@ -1,4 +1,4 @@
-import CrossIcon from "@/elements/icons/crossIcon";
+import CrossIcon from "@/elements/icons/CrossIcon";
 import React, { Children } from "react";
 
 type Props = {

@@ -1,4 +1,4 @@
-import ZipInput from "@/components/get-quote/zipInput";
+import ZipInput from "@/components/get-quote/ZipInput";
 
 export default function Home() {
   return (

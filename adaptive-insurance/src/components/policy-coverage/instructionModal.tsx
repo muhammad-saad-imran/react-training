@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "../common/modal";
+import Modal from "../common/Modal";
 import Image from "next/image";
 
 type Props = {

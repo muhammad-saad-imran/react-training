@@ -1,7 +1,7 @@
 "use client";
-import BottomNavBar from "@/components/common/bottomNavBar";
-import InstructionModal from "@/components/policy-coverage/instructionModal";
-import PolicyCoverageUI from "@/components/policy-coverage/policyCoverageUI";
+import BottomNavBar from "@/components/common/BottomNavBar";
+import InstructionModal from "@/components/policy-coverage/InstructionModal";
+import PolicyCoverageUI from "@/components/policy-coverage/PolicyCoverageUI";
 import React, { useState } from "react";
 
 type Props = {};

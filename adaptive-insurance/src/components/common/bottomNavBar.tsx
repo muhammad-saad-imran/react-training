@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/elements/buttons/Button";
-import LeftArrowIcon from "@/elements/icons/leftArrowIcon";
+import LeftArrowIcon from "@/elements/icons/LeftArrowIcon";
 import { useRouter } from "next/navigation";
 import React from "react";
 

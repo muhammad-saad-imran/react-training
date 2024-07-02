@@ -1,14 +1,14 @@
 import React from "react";
-import HourCoverage from "./hourCoverage";
-import CoverageLimit from "./coverageLimit";
-import QuoteCard from "./quoteCard";
+import HourCoverage from "./HourCoverage";
+import CoverageLimit from "./CoverageLimit";
+import QuoteCard from "./QuoteCard";
 
 type Props = {
   policy: { hours: number; limit: number };
   coverageLimitOpts: Array<{ limit: number }>;
   coverageHourOpts: Array<{ hours: number; text: string }>;
   onPolicyChange: (name: "hours" | "limit", value: number) => void;
-  onShowModal: () => void
+  onShowModal: () => void;
 };
 
 const PolicyCoverageUI = (props: Props) => {
@@ -33,11 +33,16 @@ const PolicyCoverageUI = (props: Props) => {
             props.onPolicyChange("limit", value)
           }
         />
-        <p className="font-bold underline cursor-pointer" onClick={props.onShowModal}>
-          See what this means
-        </p>
+        <div>
+          <p
+            className="font-bold underline cursor-pointer w-fit"
+            onClick={props.onShowModal}
+          >
+            See what this means
+          </p>
+        </div>
       </div>
-      <div className="w-96 grow-0 shrink-0 hidden md:block">
+      <div className="w-80 lg:w-96 grow-0 shrink-0 hidden md:block">
         <div className="fixed right-10">
           <QuoteCard policy={props.policy} />
         </div>

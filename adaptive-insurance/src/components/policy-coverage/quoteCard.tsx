@@ -1,5 +1,5 @@
 import Button from "@/elements/buttons/Button";
-import BlueTickIcon from "@/elements/icons/blueTickIcon";
+import BlueTickIcon from "@/elements/icons/BlueTickIcon";
 import moment from "moment";
 import React from "react";
 
@@ -19,9 +19,9 @@ const QuoteCard = (props: Props) => {
     <div className="md:w-80 lg:w-96 bg-white rounded-lg shadow-2xl py-10 px-8 flex-col items-center">
       <div className="flex md:flex-col md:items-center mb-12 md:mb-0">
         <div className="mr-auto md:mr-0">
-          <p className="font-bold uppercase">Your quote</p>
-          <p className="text-xl mt-4">Adaptive Power</p>
-          <p className="text-xl">Outage Coverage</p>
+          <p className="font-bold uppercase md:text-center">Your quote</p>
+          <p className="text-xl mt-4 md:text-center">Adaptive Power</p>
+          <p className="text-xl md:text-center">Outage Coverage</p>
         </div>
 
         <div>
