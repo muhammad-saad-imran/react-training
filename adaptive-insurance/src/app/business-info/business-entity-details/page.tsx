@@ -1,10 +1,10 @@
 import React from "react";
-import BusinessEntityDetailContainer from "./BusinessEntityDetailContainer";
+import BusinessEntityDetailsUI from "@/components/business-entity-details/BusinessEntityDetailsUI";
 
 type Props = {};
 
 const Page = (props: Props) => {
-  return <BusinessEntityDetailContainer />;
+  return <BusinessEntityDetailsUI />
 };
 
 export default Page;

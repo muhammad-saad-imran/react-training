@@ -1,15 +1,15 @@
+"use client";
 import React from "react";
 import BusinessEntityDetailsForm from "./BusinessEntityDetailsForm";
+import BusinessInfoFormsContainer from "../business-info/BusinessInfoFormsContainer";
 
 type Props = {};
 
 const BusinessEntityDetailsUI = (props: Props) => {
   return (
-    <div className="flex flex-col gap-6">
-      <p className="text-2xl md:text-4xl lg:text-5xl">Enter your business details </p>
-      <p>* Required </p>
+    <BusinessInfoFormsContainer title="Enter your business details">
       <BusinessEntityDetailsForm />
-    </div>
+    </BusinessInfoFormsContainer>
   );
 };
 
