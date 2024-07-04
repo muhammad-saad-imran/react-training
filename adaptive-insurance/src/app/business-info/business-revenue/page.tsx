@@ -1,11 +1,10 @@
-import React from 'react'
+import BusinessRevenueUI from "@/components/business-revenue/BusinessRevenueUI";
+import React from "react";
 
-type Props = {}
+type Props = {};
 
 const Page = (props: Props) => {
-  return (
-    <div>Business Revenue Range</div>
-  )
-}
+  return <BusinessRevenueUI />;
+};
 
-export default Page
+export default Page;

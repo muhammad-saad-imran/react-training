@@ -41,8 +41,7 @@ const FormikInputField = (props: Props) => {
       ) : (
         <Input
           id={props.name}
-          type={props.type === "number" ? "text" : props.type}
-          inputMode={props.type === "number" ? "numeric" : undefined}
+          type={props.type}
           name={props.name}
           onChange={props.handleChange}
           onBlur={props.handleBlur}
