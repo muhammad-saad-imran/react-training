@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "../common/Modal";
 import Image from "next/image";
+import styled from "styled-components";
 
 type Props = {
   hide: boolean;
@@ -10,7 +11,7 @@ type Props = {
 const InstructionModal = (props: Props) => {
   return (
     <Modal hide={props.hide} onCloseModal={props.onCloseModal}>
-      <div className="flex flex-col justify-center items-center gap-10  h-full w-full md:h-fit md:w-[600px] lg:w-[880px] md:pb-20 md:px-20">
+      <ModalContainer>
         <Image
           src={require("../../../public/logo.svg")}
           alt=""
@@ -31,11 +32,23 @@ const InstructionModal = (props: Props) => {
           our payment system. If this were to happen, Adaptive would still give
           you a 4x return on investment.
         </p>
-        <div className="w-full border border-white border-t-gray"></div>
-        <p className="text-gray text-center w-9/12">If you have any questions, please reach out to an agent at (123) 456-7890.</p>
-      </div>
+        <HorizontalLine />
+        <p className="text-gray text-center w-9/12">
+          If you have any questions, please reach out to an agent at (123)
+          456-7890.
+        </p>
+      </ModalContainer>
     </Modal>
   );
 };
+
+const ModalContainer = styled.div.attrs({
+  className:
+    "flex flex-col justify-center items-center gap-10  h-full w-full md:h-fit md:w-[600px] lg:w-[880px] md:pb-20 md:px-20",
+})``;
+
+const HorizontalLine = styled.div.attrs({
+  className: "w-full border border-white border-t-gray",
+})``;
 
 export default InstructionModal;

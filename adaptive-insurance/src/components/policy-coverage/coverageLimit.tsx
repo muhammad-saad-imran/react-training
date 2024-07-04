@@ -1,4 +1,5 @@
 import React from "react";
+import styled from "styled-components";
 
 type Props = {
   coverageLimitOpts: Array<{ limit: number }>;
@@ -8,7 +9,7 @@ type Props = {
 
 const CoverageLimit = (props: Props) => {
   return (
-    <div className="block">
+    <>
       <p className="text-5xl text-center md:text-left">
         Now, select your coverage limit
       </p>
@@ -17,26 +18,38 @@ const CoverageLimit = (props: Props) => {
         cover operations?
       </p>
 
-      <div className="flex flex-wrap justify-around items-center md:justify-start md:items-start gap-8 mb-12">
+      <CoverageCardContainer>
         {props.coverageLimitOpts.map((coverage, index) => (
-          <div
+          <CoverageLimitCard
             key={index}
-            className={
-              "border rounded-lg flex flex-col justify-center items-center p-9 w-40 md:w-36 lg:w-48 cursor-pointer " +
-              (props.selectedLimit === coverage.limit
-                ? "bg-white border-deep-blue shadow-xl"
-                : "border-gray text-gray")
-            }
+            selectedLimit={props.selectedLimit}
+            limit={coverage.limit}
             onClick={() => props.onPolicyLimitChange(coverage.limit)}
           >
             <p className="font-bold md:text-xl lg:text-2xl">
               ${coverage.limit}
             </p>
-          </div>
+          </CoverageLimitCard>
         ))}
-      </div>
-    </div>
+      </CoverageCardContainer>
+    </>
   );
 };
+
+const CoverageCardContainer = styled.div.attrs({
+  className:
+    "flex flex-wrap justify-around items-center md:justify-start md:items-start gap-8 mb-12",
+})``;
+
+const CoverageLimitCard = styled.div.attrs<{
+  selectedLimit: number;
+  limit: number;
+}>((props) => ({
+  className:
+    "border rounded-lg flex flex-col justify-center items-center p-9 w-40 md:w-36 lg:w-48 cursor-pointer " +
+    (props.selectedLimit === props.limit
+      ? "bg-white border-deep-blue shadow-xl"
+      : "border-gray text-gray"),
+}))``;
 
 export default CoverageLimit;

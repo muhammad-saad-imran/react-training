@@ -32,12 +32,14 @@ export const businessAddressSchema = object({
 });
 
 export const businessRevenueSchema = object({
-  revenueFrom: number().moreThan(0, "Please enter valid revenue").required("Revenue From is a required field"),
+  revenueFrom: number()
+    .moreThan(0, "Please enter valid revenue")
+    .required("Revenue From is a required field"),
   revenueTo: number()
-  .required("Revenue To is a required field")
-  .when(['revenueFrom'], ([revenueFrom]) => {
-    return number().moreThan(revenueFrom, "Please enter valid revenue range")
-  }),
+    .required("Revenue To is a required field")
+    .when(["revenueFrom"], ([revenueFrom]) => {
+      return number().moreThan(revenueFrom, "Please enter valid revenue range");
+    }),
 });
 
 export const businessRevenueRange = object({});

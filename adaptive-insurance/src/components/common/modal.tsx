@@ -1,5 +1,6 @@
 import CrossIcon from "@/elements/icons/CrossIcon";
 import React, { Children } from "react";
+import styled from "styled-components";
 
 type Props = {
   children: React.ReactNode;
@@ -9,28 +10,37 @@ type Props = {
 
 const Modal = (props: Props) => {
   return (
-    <div
-      className={
-        props.hide
-          ? "hidden"
-          : "" +
-            "absolute top-0 h-screen w-screen bg-black/[0.65] flex justify-center items-center z-50"
-      }
-      onClick={props.onCloseModal}
-    >
-      <div
-        className="bg-white rounded-lg p-10 h-full w-full md:w-fit md:h-fit"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="w-full flex justify-end">
-          <div className="cursor-pointer" onClick={() => props.onCloseModal()}>
-            <CrossIcon />
-          </div>
-        </div>
-        {props.children}
-      </div>
-    </div>
+    <>
+      {!props.hide && (
+        <Wrapper onClick={props.onCloseModal}>
+          <ModalContainer onClick={(e) => e.stopPropagation()}>
+            <IconContainer>
+              <div
+                className="cursor-pointer"
+                onClick={() => props.onCloseModal()}
+              >
+                <CrossIcon />
+              </div>
+            </IconContainer>
+            {props.children}
+          </ModalContainer>
+        </Wrapper>
+      )}
+    </>
   );
 };
+
+const Wrapper = styled.div.attrs({
+  className:
+    "absolute top-0 h-screen w-screen bg-black/[0.65] flex justify-center items-center z-50",
+})``;
+
+const ModalContainer = styled.div.attrs({
+  className: "bg-white rounded-lg p-10 h-full w-full md:w-fit md:h-fit",
+})``;
+
+const IconContainer = styled.div.attrs({
+  className: "w-full flex justify-end",
+})``;
 
 export default Modal;
