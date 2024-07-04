@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-input/mask": "^1.2.5",
     "@reduxjs/toolkit": "^2.2.5",
     "formik": "^2.4.6",
     "moment": "^2.30.1",

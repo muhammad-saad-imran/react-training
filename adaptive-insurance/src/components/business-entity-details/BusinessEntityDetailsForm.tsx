@@ -4,6 +4,8 @@ import { useFormik } from "formik";
 import { businessDetailsSchema } from "@/validations/businessInfoValidations";
 import { useRouter } from "next/navigation";
 import BottomNavBar from "../common/BottomNavBar";
+import { useMask } from "@react-input/mask";
+import Input from "@/elements/inputs/Input";
 
 type Props = {};
 
@@ -86,6 +88,7 @@ const BusinessEntityDetailsForm = (props: Props) => {
       type: "text",
       label: "Phone *",
       name: "phone",
+      ref: useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } }),
       value: formik.values.phone,
       error: formik.errors.phone,
       touched: formik.touched.phone,
@@ -97,6 +100,7 @@ const BusinessEntityDetailsForm = (props: Props) => {
       {inputs.map((item, index) => (
         <FormikInputField
           key={index}
+          ref={item.ref}
           type={item.type}
           label={item.label}
           name={item.name}

@@ -1,6 +1,5 @@
 import Input from "@/elements/inputs/Input";
 import SelectInput from "@/elements/inputs/SelectInput";
-import { ErrorMessage } from "formik";
 import React from "react";
 import styled from "styled-components";
 
@@ -15,9 +14,10 @@ type Props = {
   touched?: boolean;
   as?: string;
   options?: Array<{ value: string; label: string }>;
+  pattern?: string;
 };
 
-const FormikInputField = (props: Props) => {
+const FormikInputField = React.forwardRef((props: Props, ref: any) => {
   return (
     <Container>
       <p>{props.label}</p>
@@ -40,6 +40,7 @@ const FormikInputField = (props: Props) => {
         </SelectInput>
       ) : (
         <Input
+          ref={ref}
           id={props.name}
           type={props.type}
           name={props.name}
@@ -54,7 +55,7 @@ const FormikInputField = (props: Props) => {
       )}
     </Container>
   );
-};
+});
 
 const Container = styled.div.attrs({
   className: "flex flex-col gap-1 w-full",

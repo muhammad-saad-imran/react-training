@@ -4,6 +4,7 @@ import React from "react";
 import BottomNavBar from "../common/BottomNavBar";
 import FormikInputField from "../common/FormikInputField";
 import { businessAddressSchema } from "@/validations/businessInfoValidations";
+import { useMask } from "@react-input/mask";
 
 type Props = {};
 
@@ -104,6 +105,7 @@ const BusinessMailingAddressForm = (props: Props) => {
       type: "text",
       label: "Busniess Phone *",
       name: "businessPhone",
+      ref: useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } }),
       value: formik.values.businessPhone,
       error: formik.errors.businessPhone,
       touched: formik.touched.businessPhone,
@@ -113,6 +115,7 @@ const BusinessMailingAddressForm = (props: Props) => {
     <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
       {inputs.map((item, index) => (
         <FormikInputField
+          ref={item.ref}
           key={index}
           type={item.type}
           label={item.label}

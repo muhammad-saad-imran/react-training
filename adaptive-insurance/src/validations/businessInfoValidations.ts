@@ -8,9 +8,10 @@ export const businessDetailsSchema = object({
   alternateEmail: string().email("Alternative Email must be a valid email"),
   phone: string()
     .required("Phone number is a required field")
-    .matches(/^[0-9]+$/, "Phone number can only contain digits")
-    .min(11, "Must be exactly 11 digits")
-    .max(11, "Must be exactly 11 digits"),
+    .matches(
+      /^(\([0-9]{3}\) |[0-9]{3}-)[0-9]{3}-[0-9]{4}$/,
+      "Enter a valid phone number"
+    ),
 });
 
 export const businessAddressSchema = object({
@@ -26,9 +27,10 @@ export const businessAddressSchema = object({
   country: string().required("Country is a required field"),
   businessPhone: string()
     .required("Phone number is a required field")
-    .matches(/^[0-9]+$/, "Phone number can only contain digits")
-    .min(11, "Must be exactly 11 digits")
-    .max(11, "Must be exactly 11 digits"),
+    .matches(
+      /^(\([0-9]{3}\) |[0-9]{3}-)[0-9]{3}-[0-9]{4}$/,
+      "Enter a valid phone number"
+    ),
 });
 
 export const businessRevenueSchema = object({
