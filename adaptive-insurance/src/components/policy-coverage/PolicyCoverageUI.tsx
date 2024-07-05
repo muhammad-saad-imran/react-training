@@ -7,7 +7,7 @@ import {
   changeCoverageHours,
   changeCoverageLimit,
 } from "@/store/feature/policy-coverage";
-import styled from "styled-components";
+import { HorizontalLine, PageWrapper, QuoteCardWrapper } from "./style";
 
 type Props = {
   policy: { hours: number; limit: number };
@@ -19,12 +19,12 @@ type Props = {
 const PolicyCoverageUI = (props: Props) => {
   const dispatch = useAppDispatch();
   return (
-    <Wrapper>
+    <PageWrapper>
       <div className="mr-auto md:pr-10 lg:px-32">
         <div className="md:hidden">
           <QuoteCard policy={props.policy} />
+          <HorizontalLine className="my-16" />
         </div>
-        <HorizontalLine />
         <HourCoverage
           coverageHourOpts={props.coverageHourOpts}
           selectedHours={props.policy.hours}
@@ -53,20 +53,8 @@ const PolicyCoverageUI = (props: Props) => {
           <QuoteCard policy={props.policy} />
         </div>
       </QuoteCardWrapper>
-    </Wrapper>
+    </PageWrapper>
   );
 };
-
-const Wrapper = styled.div.attrs({
-  className: "flex w-full h-full px-10 py-12",
-})``;
-
-const HorizontalLine = styled.div.attrs({
-  className: "w-full border border-white border-t-gray my-16 md:hidden",
-})``;
-
-const QuoteCardWrapper = styled.div.attrs({
-  className: "w-80 lg:w-96 grow-0 shrink-0 hidden md:block",
-})``;
 
 export default PolicyCoverageUI;

@@ -1,7 +1,7 @@
 import React from "react";
-import Modal from "../common/Modal";
+import Modal from "@/components//common/Modal";
 import Image from "next/image";
-import styled from "styled-components";
+import { HorizontalLine, ModalContainer } from "./style";
 
 type Props = {
   hide: boolean;
@@ -13,7 +13,7 @@ const InstructionModal = (props: Props) => {
     <Modal hide={props.hide} onCloseModal={props.onCloseModal}>
       <ModalContainer>
         <Image
-          src={require("../../../public/logo.svg")}
+          src={require("@/../public/logo.svg")}
           alt=""
           className="size-20"
         />
@@ -41,14 +41,5 @@ const InstructionModal = (props: Props) => {
     </Modal>
   );
 };
-
-const ModalContainer = styled.div.attrs({
-  className:
-    "flex flex-col justify-center items-center gap-10  h-full w-full md:h-fit md:w-[600px] lg:w-[880px] md:pb-20 md:px-20",
-})``;
-
-const HorizontalLine = styled.div.attrs({
-  className: "w-full border border-white border-t-gray",
-})``;
 
 export default InstructionModal;

@@ -3,6 +3,7 @@ import BlueTickIcon from "@/elements/icons/BlueTickIcon";
 import moment from "moment";
 import React from "react";
 import styled from "styled-components";
+import { HorizontalLine, QuoteContainer, QuoteWrapper } from "./style";
 
 type Props = {
   policy: { hours: number; limit: number };
@@ -17,7 +18,7 @@ const QuoteCard = (props: Props) => {
   ];
 
   return (
-    <Wrapper>
+    <QuoteWrapper>
       <QuoteContainer>
         <div className="mr-auto md:mr-0">
           <p className="font-bold uppercase md:text-center">Your quote</p>
@@ -32,7 +33,7 @@ const QuoteCard = (props: Props) => {
       </QuoteContainer>
 
       <div className="hidden md:block">
-        <HorizontalLine />
+        <HorizontalLine className="mt-7" />
         <p className="font-bold my-7 text-center">What’s included:</p>
 
         <div className="flex flex-col gap-3">
@@ -48,21 +49,9 @@ const QuoteCard = (props: Props) => {
       </div>
 
       <Button className="w-full md:hidden">Next: Business Information</Button>
-    </Wrapper>
+    </QuoteWrapper>
   );
 };
 
-const Wrapper = styled.div.attrs({
-  className:
-    "md:w-80 lg:w-96 bg-white rounded-lg shadow-2xl py-10 px-8 flex-col items-center",
-})``;
-
-const QuoteContainer = styled.div.attrs({
-  className: "flex md:flex-col md:items-center mb-12 md:mb-0",
-})``;
-
-const HorizontalLine = styled.div.attrs({
-  className: "w-full border border-white border-t-gray mt-7",
-})``;
 
 export default QuoteCard;

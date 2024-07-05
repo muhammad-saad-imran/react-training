@@ -1,135 +1,53 @@
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import React from "react";
-import BottomNavBar from "../common/BottomNavBar";
-import FormikInputField from "../common/FormikInputField";
+import BottomNavBar from "@/components//common/BottomNavBar";
+import FormikInputField from "@/components//common/FormikInputField";
 import { businessAddressSchema } from "@/validations/businessInfoValidations";
 import { useMask } from "@react-input/mask";
+import { businessAddressConfig } from "@/config/businessAddressConfig";
 
 type Props = {};
 
 const BusinessMailingAddressForm = (props: Props) => {
   const router = useRouter();
 
-  const formik = useFormik({
-    initialValues: {
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      state: "",
-      zip: "",
-      country: "",
-      businessPhone: "",
-    },
+  const formik = useFormik<any>({
+    initialValues: businessAddressConfig.initialValues,
     validationSchema: businessAddressSchema,
     onSubmit: (values, { setSubmitting }) => {
-      console.log(values, "Form Values");
       setSubmitting(false);
       router.push("business-revenue");
     },
   });
 
-  const inputs = [
-    {
-      type: "text",
-      label: "Address Line 1 *",
-      name: "addressLine1",
-      value: formik.values.addressLine1,
-      error: formik.errors.addressLine1,
-      touched: formik.touched.addressLine1,
-    },
-    {
-      type: "text",
-      label: "Address Line 2 (Optional)",
-      name: "addressLine2",
-      value: formik.values.addressLine2,
-      error: formik.errors.addressLine2,
-      touched: formik.touched.addressLine2,
-    },
-    {
-      type: "text",
-      label: "City *",
-      name: "city",
-      value: formik.values.city,
-      error: formik.errors.city,
-      touched: formik.touched.city,
-    },
-    {
-      type: "text",
-      label: "State *",
-      name: "state",
-      as: "select",
-      options: [
-        {
-          value: "sindh",
-          label: "Sindh",
-        },
-        {
-          value: "punjab",
-          label: "Punjab",
-        },
-        {
-          value: "kpk",
-          label: "KPK",
-        },
-        {
-          value: "balochistan",
-          label: "Balochistan",
-        },
-        {
-          value: "kashmir",
-          label: "Kashmir",
-        },
-      ],
-      value: formik.values.state,
-      error: formik.errors.state,
-      touched: formik.touched.state,
-    },
-    {
-      type: "text",
-      label: "Zip Code *",
-      name: "zip",
-      ref: useMask({ mask: "_____", replacement: { _: /\d/ } }),
-      value: formik.values.zip,
-      error: formik.errors.zip,
-      touched: formik.touched.zip,
-    },
-    {
-      type: "text",
-      label: "Country *",
-      name: "country",
-      value: formik.values.country,
-      error: formik.errors.country,
-      touched: formik.touched.country,
-    },
-    {
-      type: "text",
-      label: "Busniess Phone *",
-      name: "businessPhone",
-      ref: useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } }),
-      value: formik.values.businessPhone,
-      error: formik.errors.businessPhone,
-      touched: formik.touched.businessPhone,
-    },
-  ];
+  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
+    ...extraAttrs,
+    ...businessAddressConfig.inputs[fieldName],
+    value: formik.values[fieldName],
+    error: formik.errors[fieldName],
+    touched: formik.touched[fieldName],
+    handleChange: formik.handleChange,
+    handleBlur: formik.handleBlur,
+  });
+
   return (
     <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
-      {inputs.map((item, index) => (
-        <FormikInputField
-          ref={item.ref}
-          key={index}
-          type={item.type}
-          label={item.label}
-          name={item.name}
-          value={item.value}
-          error={item.error}
-          touched={item.touched}
-          as={item.as}
-          options={item.options}
-          handleChange={formik.handleChange}
-          handleBlur={formik.handleBlur}
-        />
-      ))}
+      <FormikInputField {...getFieldAttrs("addressLine1")} />
+      <FormikInputField {...getFieldAttrs("addressLine2")} />
+      <FormikInputField {...getFieldAttrs("city")} />
+      <FormikInputField {...getFieldAttrs("state")} />
+      <FormikInputField
+        {...getFieldAttrs("zip", {
+          ref: useMask({ mask: "_____", replacement: { _: /\d/ } }),
+        })}
+      />
+      <FormikInputField {...getFieldAttrs("country")} />
+      <FormikInputField
+        {...getFieldAttrs("businessPhone", {
+          ref: useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } }),
+        })}
+      />
       <BottomNavBar
         buttonLabel="Next: Business Revenue Range"
         disabled={formik.isSubmitting}

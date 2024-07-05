@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { HoursCard, Title } from "./style";
 
 type Props = {
   coverageHourOpts: Array<{ hours: number; text: string }>;
@@ -36,19 +37,5 @@ const HourCoverage = (props: Props) => {
     </>
   );
 };
-
-const Title = styled.p.attrs({
-  className: "text-5xl text-center md:text-left",
-})``;
-
-const HoursCard = styled.div.attrs<{ selectedHours: number; hours: number }>(
-  (props) => ({
-    className:
-      "border rounded-lg flex flex-col items-center w-full md:size-48 lg:size-60 p-4 cursor-pointer " +
-      (props.selectedHours === props.hours
-        ? "bg-white border-deep-blue shadow-xl"
-        : "border-gray text-gray"),
-  })
-)``;
 
 export default HourCoverage;

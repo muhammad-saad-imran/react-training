@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import BusinessInfoFormsContainer from "../business-info/BusinessInfoFormsContainer";
+import BusinessInfoFormsContainer from "@/components/business-info/BusinessInfoFormsContainer";
 import BusinessRevenueForm from "./BusinessRevenueForm";
 
 type Props = {};

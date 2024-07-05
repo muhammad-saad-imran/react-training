@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { CoverageCardContainer, CoverageLimitCard } from "./style";
 
 type Props = {
   coverageLimitOpts: Array<{ limit: number }>;
@@ -35,21 +36,5 @@ const CoverageLimit = (props: Props) => {
     </>
   );
 };
-
-const CoverageCardContainer = styled.div.attrs({
-  className:
-    "flex flex-wrap justify-around items-center md:justify-start md:items-start gap-8 mb-12",
-})``;
-
-const CoverageLimitCard = styled.div.attrs<{
-  selectedLimit: number;
-  limit: number;
-}>((props) => ({
-  className:
-    "border rounded-lg flex flex-col justify-center items-center p-9 w-40 md:w-36 lg:w-48 cursor-pointer " +
-    (props.selectedLimit === props.limit
-      ? "bg-white border-deep-blue shadow-xl"
-      : "border-gray text-gray"),
-}))``;
 
 export default CoverageLimit;

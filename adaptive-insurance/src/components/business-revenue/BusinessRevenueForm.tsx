@@ -1,62 +1,39 @@
 import { useFormik } from "formik";
 import React from "react";
-import FormikInputField from "../common/FormikInputField";
-import BottomNavBar from "../common/BottomNavBar";
+import FormikInputField from "@/components//common/FormikInputField";
+import BottomNavBar from "@/components//common/BottomNavBar";
 import { useRouter } from "next/navigation";
 import { businessRevenueSchema } from "@/validations/businessInfoValidations";
+import { businessRevenueConfig } from "@/config/businessRevenueConfig";
 
 type Props = {};
 
 const BusinessRevenueForm = (props: Props) => {
   const router = useRouter();
 
-  const formik = useFormik({
-    initialValues: {
-      revenueFrom: "",
-      revenueTo: "",
-    },
+  const formik = useFormik<any>({
+    initialValues: businessRevenueConfig.initialValues,
     validationSchema: businessRevenueSchema,
     onSubmit: (values, { setSubmitting }) => {
-      console.log(values, "Form Values");
       setSubmitting(false);
       //   router.push("business-revenue");
     },
   });
 
-  const inputs = [
-    {
-      type: "number",
-      label: "Revernue From",
-      name: "revenueFrom",
-      value: formik.values.revenueFrom,
-      error: formik.errors.revenueFrom,
-      touched: formik.touched.revenueFrom,
-    },
-    {
-      type: "number",
-      label: "Revenue To",
-      name: "revenueTo",
-      value: formik.values.revenueTo,
-      error: formik.errors.revenueTo,
-      touched: formik.touched.revenueTo,
-    },
-  ];
+  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
+    ...extraAttrs,
+    ...businessRevenueConfig.inputs[fieldName],
+    value: formik.values[fieldName],
+    error: formik.errors[fieldName],
+    touched: formik.touched[fieldName],
+    handleChange: formik.handleChange,
+    handleBlur: formik.handleBlur,
+  });
 
   return (
     <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
-      {inputs.map((item, index) => (
-        <FormikInputField
-          key={index}
-          type={item.type}
-          label={item.label}
-          name={item.name}
-          value={item.value}
-          error={item.error}
-          touched={item.touched}
-          handleChange={formik.handleChange}
-          handleBlur={formik.handleBlur}
-        />
-      ))}
+      <FormikInputField {...getFieldAttrs("revenueFrom")} />
+      <FormikInputField {...getFieldAttrs("revenueTo")} />
       <BottomNavBar
         buttonLabel="Next: Review and Pay"
         disabled={formik.isSubmitting}

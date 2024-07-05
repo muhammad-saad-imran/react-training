@@ -1,7 +1,7 @@
 import Input from "@/elements/inputs/Input";
 import SelectInput from "@/elements/inputs/SelectInput";
 import React from "react";
-import styled from "styled-components";
+import { ErrorMessageText, InputFieldContainer } from "./style";
 
 type Props = {
   label?: string;
@@ -11,8 +11,8 @@ type Props = {
   handleBlur: any;
   value: string;
   placeholder?: string;
-  error?: string;
-  touched?: boolean;
+  error?: string | any;
+  touched?: boolean | any;
   as?: string;
   options?: Array<{ value: string; label: string }>;
   pattern?: string;
@@ -20,7 +20,7 @@ type Props = {
 
 const FormikInputField = React.forwardRef((props: Props, ref: any) => {
   return (
-    <Container>
+    <InputFieldContainer>
       {props.label && <p>{props.label}</p>}
 
       {props.as === "select" && props.options ? (
@@ -55,16 +55,8 @@ const FormikInputField = React.forwardRef((props: Props, ref: any) => {
       {props.error && props.touched && (
         <ErrorMessageText>{props.error}</ErrorMessageText>
       )}
-    </Container>
+    </InputFieldContainer>
   );
 });
-
-const Container = styled.div.attrs({
-  className: "flex flex-col gap-1 w-full",
-})``;
-
-const ErrorMessageText = styled.p.attrs({
-  className: "text-rose-800 text-sm capitalize",
-})``;
 
 export default FormikInputField;
