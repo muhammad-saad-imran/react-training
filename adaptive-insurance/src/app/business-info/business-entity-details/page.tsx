@@ -3,8 +3,8 @@ import BusinessEntityDetailsUI from "@/components/business-entity-details/Busine
 
 type Props = {};
 
-const Page = (props: Props) => {
+const BusinessEntityPage = (props: Props) => {
   return <BusinessEntityDetailsUI />
 };
 
-export default Page;
+export default BusinessEntityPage;

@@ -3,10 +3,10 @@ import React from 'react'
 
 type Props = {}
 
-const Page = (props: Props) => {
+const BusinessMailingPage = (props: Props) => {
   return (
     <BusinessMailingAddressUI />
   )
 }
 
-export default Page
+export default BusinessMailingPage

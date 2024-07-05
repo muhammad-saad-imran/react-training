@@ -4,12 +4,13 @@ import React from "react";
 import styled from "styled-components";
 
 type Props = {
-  label: string;
+  label?: string;
   type?: string;
   name: string;
   handleChange: any;
   handleBlur: any;
   value: string;
+  placeholder?: string;
   error?: string;
   touched?: boolean;
   as?: string;
@@ -20,7 +21,7 @@ type Props = {
 const FormikInputField = React.forwardRef((props: Props, ref: any) => {
   return (
     <Container>
-      <p>{props.label}</p>
+      {props.label && <p>{props.label}</p>}
 
       {props.as === "select" && props.options ? (
         <SelectInput
@@ -42,6 +43,7 @@ const FormikInputField = React.forwardRef((props: Props, ref: any) => {
         <Input
           ref={ref}
           id={props.name}
+          placeholder={props.placeholder}
           type={props.type}
           name={props.name}
           onChange={props.handleChange}
