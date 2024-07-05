@@ -14,16 +14,16 @@ const CrossIcon = (props: Props) => {
       <path
         d="M9 9.21289L30.2132 30.4261"
         stroke="#161616"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M9 30.2129L30.2132 8.99969"
         stroke="#161616"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

@@ -89,6 +89,7 @@ const BusinessMailingAddressForm = (props: Props) => {
       type: "text",
       label: "Zip Code *",
       name: "zip",
+      ref: useMask({ mask: "_____", replacement: { _: /\d/ } }),
       value: formik.values.zip,
       error: formik.errors.zip,
       touched: formik.touched.zip,

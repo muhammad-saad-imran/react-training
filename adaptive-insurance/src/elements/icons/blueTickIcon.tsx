@@ -15,9 +15,9 @@ const BlueTickIcon = (props: Props) => {
       <path
         d="M15.9971 9.5L10.4971 15L7.99707 12.5"
         stroke="#161616"
-        stroke-width="1.66667"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.66667"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

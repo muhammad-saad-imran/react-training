@@ -15,16 +15,16 @@ const LeftArrowIcon = (props: Props) => {
         <path
           d="M24.6904 11.998L1.07575 11.998"
           stroke="#161616"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M8.58984 19.0068L1.07608 12.0068L8.58985 5.00683"
           stroke="#161616"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </g>
       <defs>

@@ -21,9 +21,7 @@ export const businessAddressSchema = object({
   state: string().required("State is a required field"),
   zip: string()
     .required("Zip code is a required field")
-    .matches(/^[0-9]+$/, "Zip code can only contain digits")
-    .min(5, "Must be exactly 5 digits")
-    .max(5, "Must be exactly 5 digits"),
+    .matches(/^[0-9]{5}$/, "Please enter valid Zip code"),
   country: string().required("Country is a required field"),
   businessPhone: string()
     .required("Phone number is a required field")
