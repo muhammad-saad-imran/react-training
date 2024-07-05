@@ -1,10 +1,10 @@
 import React from "react";
-import PolicyCoverageContainer from "./PolicyCoverageContainer";
+import PolicyCoverageContainer from "./policyCoverageContainer";
 
 type Props = {};
 
-const page = (props: Props) => {
+const PolicyCoveragePage = (props: Props) => {
   return <PolicyCoverageContainer />;
 };
 
-export default page;
+export default PolicyCoveragePage;

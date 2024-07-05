@@ -1,5 +1,5 @@
 import CrossIcon from "@/elements/icons/CrossIcon";
-import React, { Children } from "react";
+import React from "react";
 import styled from "styled-components";
 
 type Props = {

@@ -3,8 +3,8 @@ import React from "react";
 
 type Props = {};
 
-const Page = (props: Props) => {
+const BusinessRevenuePage = (props: Props) => {
   return <BusinessRevenueUI />;
 };
 
-export default Page;
+export default BusinessRevenuePage;
