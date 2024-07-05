@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import policyCoverageSlice from "./feature/policy-coverage/policyCoverageSlice";
+import policyCoverageSlice from "./feature/policy-coverage";
 
 const rootReducer = combineReducers({
   policy: policyCoverageSlice,

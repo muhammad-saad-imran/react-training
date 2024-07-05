@@ -2,11 +2,11 @@ import React from "react";
 import HourCoverage from "./HourCoverage";
 import CoverageLimit from "./CoverageLimit";
 import QuoteCard from "./QuoteCard";
-import { useAppDispatch } from "@/lib/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import {
   changeCoverageHours,
   changeCoverageLimit,
-} from "@/lib/feature/policy-coverage/policyCoverageSlice";
+} from "@/store/feature/policy-coverage";
 import styled from "styled-components";
 
 type Props = {
