@@ -1,14 +1,14 @@
+"use client";
+import React from "react";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
-import React from "react";
+import { useMask } from "@react-input/mask";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectBusinessMailingAddress, setBusinessMailingAddress } from "@/store/feature/business-info";
+import { businessAddressConfig } from "@/config/businessAddressConfig";
+import { businessAddressSchema } from "@/validations/businessInfoValidations";
 import BottomNavBar from "@/components//common/BottomNavBar";
 import FormikInputField from "@/components//common/FormikInputField";
-import { businessAddressSchema } from "@/validations/businessInfoValidations";
-import { useMask } from "@react-input/mask";
-import { businessAddressConfig } from "@/config/businessAddressConfig";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { selectBusinessMailingAddress } from "@/store/feature/business-info/hooks";
-import { setBusinessMailingAddress } from "@/store/feature/business-info";
 
 type Props = {};
 

@@ -1,7 +1,7 @@
 import React from "react";
-import Modal from "@/components//common/Modal";
 import Image from "next/image";
 import { HorizontalLine, ModalContainer } from "./style";
+import Modal from "@/components//common/Modal";
 
 type Props = {
   hide: boolean;
@@ -13,9 +13,10 @@ const InstructionModal = (props: Props) => {
     <Modal hide={props.hide} onCloseModal={props.onCloseModal}>
       <ModalContainer>
         <Image
-          src={require("@/../public/logo.svg")}
+          src={"/logo.svg"}
           alt=""
-          className="size-20"
+          width={85}
+          height={85}
         />
         <p className="text-center">
           Based on your ZIP code and the recommended 12-hour coverage plan, our

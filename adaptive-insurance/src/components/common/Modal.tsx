@@ -1,7 +1,6 @@
-import CrossIcon from "@/elements/icons/CrossIcon";
 import React from "react";
-import styled from "styled-components";
 import { IconContainer, ModalContainer, ModalWrapper } from "./style";
+import CrossIcon from "@/elements/icons/CrossIcon";
 
 type Props = {
   children: React.ReactNode;

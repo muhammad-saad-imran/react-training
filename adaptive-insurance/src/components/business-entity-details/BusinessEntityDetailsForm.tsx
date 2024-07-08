@@ -1,15 +1,17 @@
+"use client";
 import React from "react";
-import FormikInputField from "@/components/common/FormikInputField";
 import { useFormik } from "formik";
-import { businessDetailsSchema } from "@/validations/businessInfoValidations";
 import { useRouter } from "next/navigation";
 import { useMask } from "@react-input/mask";
-import BottomNavBar from "@/components/common/BottomNavBar";
-import { businessDetailsConfig } from "@/config/businessDetailsConfig";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { selectBusinessDetails } from "@/store/feature/business-info/hooks";
-import { setBusinessDetails } from "@/store/feature/business-info";
-import { IBusinessDetails } from "@/store/feature/business-info/types";
+import {
+  selectBusinessDetails,
+  setBusinessDetails,
+} from "@/store/feature/business-info";
+import { businessDetailsSchema } from "@/validations/businessInfoValidations";
+import { businessDetailsConfig } from "@/config/businessDetailsConfig";
+import BottomNavBar from "@/components/common/BottomNavBar";
+import FormikInputField from "@/components/common/FormikInputField";
 
 type Props = {};
 
@@ -23,7 +25,7 @@ const BusinessEntityDetailsForm = (props: Props) => {
     initialValues: businessDetails,
     validationSchema: businessDetailsSchema,
     onSubmit: (values, { setSubmitting }) => {
-      dispatch(setBusinessDetails(values))
+      dispatch(setBusinessDetails(values));
       setSubmitting(false);
       router.push("business-mailing-address");
     },

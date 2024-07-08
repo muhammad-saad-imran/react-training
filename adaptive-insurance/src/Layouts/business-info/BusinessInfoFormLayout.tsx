@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import QuoteCard from "@/components/policy-coverage/QuoteCard";
 import { useAppSelector } from "@/store/hooks";
-import { selectPolicyCoverage } from "@/store/feature/policy-coverage/hooks";
+import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
+import QuoteCard from "@/components/policy-coverage/QuoteCard";
 
 type Props = {
   children: React.ReactNode;

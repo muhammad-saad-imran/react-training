@@ -1,12 +1,12 @@
 "use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
+import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
+import { policyCoverageConfig } from "@/config/policyCoverageConfig";
 import BottomNavBar from "@/components/common/BottomNavBar";
 import InstructionModal from "@/components/policy-coverage/InstructionModal";
 import PolicyCoverageUI from "@/components/policy-coverage/PolicyCoverageUI";
-import { policyCoverageConfig } from "@/config/policyCoverageConfig";
-import { selectPolicyCoverage } from "@/store/feature/policy-coverage/hooks";
-import { useAppSelector } from "@/store/hooks";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
 
 type Props = {};
 

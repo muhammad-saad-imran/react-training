@@ -1,9 +1,9 @@
+import React from "react";
+import map from "lodash/map";
+import moment from "moment";
+import { HorizontalLine, QuoteContainer, QuoteWrapper } from "./style";
 import Button from "@/elements/buttons/Button";
 import BlueTickIcon from "@/elements/icons/BlueTickIcon";
-import moment from "moment";
-import React from "react";
-import styled from "styled-components";
-import { HorizontalLine, QuoteContainer, QuoteWrapper } from "./style";
 
 type Props = {
   policy: { hours: number; limit: number };
@@ -37,8 +37,8 @@ const QuoteCard = (props: Props) => {
         <p className="font-bold my-7 text-center">What’s included:</p>
 
         <div className="flex flex-col gap-3">
-          {includedInQuote.map((item) => (
-            <div className="flex gap-4 items-center">
+          {map(includedInQuote, (item, index) => (
+            <div className="flex gap-4 items-center" key={index}>
               <div className="size-6">
                 <BlueTickIcon />
               </div>
@@ -52,6 +52,5 @@ const QuoteCard = (props: Props) => {
     </QuoteWrapper>
   );
 };
-
 
 export default QuoteCard;

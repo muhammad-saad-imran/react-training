@@ -1,13 +1,13 @@
-import { useFormik } from "formik";
+"use client";
 import React from "react";
-import FormikInputField from "@/components//common/FormikInputField";
-import BottomNavBar from "@/components//common/BottomNavBar";
+import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectBusinessRevenue, setBusinessRevenue } from "@/store/feature/business-info";
 import { businessRevenueSchema } from "@/validations/businessInfoValidations";
 import { businessRevenueConfig } from "@/config/businessRevenueConfig";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { selectBusinessRevenue } from "@/store/feature/business-info/hooks";
-import { setBusinessRevenue } from "@/store/feature/business-info";
+import FormikInputField from "@/components//common/FormikInputField";
+import BottomNavBar from "@/components//common/BottomNavBar";
 
 type Props = {};
 

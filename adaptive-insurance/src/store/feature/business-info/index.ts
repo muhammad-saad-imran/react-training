@@ -1,10 +1,11 @@
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "@/store";
 import {
   IBusinessDetails,
   IBusinessMailingAddress,
   IBusinessRevenue,
 } from "@/store/feature/business-info/types";
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface BusinessInfoState {
   details: IBusinessDetails;
@@ -61,3 +62,12 @@ export const {
 } = businessInfoSlice.actions;
 
 export default businessInfoSlice;
+
+export const selectBusinessDetails = (state: RootState) =>
+  state.businessInfo.details;
+
+export const selectBusinessMailingAddress = (state: RootState) =>
+  state.businessInfo.mailingAddress;
+
+export const selectBusinessRevenue = (state: RootState) =>
+  state.businessInfo.revenue;
