@@ -11,7 +11,7 @@ const LeftArrowIcon = (props: Props) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_39_592)">
+      <g clipPath="url(#clip0_39_592)">
         <path
           d="M24.6904 11.998L1.07575 11.998"
           stroke="#161616"

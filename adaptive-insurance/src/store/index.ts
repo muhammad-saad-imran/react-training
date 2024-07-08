@@ -1,14 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import policyCoverageSlice from "./feature/policy-coverage";
+import testApiSlice from "@/store/api/testApiSlice";
+import businessInfoSlice from "@/store/feature/business-info";
 
 const rootReducer = combineReducers({
-  policy: policyCoverageSlice,
+  policy: policyCoverageSlice.reducer,
+  businessInfo: businessInfoSlice.reducer,
+  [testApiSlice.reducerPath]: testApiSlice.reducer,
 });
 
 export const makeStore = () => {
   return configureStore({
     reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(testApiSlice.middleware),
   });
 };
 

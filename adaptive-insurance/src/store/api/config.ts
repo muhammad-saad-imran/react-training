@@ -1,3 +1,8 @@
 export const apiConfig = {
-  baseUrl: "https://api-dev.adaptiveinsurance.com/api",
+  adaptiveApi: {
+    baseUrl: "https://api-dev.adaptiveinsurance.com/api",
+  },
+  testApi: {
+    baseUrl: "https://jsonplaceholder.typicode.com/",
+  },
 };

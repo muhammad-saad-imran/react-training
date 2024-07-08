@@ -5,16 +5,23 @@ import BottomNavBar from "@/components//common/BottomNavBar";
 import { useRouter } from "next/navigation";
 import { businessRevenueSchema } from "@/validations/businessInfoValidations";
 import { businessRevenueConfig } from "@/config/businessRevenueConfig";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectBusinessRevenue } from "@/store/feature/business-info/hooks";
+import { setBusinessRevenue } from "@/store/feature/business-info";
 
 type Props = {};
 
 const BusinessRevenueForm = (props: Props) => {
   const router = useRouter();
 
+  const dispatch = useAppDispatch();
+  const businessRevenue = useAppSelector(selectBusinessRevenue);
+
   const formik = useFormik<any>({
-    initialValues: businessRevenueConfig.initialValues,
+    initialValues: businessRevenue,
     validationSchema: businessRevenueSchema,
     onSubmit: (values, { setSubmitting }) => {
+      dispatch(setBusinessRevenue(values));
       setSubmitting(false);
       //   router.push("business-revenue");
     },

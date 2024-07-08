@@ -2,7 +2,7 @@
 import React from "react";
 import QuoteCard from "@/components/policy-coverage/QuoteCard";
 import { useAppSelector } from "@/store/hooks";
-import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
+import { selectPolicyCoverage } from "@/store/feature/policy-coverage/hooks";
 
 type Props = {
   children: React.ReactNode;

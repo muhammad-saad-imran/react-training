@@ -6,16 +6,23 @@ import FormikInputField from "@/components//common/FormikInputField";
 import { businessAddressSchema } from "@/validations/businessInfoValidations";
 import { useMask } from "@react-input/mask";
 import { businessAddressConfig } from "@/config/businessAddressConfig";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectBusinessMailingAddress } from "@/store/feature/business-info/hooks";
+import { setBusinessMailingAddress } from "@/store/feature/business-info";
 
 type Props = {};
 
 const BusinessMailingAddressForm = (props: Props) => {
   const router = useRouter();
 
+  const dispatch = useAppDispatch();
+  const businessAddress = useAppSelector(selectBusinessMailingAddress);
+
   const formik = useFormik<any>({
-    initialValues: businessAddressConfig.initialValues,
+    initialValues: businessAddress,
     validationSchema: businessAddressSchema,
     onSubmit: (values, { setSubmitting }) => {
+      dispatch(setBusinessMailingAddress(values));
       setSubmitting(false);
       router.push("business-revenue");
     },
