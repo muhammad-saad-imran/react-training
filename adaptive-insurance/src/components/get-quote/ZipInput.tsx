@@ -5,9 +5,10 @@ import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { object, string } from "yup";
 import FormikInputField from "@/components//common/FormikInputField";
 import { InputFormContainer, LogoContainer, Wrapper } from "./style";
+import { getQuoteConfig } from "@/config/getQuoteConfig";
+import { getQuoteSchema } from "@/validations/getQuoteValidation";
 
 type Props = {};
 
@@ -15,22 +16,15 @@ const ZipInput = (props: Props) => {
   const router = useRouter();
 
   const formik = useFormik({
-    initialValues: { zip: "" },
-    validationSchema: object({
-      zip: string()
-        .required("")
-        .matches(/^[0-9]{5}$/, "Please enter valid Zip code"),
-    }),
+    initialValues: getQuoteConfig.initialValues,
+    validationSchema: getQuoteSchema,
     onSubmit: (values, { setSubmitting }) => {
-      console.log("ZIP", values);
       setSubmitting(false);
       router.push("policy-coverage");
     },
   });
 
   const inputRef = useMask({ mask: "_____", replacement: { _: /\d/ } });
-
-  console.log(formik.errors, "error");
 
   return (
     <Wrapper>
@@ -46,13 +40,12 @@ const ZipInput = (props: Props) => {
       <InputFormContainer onSubmit={formik.handleSubmit}>
         <FormikInputField
           ref={inputRef}
-          name="zip"
           value={formik.values.zip}
           error={formik.errors.zip}
           touched={formik.touched.zip}
           handleChange={formik.handleChange}
           handleBlur={formik.handleBlur}
-          placeholder="Enter ZIP Code"
+          {...getQuoteConfig.inputs.zip}
         />
         <Button
           className="w-full md:w-2/5 text-sm"
