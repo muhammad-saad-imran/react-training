@@ -12,12 +12,7 @@ const InstructionModal = (props: Props) => {
   return (
     <Modal hide={props.hide} onCloseModal={props.onCloseModal}>
       <ModalContainer>
-        <Image
-          src={"/logo.svg"}
-          alt=""
-          width={85}
-          height={85}
-        />
+        <Image src={"/logo.svg"} alt="" width={85} height={85} />
         <p className="text-center">
           Based on your ZIP code and the recommended 12-hour coverage plan, our
           models predict you will receive your claim money in full 99% of the

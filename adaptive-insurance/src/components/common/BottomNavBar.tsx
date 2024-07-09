@@ -1,7 +1,11 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { BackIconContainer, QuoteContainer, BottomNavbarContainer } from "./style";
+import {
+  BackIconContainer,
+  QuoteContainer,
+  BottomNavbarContainer,
+} from "./style";
 import Button from "@/elements/buttons/Button";
 import LeftArrowIcon from "@/elements/icons/LeftArrowIcon";
 

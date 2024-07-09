@@ -1,13 +1,13 @@
 import React from "react";
-import HourCoverage from "./HourCoverage";
-import CoverageLimit from "./CoverageLimit";
-import QuoteCard from "./QuoteCard";
 import { useAppDispatch } from "@/store/hooks";
 import {
   changeCoverageHours,
   changeCoverageLimit,
 } from "@/store/feature/policy-coverage";
 import { HorizontalLine, PageWrapper, QuoteCardWrapper } from "./style";
+import HourCoverage from "./HourCoverage";
+import CoverageLimit from "./CoverageLimit";
+import QuoteCard from "./QuoteCard";
 
 type Props = {
   policy: { hours: number; limit: number };

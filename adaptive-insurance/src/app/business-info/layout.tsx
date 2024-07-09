@@ -6,11 +6,7 @@ const Layout = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  return (
-      <BusinessInfoFormLayout>
-        {children}
-      </BusinessInfoFormLayout>
-  );
+  return <BusinessInfoFormLayout>{children}</BusinessInfoFormLayout>;
 };
 
 export default Layout;
