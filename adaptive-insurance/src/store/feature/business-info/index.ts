@@ -8,12 +8,14 @@ import {
 } from "@/store/feature/business-info/types";
 
 interface BusinessInfoState {
+  zipCode: string;
   details: IBusinessDetails;
   mailingAddress: IBusinessMailingAddress;
   revenue: IBusinessRevenue;
 }
 
 const initialState = {
+  zipCode: "",
   details: {
     businessType: "",
     businessName: "",
@@ -40,6 +42,9 @@ const businessInfoSlice = createSlice({
   name: "business-info",
   initialState,
   reducers: {
+    setBusinessZipCode(state, action: PayloadAction<string>) {
+      state.zipCode = action.payload;
+    },
     setBusinessDetails(state, action: PayloadAction<IBusinessDetails>) {
       state.details = action.payload;
     },
@@ -59,9 +64,13 @@ export const {
   setBusinessDetails,
   setBusinessMailingAddress,
   setBusinessRevenue,
+  setBusinessZipCode
 } = businessInfoSlice.actions;
 
 export default businessInfoSlice;
+
+export const selectBusinessZipCode = (state: RootState) =>
+  state.businessInfo.zipCode;
 
 export const selectBusinessDetails = (state: RootState) =>
   state.businessInfo.details;

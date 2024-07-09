@@ -3,6 +3,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useMask } from "@react-input/mask";
 import { useFormik } from "formik";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectBusinessZipCode, setBusinessZipCode } from "@/store/feature/business-info";
 import { getQuoteConfig } from "@/config/getQuoteConfig";
 import { getQuoteSchema } from "@/validations/getQuoteValidation";
 import {
@@ -17,14 +19,20 @@ import FormikInputField from "@/components/common/FormikInputField";
 export default function Home() {
   const router = useRouter();
 
+  const dispatch = useAppDispatch();
+
   const formik = useFormik({
     initialValues: getQuoteConfig.initialValues,
     validationSchema: getQuoteSchema,
     onSubmit: (values, { setSubmitting }) => {
+      dispatch(setBusinessZipCode(values.zipCode));
       setSubmitting(false);
       router.push("policy-coverage");
     },
   });
+
+  console.log(formik.values, "formik.values")
+  console.log(formik.errors, "formik.errors")
 
   const inputRef = useMask({ mask: "_____", replacement: { _: /\d/ } });
 
@@ -37,21 +45,21 @@ export default function Home() {
             src={"/logo.svg"}
             alt=""
             width={50}
-            height={20}
+            height={50}
           />
           <p className="text-3xl md:text-5xl">Get a quote in seconds</p>
         </LogoContainer>
 
         <InputFormContainer onSubmit={formik.handleSubmit}>
-          <FormikInputField
+          {/* <FormikInputField
             ref={inputRef}
-            value={formik.values.zip}
-            error={formik.errors.zip}
-            touched={formik.touched.zip}
+            value={formik.values.zipCode}
+            error={formik.errors.zipCode}
+            touched={formik.touched.zipCode}
             handleChange={formik.handleChange}
             handleBlur={formik.handleBlur}
-            {...getQuoteConfig.inputs.zip}
-          />
+            {...getQuoteConfig.inputs.zipCode}
+          /> */}
           <Button
             className="w-full md:w-2/5 text-sm"
             type="submit"
