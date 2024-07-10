@@ -41,5 +41,3 @@ export const businessRevenueSchema = object({
       return number().moreThan(revenueFrom, "Please enter valid revenue range");
     }),
 });
-
-export const businessRevenueRange = object({});

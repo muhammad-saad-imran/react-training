@@ -1,18 +1,21 @@
+"use client";
+import React from "react";
+import map from "lodash/map";
+import moment from "moment";
+import { HorizontalLine, QuoteContainer, QuoteWrapper } from "./style";
 import Button from "@/elements/buttons/Button";
 import BlueTickIcon from "@/elements/icons/BlueTickIcon";
-import moment from "moment";
-import React from "react";
-import styled from "styled-components";
-import { HorizontalLine, QuoteContainer, QuoteWrapper } from "./style";
+import { useAppSelector } from "@/store/hooks";
+import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
 
-type Props = {
-  policy: { hours: number; limit: number };
-};
+type Props = {};
 
 const QuoteCard = (props: Props) => {
+  const policy = useAppSelector(selectPolicyCoverage);
+
   const includedInQuote = [
-    `Coverage starting after ${props.policy.hours} hours of power loss`,
-    `Coverage limit of $${props.policy.limit}`,
+    `Coverage starting after ${policy.hours} hours of power loss`,
+    `Coverage limit of $${policy.limit}`,
     `Coverage starting as of ${moment().format("D MMM, YYYY")}`,
     "Easy payment once your power goes out",
   ];
@@ -37,8 +40,8 @@ const QuoteCard = (props: Props) => {
         <p className="font-bold my-7 text-center">What’s included:</p>
 
         <div className="flex flex-col gap-3">
-          {includedInQuote.map((item) => (
-            <div className="flex gap-4 items-center">
+          {map(includedInQuote, (item, index) => (
+            <div className="flex gap-4 items-center" key={index}>
               <div className="size-6">
                 <BlueTickIcon />
               </div>
@@ -52,6 +55,5 @@ const QuoteCard = (props: Props) => {
     </QuoteWrapper>
   );
 };
-
 
 export default QuoteCard;

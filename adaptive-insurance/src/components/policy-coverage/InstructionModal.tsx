@@ -1,7 +1,7 @@
 import React from "react";
-import Modal from "@/components//common/Modal";
 import Image from "next/image";
 import { HorizontalLine, ModalContainer } from "./style";
+import Modal from "@/components//common/Modal";
 
 type Props = {
   hide: boolean;
@@ -12,11 +12,7 @@ const InstructionModal = (props: Props) => {
   return (
     <Modal hide={props.hide} onCloseModal={props.onCloseModal}>
       <ModalContainer>
-        <Image
-          src={require("@/../public/logo.svg")}
-          alt=""
-          className="size-20"
-        />
+        <Image src={"/logo.svg"} alt="" width={85} height={85} />
         <p className="text-center">
           Based on your ZIP code and the recommended 12-hour coverage plan, our
           models predict you will receive your claim money in full 99% of the

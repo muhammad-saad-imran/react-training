@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import map from "lodash/map";
 import { CoverageCardContainer, CoverageLimitCard } from "./style";
 
 type Props = {
@@ -20,7 +20,7 @@ const CoverageLimit = (props: Props) => {
       </p>
 
       <CoverageCardContainer>
-        {props.coverageLimitOpts.map((coverage, index) => (
+        {map(props.coverageLimitOpts, (coverage, index) => (
           <CoverageLimitCard
             key={index}
             selectedLimit={props.selectedLimit}

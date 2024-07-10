@@ -15,8 +15,10 @@ const Navbar = (props: Props) => {
       </NavbarIconContainer>
       <Image
         className="ml-auto mr-auto md:ml-0 md:mr-0"
-        src={require("@/../public/adaptive-logo.svg")}
+        src={"/adaptive-logo.svg"}
         alt=""
+        width={200}
+        height={20}
       />
       <NavbarIconContainer>
         <PhoneIcon />

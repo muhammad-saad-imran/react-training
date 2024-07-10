@@ -12,3 +12,7 @@ export const LogoContainer = styled.div.attrs({
 export const InputFormContainer = styled.form.attrs({
   className: "w-full flex flex-col items-center gap-3 md:gap-16",
 })``;
+
+export const PageWrapper = styled.div.attrs({
+  className: "w-full h-full flex justify-center items-center p-6",
+})``;

@@ -1,8 +1,8 @@
 export const getQuoteConfig = {
-  initialValues: { zip: "" },
+  initialValues: { zipCode: "" },
   inputs: {
-    zip: {
-      name: "zip",
+    zipCode: {
+      name: "zipCode",
       placeholder: "Enter ZIP Code",
     },
   },

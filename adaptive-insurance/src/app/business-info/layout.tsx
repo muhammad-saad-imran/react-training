@@ -1,5 +1,8 @@
+"use client";
 import React from "react";
-import BusinessInfoFormLayout from "@/Layouts/business-info/BusinessInfoFormLayout";
+import QuoteCard from "@/components/policy-coverage/QuoteCard";
+import { QuoteCardWrapper } from "@/components/policy-coverage/style";
+import { BusinessFormWrapper, BusinessInfoPageWrapper } from "@/components/business-info/style";
 
 const Layout = ({
   children,
@@ -7,9 +10,16 @@ const Layout = ({
   children: React.ReactNode;
 }>) => {
   return (
-      <BusinessInfoFormLayout>
-        {children}
-      </BusinessInfoFormLayout>
+    <div className="pb-24">
+      <BusinessInfoPageWrapper>
+        <BusinessFormWrapper>{children}</BusinessFormWrapper>
+        <QuoteCardWrapper>
+          <div className="fixed right-10">
+            <QuoteCard />
+          </div>
+        </QuoteCardWrapper>
+      </BusinessInfoPageWrapper>
+    </div>
   );
 };
 

@@ -1,6 +1,7 @@
+import React from "react";
+import map from "lodash/map";
 import Input from "@/elements/inputs/Input";
 import SelectInput from "@/elements/inputs/SelectInput";
-import React from "react";
 import { ErrorMessageText, InputFieldContainer } from "./style";
 
 type Props = {
@@ -18,7 +19,7 @@ type Props = {
   pattern?: string;
 };
 
-const FormikInputField = React.forwardRef((props: Props, ref: any) => {
+const FormikInputField = (props: Props, ref: any) => {
   return (
     <InputFieldContainer>
       {props.label && <p>{props.label}</p>}
@@ -33,7 +34,7 @@ const FormikInputField = React.forwardRef((props: Props, ref: any) => {
           <option disabled selected value="">
             Select
           </option>
-          {props.options.map((item, index) => (
+          {map(props.options, (item: any, index: number) => (
             <option value={item.value} key={index}>
               {item.label}
             </option>
@@ -57,6 +58,6 @@ const FormikInputField = React.forwardRef((props: Props, ref: any) => {
       )}
     </InputFieldContainer>
   );
-});
+};
 
-export default FormikInputField;
+export default React.forwardRef(FormikInputField);

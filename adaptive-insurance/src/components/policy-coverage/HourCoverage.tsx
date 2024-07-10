@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import map from "lodash/map";
 import { HoursCard, Title } from "./style";
 
 type Props = {
@@ -21,8 +21,9 @@ const HourCoverage = (props: Props) => {
       </p>
 
       <div className="flex flex-wrap gap-8 mb-12">
-        {props.coverageHourOpts.map((coverage) => (
+        {map(props.coverageHourOpts, (coverage, index) => (
           <HoursCard
+            key={index}
             selectedHours={props.selectedHours}
             hours={coverage.hours}
             onClick={() => props.onPolicyHoursChange(coverage.hours)}

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "@/store";
 
 interface PolicyCoverageState {
   hours: number;
@@ -28,3 +29,5 @@ export const { changeCoverageHours, changeCoverageLimit } =
   policyCoverageSlice.actions;
 
 export default policyCoverageSlice;
+
+export const selectPolicyCoverage = (state: RootState) => state.policy;

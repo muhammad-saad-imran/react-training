@@ -1,9 +1,13 @@
 "use client";
+import React from "react";
+import { useRouter } from "next/navigation";
+import {
+  BackIconContainer,
+  QuoteContainer,
+  BottomNavbarContainer,
+} from "./style";
 import Button from "@/elements/buttons/Button";
 import LeftArrowIcon from "@/elements/icons/LeftArrowIcon";
-import { useRouter } from "next/navigation";
-import React from "react";
-import { BackIconContainer, QuoteContainer, BottomNavbarContainer } from "./style";
 
 type Props = {
   buttonLabel: string;
