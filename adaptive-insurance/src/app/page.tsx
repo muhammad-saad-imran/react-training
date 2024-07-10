@@ -3,8 +3,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useMask } from "@react-input/mask";
 import { useFormik } from "formik";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { selectBusinessZipCode, setBusinessZipCode } from "@/store/feature/business-info";
+import { useAppDispatch } from "@/store/hooks";
+import { setBusinessZipCode } from "@/store/feature/business-info";
 import { getQuoteConfig } from "@/config/getQuoteConfig";
 import { getQuoteSchema } from "@/validations/getQuoteValidation";
 import {
@@ -31,9 +31,6 @@ export default function Home() {
     },
   });
 
-  console.log(formik.values, "formik.values")
-  console.log(formik.errors, "formik.errors")
-
   const inputRef = useMask({ mask: "_____", replacement: { _: /\d/ } });
 
   return (
@@ -51,7 +48,7 @@ export default function Home() {
         </LogoContainer>
 
         <InputFormContainer onSubmit={formik.handleSubmit}>
-          {/* <FormikInputField
+          <FormikInputField
             ref={inputRef}
             value={formik.values.zipCode}
             error={formik.errors.zipCode}
@@ -59,7 +56,7 @@ export default function Home() {
             handleChange={formik.handleChange}
             handleBlur={formik.handleBlur}
             {...getQuoteConfig.inputs.zipCode}
-          /> */}
+          />
           <Button
             className="w-full md:w-2/5 text-sm"
             type="submit"

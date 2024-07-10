@@ -1,18 +1,21 @@
+"use client";
 import React from "react";
 import map from "lodash/map";
 import moment from "moment";
 import { HorizontalLine, QuoteContainer, QuoteWrapper } from "./style";
 import Button from "@/elements/buttons/Button";
 import BlueTickIcon from "@/elements/icons/BlueTickIcon";
+import { useAppSelector } from "@/store/hooks";
+import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
 
-type Props = {
-  policy: { hours: number; limit: number };
-};
+type Props = {};
 
 const QuoteCard = (props: Props) => {
+  const policy = useAppSelector(selectPolicyCoverage);
+
   const includedInQuote = [
-    `Coverage starting after ${props.policy.hours} hours of power loss`,
-    `Coverage limit of $${props.policy.limit}`,
+    `Coverage starting after ${policy.hours} hours of power loss`,
+    `Coverage limit of $${policy.limit}`,
     `Coverage starting as of ${moment().format("D MMM, YYYY")}`,
     "Easy payment once your power goes out",
   ];
