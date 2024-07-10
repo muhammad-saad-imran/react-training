@@ -6,12 +6,12 @@ export const businessRevenueConfig: { initialValues: any; inputs: any } = {
   inputs: {
     revenueFrom: {
       type: "number",
-      label: "Revernue From",
+      label: "Revernue From *",
       name: "revenueFrom",
     },
     revenueTo: {
       type: "number",
-      label: "Revenue To",
+      label: "Revenue To *",
       name: "revenueTo",
     },
   },

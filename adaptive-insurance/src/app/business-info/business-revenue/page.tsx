@@ -27,7 +27,7 @@ const BusinessRevenuePage = (props: Props) => {
     onSubmit: (values, { setSubmitting }) => {
       dispatch(setBusinessRevenue(values));
       setSubmitting(false);
-      //   router.push("business-revenue");
+        router.push("/purchase");
     },
   });
 

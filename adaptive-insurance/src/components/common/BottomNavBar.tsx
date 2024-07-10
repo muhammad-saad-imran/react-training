@@ -25,8 +25,8 @@ const BottomNavBar = (props: Props) => {
       </BackIconContainer>
 
       <QuoteContainer>
-        <p className="text-sm font-bold uppercase">Your quote</p>
-        <p className="text-lg">$13/mo</p>
+        <p className="text-xs font-bold uppercase">Your quote</p>
+        <p className="text-sm">$13/mo</p>
       </QuoteContainer>
 
       <Button
