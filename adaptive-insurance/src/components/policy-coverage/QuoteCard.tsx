@@ -40,7 +40,7 @@ const QuoteCard = (props: Props) => {
         <p className="font-bold my-7 text-center">What’s included:</p>
 
         <div className="flex flex-col gap-3">
-          {map(includedInQuote, (item, index) => (
+          {map(includedInQuote, (item: any, index: number) => (
             <div className="flex gap-4 items-center" key={index}>
               <div className="size-6">
                 <BlueTickIcon />

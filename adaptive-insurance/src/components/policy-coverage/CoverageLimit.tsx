@@ -20,7 +20,7 @@ const CoverageLimit = (props: Props) => {
       </p>
 
       <CoverageCardContainer>
-        {map(props.coverageLimitOpts, (coverage, index) => (
+        {map(props.coverageLimitOpts, (coverage: any, index: number) => (
           <CoverageLimitCard
             key={index}
             selectedLimit={props.selectedLimit}
