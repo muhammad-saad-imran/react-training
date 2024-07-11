@@ -21,7 +21,7 @@ const HourCoverage = (props: Props) => {
       </p>
 
       <div className="flex flex-wrap gap-8 mb-12">
-        {map(props.coverageHourOpts, (coverage, index) => (
+        {map(props.coverageHourOpts, (coverage: any, index: number) => (
           <HoursCard
             key={index}
             selectedHours={props.selectedHours}
