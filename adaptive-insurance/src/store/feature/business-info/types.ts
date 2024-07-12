@@ -1,3 +1,16 @@
+export interface IBusinessInfoState {
+  businessType: string;
+  businessName: string;
+  contactName: string;
+  email: string;
+  alternateEmail: string;
+  phone: string;
+  revenueRangeFrom: number | undefined;
+  revenueRangeTo: number | undefined;
+  mailingAddress: IBusinessAddress;
+  billingAddress: IBusinessAddress;
+}
+
 export interface IBusinessDetails {
   businessType: string;
   businessName: string;
@@ -7,7 +20,7 @@ export interface IBusinessDetails {
   phone: string;
 }
 
-export interface IBusinessMailingAddress {
+export interface IBusinessAddress {
   address: string;
   city: string;
   state: string;
@@ -17,6 +30,6 @@ export interface IBusinessMailingAddress {
 }
 
 export interface IBusinessRevenue {
-  revenueFrom: number | undefined;
-  revenueTo: number | undefined;
+  revenueRangeFrom: number | undefined;
+  revenueRangeTo: number | undefined;
 }

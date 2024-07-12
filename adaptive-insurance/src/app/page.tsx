@@ -1,37 +1,81 @@
 "use client";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { useMask } from "@react-input/mask";
+import map from "lodash/map";
 import { useFormik } from "formik";
-import { useAppDispatch } from "@/store/hooks";
-import { setBusinessZipCode } from "@/store/feature/business-info";
+import { useAutocompleteQuery } from "@/store/api/smartyStreetApiSlice";
 import { getQuoteConfig } from "@/config/getQuoteConfig";
 import { getQuoteSchema } from "@/validations/getQuoteValidation";
 import {
+  AutocompleteContainer,
+  AutocompleteItems,
+  AutocompleteOptions,
   InputFormContainer,
   LogoContainer,
   PageWrapper,
   Wrapper,
 } from "@/components/get-quote/style";
+import Image from "next/image";
 import Button from "@/elements/buttons/Button";
 import FormikInputField from "@/components/common/FormikInputField";
+import { useCreateQuoteMutation } from "@/store/api/adaptiveApiSlice";
+import { getCreateQuoteParams } from "@/utils/adaptiveApiUtils";
 
 export default function Home() {
-  const router = useRouter();
+  const [address, setAddress] = useState<any>(null);
+  const [autocompleteOptions, setAutocompleteOptions] = useState<Array<string>>(
+    []
+  );
 
-  const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: getQuoteConfig.initialValues,
     validationSchema: getQuoteSchema,
-    onSubmit: (values, { setSubmitting }) => {
-      dispatch(setBusinessZipCode(values.zipCode));
+    onSubmit: async (values, { setSubmitting }) => {
+      await createQuote({
+        address,
+        stage: "address",
+        product: "Outage",
+      });
+
+      if (createQuoteResult.error) {
+        alert("Something went wrong. Please try again later.");
+        console.log(createQuoteResult.error, "error");
+      } else {
+        router.push(`policy-coverage?quoteId=${"createQuoteResult.data.id"}`);
+      }
       setSubmitting(false);
-      router.push("policy-coverage");
     },
   });
 
-  const inputRef = useMask({ mask: "_____", replacement: { _: /\d/ } });
+  let data = getQuoteConfig.options;
+  let isLoading = false;
+  // const { data, isLoading } = useAutocompleteQuery(formik.values.address);
+  const [createQuote, createQuoteResult] = useCreateQuoteMutation();
+
+  const options = map(
+    data?.suggestions,
+    (item: any, index: number) =>
+      `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
+  );
+
+  useEffect(() => {
+    !isLoading && setAutocompleteOptions(options);
+
+    if (data?.suggestions.length === 1) {
+      let addr = data?.suggestions[0];
+      setAddress({
+        street: addr.street_line,
+        street2: addr.secondary,
+        city: addr.city,
+        state: addr.state,
+        zipCode: addr.zipcode,
+      });
+    } else {
+      setAddress(null);
+    }
+  }, [data]);
 
   return (
     <PageWrapper>
@@ -47,20 +91,35 @@ export default function Home() {
           <p className="text-3xl md:text-5xl">Get a quote in seconds</p>
         </LogoContainer>
 
-        <InputFormContainer onSubmit={formik.handleSubmit}>
-          <FormikInputField
-            ref={inputRef}
-            value={formik.values.zipCode}
-            error={formik.errors.zipCode}
-            touched={formik.touched.zipCode}
-            handleChange={formik.handleChange}
-            handleBlur={formik.handleBlur}
-            {...getQuoteConfig.inputs.zipCode}
-          />
+        <InputFormContainer onSubmit={formik.handleSubmit} autoComplete="off">
+          <AutocompleteContainer>
+            <FormikInputField
+              value={formik.values.address}
+              error={formik.errors.address}
+              touched={formik.touched.address}
+              handleChange={formik.handleChange}
+              handleBlur={formik.handleBlur}
+              {...getQuoteConfig.inputs.address}
+            />
+            {autocompleteOptions.length > 0 &&
+              autocompleteOptions[0] !== formik.values.address &&
+              formik.values.address !== "" && (
+                <AutocompleteItems>
+                  {map(autocompleteOptions, (item: string, index: number) => (
+                    <AutocompleteOptions
+                      key={index}
+                      onClick={() => formik.setFieldValue("address", item)}
+                    >
+                      {item}
+                    </AutocompleteOptions>
+                  ))}
+                </AutocompleteItems>
+              )}
+          </AutocompleteContainer>
           <Button
             className="w-full md:w-2/5 text-sm"
             type="submit"
-            disabled={formik.isSubmitting}
+            disabled={formik.isSubmitting || address === null}
           >
             Get Your Quote
           </Button>

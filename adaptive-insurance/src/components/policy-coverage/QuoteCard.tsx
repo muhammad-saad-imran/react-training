@@ -2,11 +2,11 @@
 import React from "react";
 import map from "lodash/map";
 import moment from "moment";
+import { useAppSelector } from "@/store/hooks";
+import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
 import { HorizontalLine, QuoteContainer, QuoteWrapper } from "./style";
 import Button from "@/elements/buttons/Button";
 import BlueTickIcon from "@/elements/icons/BlueTickIcon";
-import { useAppSelector } from "@/store/hooks";
-import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
 
 type Props = {};
 
