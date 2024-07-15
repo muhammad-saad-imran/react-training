@@ -1,6 +1,5 @@
 import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
-import testApiSlice from "@/store/api/testApiSlice";
 import businessInfoSlice from "@/store/feature/business-info";
 import adaptiveApiSlice from "@/store/api/adaptiveApiSlice";
 import policyCoverageSlice from "@/store/feature/policy-coverage";
@@ -9,7 +8,6 @@ import smartyStreetApiSlice from "@/store/api/smartyStreetApiSlice";
 const rootReducer = combineReducers({
   policy: policyCoverageSlice.reducer,
   businessInfo: businessInfoSlice.reducer,
-  [testApiSlice.reducerPath]: testApiSlice.reducer,
   [adaptiveApiSlice.reducerPath]: adaptiveApiSlice.reducer,
   [smartyStreetApiSlice.reducerPath]: smartyStreetApiSlice.reducer,
 });
@@ -19,7 +17,6 @@ export const makeStore = () => {
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(
-        testApiSlice.middleware,
         adaptiveApiSlice.middleware,
         smartyStreetApiSlice.middleware
       ),

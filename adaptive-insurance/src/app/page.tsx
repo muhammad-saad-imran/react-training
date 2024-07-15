@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import map from "lodash/map";
 import { useFormik } from "formik";
+import { map } from "lodash";
 import { useAutocompleteQuery } from "@/store/api/smartyStreetApiSlice";
+import { useCreateQuoteMutation } from "@/store/api/adaptiveApiSlice";
+import { IAddress, ICreateQuoteParams } from "@/store/api/types";
 import { getQuoteConfig } from "@/config/getQuoteConfig";
 import { getQuoteSchema } from "@/validations/getQuoteValidation";
 import {
@@ -18,14 +20,26 @@ import {
 import Image from "next/image";
 import Button from "@/elements/buttons/Button";
 import FormikInputField from "@/components/common/FormikInputField";
-import { useCreateQuoteMutation } from "@/store/api/adaptiveApiSlice";
-import { getCreateQuoteParams } from "@/utils/adaptiveApiUtils";
+
+const initAddress: IAddress = {
+  street: "",
+  street2: "",
+  city: "",
+  state: "",
+  zipCode: "",
+};
 
 export default function Home() {
-  const [address, setAddress] = useState<any>(null);
-  const [autocompleteOptions, setAutocompleteOptions] = useState<Array<string>>(
-    []
-  );
+  const [address, setAddress] = useState<IAddress>(initAddress);
+  const [autocompleteOptions, setAutocompleteOptions] = useState<string[]>([]);
+
+  const [createQuote, _] = useCreateQuoteMutation();
+
+  const createQuoteParams: ICreateQuoteParams = {
+    address,
+    step: "address",
+    product: "Outage",
+  };
 
   const router = useRouter();
 
@@ -33,30 +47,20 @@ export default function Home() {
     initialValues: getQuoteConfig.initialValues,
     validationSchema: getQuoteSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      await createQuote({
-        address,
-        stage: "address",
-        product: "Outage",
-      });
-
-      if (createQuoteResult.error) {
-        alert("Something went wrong. Please try again later.");
-        console.log(createQuoteResult.error, "error");
-      } else {
-        router.push(`policy-coverage?quoteId=${"createQuoteResult.data.id"}`);
-      }
-      setSubmitting(false);
+      createQuote(createQuoteParams)
+        .then((res) => router.push(`policy-coverage?quoteId=${res.data?.id}`))
+        .catch((error) => {
+          alert("Something went wrong. Please try again later.");
+          console.log(error, "error");
+        })
+        .finally(() => setSubmitting(false));
     },
   });
-
-  let data = getQuoteConfig.options;
-  let isLoading = false;
-  // const { data, isLoading } = useAutocompleteQuery(formik.values.address);
-  const [createQuote, createQuoteResult] = useCreateQuoteMutation();
+  const { data, isLoading } = useAutocompleteQuery(formik.values.address);
 
   const options = map(
     data?.suggestions,
-    (item: any, index: number) =>
+    (item: any) =>
       `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
   );
 
@@ -64,16 +68,15 @@ export default function Home() {
     !isLoading && setAutocompleteOptions(options);
 
     if (data?.suggestions.length === 1) {
-      let addr = data?.suggestions[0];
+      let { entries, zipcode, ...addr } = data?.suggestions[0];
       setAddress({
+        ...addr,
         street: addr.street_line,
         street2: addr.secondary,
-        city: addr.city,
-        state: addr.state,
-        zipCode: addr.zipcode,
+        zipCode: zipcode,
       });
     } else {
-      setAddress(null);
+      setAddress(initAddress);
     }
   }, [data]);
 
@@ -119,7 +122,7 @@ export default function Home() {
           <Button
             className="w-full md:w-2/5 text-sm"
             type="submit"
-            disabled={formik.isSubmitting || address === null}
+            disabled={formik.isSubmitting || address === initAddress}
           >
             Get Your Quote
           </Button>

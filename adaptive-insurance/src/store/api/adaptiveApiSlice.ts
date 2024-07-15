@@ -1,6 +1,7 @@
 // Import the RTK Query methods from the React-specific entry point
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { apiConfig } from "./config";
+import { ICreateQuoteParams, IQuote } from "@/store/api/types";
 
 // Define our single API slice object
 export const adaptiveApiSlice = createApi({
@@ -11,11 +12,11 @@ export const adaptiveApiSlice = createApi({
   tagTypes: ["QUOTE"],
   // The "endpoints" represent operations and requests for this server
   endpoints: (builder) => ({
-    getQuote: builder.query({
+    getQuote: builder.query<IQuote, string>({
       query: (id) => `/v1/insurance-quote/${id}`,
       providesTags: ["QUOTE"],
     }),
-    createQuote: builder.mutation({
+    createQuote: builder.mutation<IQuote, ICreateQuoteParams>({
       query: (body) => ({
         url: "/v1/insurance-quote",
         method: "POST",
