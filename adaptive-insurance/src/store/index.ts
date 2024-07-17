@@ -5,16 +5,14 @@ import adaptiveApiSlice from "@/store/api/adaptiveApiSlice";
 import policyCoverageSlice from "@/store/feature/policy-coverage";
 import smartyStreetApiSlice from "@/store/api/smartyStreetApiSlice";
 
-const rootReducer = combineReducers({
-  policy: policyCoverageSlice.reducer,
-  businessInfo: businessInfoSlice.reducer,
-  [adaptiveApiSlice.reducerPath]: adaptiveApiSlice.reducer,
-  [smartyStreetApiSlice.reducerPath]: smartyStreetApiSlice.reducer,
-});
-
 export const makeStore = () => {
   return configureStore({
-    reducer: rootReducer,
+    reducer: {
+      policy: policyCoverageSlice.reducer,
+      businessInfo: businessInfoSlice.reducer,
+      [adaptiveApiSlice.reducerPath]: adaptiveApiSlice.reducer,
+      [smartyStreetApiSlice.reducerPath]: smartyStreetApiSlice.reducer,
+    },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(
         adaptiveApiSlice.middleware,

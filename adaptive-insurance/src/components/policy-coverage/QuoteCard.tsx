@@ -7,18 +7,29 @@ import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
 import { HorizontalLine, QuoteContainer, QuoteWrapper } from "./style";
 import Button from "@/elements/buttons/Button";
 import BlueTickIcon from "@/elements/icons/BlueTickIcon";
+import { find, round } from "lodash";
+import { IQuoteEstimate } from "@/store/api/types";
 
 type Props = {};
 
 const QuoteCard = (props: Props) => {
   const policy = useAppSelector(selectPolicyCoverage);
+  const selectedEstimate = find(policy.quoteEstimates, {
+    productId: policy.selectedEstimateId,
+  });
 
   const includedInQuote = [
-    `Coverage starting after ${policy.hours} hours of power loss`,
-    `Coverage limit of $${policy.limit}`,
+    `Coverage starting after ${
+      selectedEstimate?.duration || 16
+    } hours of power loss`,
+    `Coverage limit of $${selectedEstimate?.coverageAmount || 10000}`,
     `Coverage starting as of ${moment().format("D MMM, YYYY")}`,
     "Easy payment once your power goes out",
   ];
+
+  const premium = selectedEstimate?.premiumAmount
+    ? selectedEstimate.premiumAmount / 12
+    : 13;
 
   return (
     <QuoteWrapper>
@@ -30,8 +41,8 @@ const QuoteCard = (props: Props) => {
         </div>
 
         <div>
-          <p className="text-5xl font-bold mt-3">$13</p>
-          <p className="text-sm mt-2">Billed Monthly</p>
+          <p className="text-5xl font-bold mt-3">${round(premium, 2)}</p>
+          <p className="text-sm mt-2 md:text-center">Billed Monthly</p>
         </div>
       </QuoteContainer>
 

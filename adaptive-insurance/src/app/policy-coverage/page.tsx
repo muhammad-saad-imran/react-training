@@ -10,6 +10,7 @@ import { ICreateQuoteParams } from "@/store/api/types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   changeCoveragePolicy,
+  changeQuoteEstimates,
   selectPolicyCoverage,
 } from "@/store/feature/policy-coverage";
 import { getAddressFromQuote } from "@/utils/adaptiveApiUtils";
@@ -19,19 +20,23 @@ import PolicyCoverageUI from "@/components/policy-coverage/PolicyCoverageUI";
 
 type Props = {};
 
+const initCoverage = {
+  coverageAmount: 10000,
+  estimateId: "",
+  effectiveDate: moment().add(1, "days").format("MM/DD/YY"),
+};
+
 const PolicyCoveragePage = (props: Props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [isModelHidden, setIsModelHidden] = useState(true);
-  const [policyInitialized, setPolicyInitialized] = useState(false);
 
   const quoteId = searchParams.get("quoteId") || "";
 
   const { data: quote } = useGetQuoteQuery(quoteId);
   const [createQuote, _] = useCreateQuoteMutation();
-
   const address = getAddressFromQuote(quote);
 
   const policy = useAppSelector(selectPolicyCoverage);
@@ -44,77 +49,8 @@ const PolicyCoveragePage = (props: Props) => {
   };
 
   // This initializes the policy state in redux that UI uses
-  // useEffect(() => {
-  //   createQuoteParams = {
-  //     ...createQuoteParams,
-  //     coverage: initCoverage,
-  //   };
-
-  //   const initPolicy = async () => {
-  //     if (
-  //       !quote?.data.quoteEstimates ||
-  //       !quote?.data.selectedEstimateId ||
-  //       quote?.data.selectedEstimateId === ""
-  //     ) {
-  //       try {
-  //         const res = await createQuote(createQuoteParams).unwrap();
-  //         dispatch(
-  //           changeCoveragePolicy({
-  //             quoteEstimates: res.data.quoteEstimates,
-  //             selectedEstimateId: res.data.selectedEstimateId,
-  //             amount: res.data.quoteEstimates[0].coverageAmount,
-  //           })
-  //         );
-  //       } catch (error) {
-  //         console.log("error", error);
-  //         // router.push("/");
-  //       }
-  //     } else {
-  //       dispatch(
-  //         changeCoveragePolicy({
-  //           quoteEstimates: quote.data.quoteEstimates,
-  //           selectedEstimateId: quote.data.selectedEstimateId,
-  //           amount: quote.data.quoteEstimates[0].coverageAmount,
-  //         })
-  //       );
-  //     }
-  //   };
-
-  //   initPolicy();
-  // }, []);
-
   useEffect(() => {
-    createQuoteParams.coverage = {
-      coverageAmount: policy.amount,
-      estimateId: policy.selectedEstimateId,
-      effectiveDate: moment().add(1, "days").format("MM/DD/YY"),
-    };
-
-    const updatePolicyState = async () => {
-      try {
-        const res = await createQuote(createQuoteParams).unwrap();
-        dispatch(
-          changeCoveragePolicy({
-            quoteEstimates: res.data.quoteEstimates,
-            selectedEstimateId: res.data.selectedEstimateId,
-            amount: res.data.quoteEstimates[0].coverageAmount,
-          })
-        );
-      } catch (error: any) {
-        console.log("error", error);
-        // router.push("/");
-      }
-    };
-
-    if (
-      !quote?.data.quoteEstimates ||
-      !quote?.data.selectedEstimateId ||
-      quote.data.selectedEstimateId === "" ||
-      (policyInitialized &&
-        quote.data.quoteEstimates[0].coverageAmount !== policy.amount)
-    ) {
-      updatePolicyState();
-    } else {
+    if (quote && quote.data.quoteEstimates && quote.data.selectedEstimateId) {
       dispatch(
         changeCoveragePolicy({
           quoteEstimates: quote.data.quoteEstimates,
@@ -123,10 +59,42 @@ const PolicyCoveragePage = (props: Props) => {
         })
       );
     }
-    !policyInitialized && setPolicyInitialized(true);
-  }, [policy.amount]);
+  }, [quote]);
 
-  console.log(policy, "policy");
+  useEffect(() => {
+    const updateSelectedPolicy = async (params: ICreateQuoteParams) => {
+      try {
+        await createQuote(params);
+      } catch (error: any) {
+        console.log("error", error);
+        // router.push("/");
+      }
+    };
+
+    if (
+      quote &&
+      (!quote.data.quoteEstimates || !quote.data.selectedEstimateId)
+    ) {
+      const params = {
+        ...createQuoteParams,
+        coverage: initCoverage,
+      };
+      updateSelectedPolicy(params);
+    } else if (
+      quote &&
+      quote.data.quoteEstimates[0].coverageAmount !== policy.amount
+    ) {
+      const params = {
+        ...createQuoteParams,
+        coverage: {
+          coverageAmount: policy.amount,
+          estimateId: policy.selectedEstimateId,
+          effectiveDate: moment().add(1, "days").format("MM/DD/YY"),
+        },
+      };
+      updateSelectedPolicy(params);
+    }
+  }, [policy.amount]);
 
   return (
     <div className="pb-24">

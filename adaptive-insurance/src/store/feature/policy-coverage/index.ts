@@ -20,7 +20,9 @@ const policyCoverageSlice = createSlice({
   initialState,
   reducers: {
     changeCoveragePolicy(state, action: PayloadAction<IPolicyCoverageState>) {
-      state = action.payload;
+      state.quoteEstimates = action.payload.quoteEstimates;
+      state.selectedEstimateId = action.payload.selectedEstimateId;
+      state.amount = action.payload.amount;
     },
     changeQuoteEstimates(state, action: PayloadAction<IQuoteEstimate[]>) {
       state.quoteEstimates = action.payload;

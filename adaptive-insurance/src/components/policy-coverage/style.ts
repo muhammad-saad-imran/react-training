@@ -25,7 +25,7 @@ export const HoursCard = styled.div.attrs<{
   id: string;
 }>((props) => ({
   className:
-    "border rounded-lg flex flex-col items-center w-full md:size-48 lg:size-60 p-4 cursor-pointer " +
+    "border rounded-lg flex flex-col items-center w-full md:size-36 lg:size-48 p-4 cursor-pointer " +
     (props.selectedId === props.id
       ? "bg-white border-deep-blue shadow-xl"
       : "border-gray text-gray"),
