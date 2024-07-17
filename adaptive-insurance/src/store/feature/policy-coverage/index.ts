@@ -1,32 +1,45 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@/store";
+import { IQuoteEstimate } from "@/store/api/types";
 
-interface PolicyCoverageState {
-  hours: number;
-  limit: number;
+export interface IPolicyCoverageState {
+  quoteEstimates: IQuoteEstimate[];
+  selectedEstimateId: string;
+  amount: number;
 }
 
 const initialState = {
-  hours: 12,
-  limit: 15000,
-} satisfies PolicyCoverageState as PolicyCoverageState;
+  quoteEstimates: [],
+  selectedEstimateId: "",
+  amount: 10000,
+} satisfies IPolicyCoverageState as IPolicyCoverageState;
 
 const policyCoverageSlice = createSlice({
   name: "policy",
   initialState,
   reducers: {
-    changeCoverageHours(state, action: PayloadAction<number>) {
-      state.hours = action.payload;
+    changeCoveragePolicy(state, action: PayloadAction<IPolicyCoverageState>) {
+      state = action.payload;
     },
-    changeCoverageLimit(state, action: PayloadAction<number>) {
-      state.limit = action.payload;
+    changeQuoteEstimates(state, action: PayloadAction<IQuoteEstimate[]>) {
+      state.quoteEstimates = action.payload;
+    },
+    changeCoverageAmount(state, action: PayloadAction<number>) {
+      state.amount = action.payload;
+    },
+    changeSelectedQuoteId(state, action: PayloadAction<string>) {
+      state.selectedEstimateId = action.payload;
     },
   },
 });
 
-export const { changeCoverageHours, changeCoverageLimit } =
-  policyCoverageSlice.actions;
+export const {
+  changeCoveragePolicy,
+  changeCoverageAmount,
+  changeQuoteEstimates,
+  changeSelectedQuoteId,
+} = policyCoverageSlice.actions;
 
 export default policyCoverageSlice;
 

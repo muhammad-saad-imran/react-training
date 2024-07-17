@@ -47,15 +47,18 @@ export default function Home() {
     initialValues: getQuoteConfig.initialValues,
     validationSchema: getQuoteSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      createQuote(createQuoteParams)
-        .then((res) => router.push(`policy-coverage?quoteId=${res.data?.id}`))
-        .catch((error) => {
-          alert("Something went wrong. Please try again later.");
-          console.log(error, "error");
-        })
-        .finally(() => setSubmitting(false));
+      try {
+        const res = await createQuote(createQuoteParams).unwrap();
+        setSubmitting(false);
+        router.push(`policy-coverage?quoteId=${res.id}`);
+      } catch (error) {
+        setSubmitting(false);
+        alert("Something went wrong. Please try again later.");
+        console.log(error, "error");
+      }
     },
   });
+  
   const { data, isLoading } = useAutocompleteQuery(formik.values.address);
 
   const options = map(
@@ -68,12 +71,13 @@ export default function Home() {
     !isLoading && setAutocompleteOptions(options);
 
     if (data?.suggestions.length === 1) {
-      let { entries, zipcode, ...addr } = data?.suggestions[0];
+      let addr = data?.suggestions[0];
       setAddress({
-        ...addr,
         street: addr.street_line,
         street2: addr.secondary,
-        zipCode: zipcode,
+        zipCode: addr.zipcode,
+        city: addr.city,
+        state: addr.state
       });
     } else {
       setAddress(initAddress);

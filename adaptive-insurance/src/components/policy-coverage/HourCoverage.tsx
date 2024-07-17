@@ -1,11 +1,12 @@
 import React from "react";
 import map from "lodash/map";
 import { HoursCard, Title } from "./style";
+import { IQuoteEstimate } from "@/store/api/types";
 
 type Props = {
-  coverageHourOpts: Array<{ hours: number; text: string }>;
-  selectedHours: number;
-  onPolicyHoursChange: (value: number) => void;
+  coverageQuotes: IQuoteEstimate[];
+  selectedQuoteId: string;
+  onPolicyQuoteChange: (value: string) => void;
 };
 
 const HourCoverage = (props: Props) => {
@@ -21,17 +22,17 @@ const HourCoverage = (props: Props) => {
       </p>
 
       <div className="flex flex-wrap gap-8 mb-12">
-        {map(props.coverageHourOpts, (coverage: any, index: number) => (
+        {map(props.coverageQuotes, (coverage: IQuoteEstimate) => (
           <HoursCard
-            key={index}
-            selectedHours={props.selectedHours}
-            hours={coverage.hours}
-            onClick={() => props.onPolicyHoursChange(coverage.hours)}
+            key={coverage.productId}
+            selectedId={props.selectedQuoteId}
+            id={coverage.productId}
+            onClick={() => props.onPolicyQuoteChange(coverage.productId)}
           >
             <p className="font-bold text-xl lg:text-4xl mt-auto mb-auto">
-              {coverage.hours} hours
+              {coverage.duration} hours
             </p>
-            <p className="text-center text-sm mb-auto">{coverage.text}</p>
+            {/* <p className="text-center text-sm mb-auto">{coverage.text}</p> */}
           </HoursCard>
         ))}
       </div>

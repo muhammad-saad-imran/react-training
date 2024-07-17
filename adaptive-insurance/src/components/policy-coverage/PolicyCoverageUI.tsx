@@ -1,24 +1,23 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  changeCoverageHours,
-  changeCoverageLimit,
+  changeCoverageAmount,
+  changeSelectedQuoteId,
   selectPolicyCoverage,
 } from "@/store/feature/policy-coverage";
 import { HorizontalLine, PageWrapper, QuoteCardWrapper } from "./style";
 import HourCoverage from "./HourCoverage";
 import CoverageLimit from "./CoverageLimit";
 import QuoteCard from "./QuoteCard";
+import { policyCoverageConfig } from "@/config/policyCoverageConfig";
 
 type Props = {
-  coverageLimitOpts: Array<{ limit: number }>;
-  coverageHourOpts: Array<{ hours: number; text: string }>;
   onShowModal: () => void;
 };
 
 const PolicyCoverageUI = (props: Props) => {
   const dispatch = useAppDispatch();
-  const policy = useAppSelector(selectPolicyCoverage)
+  const policy = useAppSelector(selectPolicyCoverage);
   return (
     <PageWrapper>
       <div className="mr-auto md:pr-10 lg:px-32">
@@ -27,17 +26,17 @@ const PolicyCoverageUI = (props: Props) => {
           <HorizontalLine className="my-16" />
         </div>
         <HourCoverage
-          coverageHourOpts={props.coverageHourOpts}
-          selectedHours={policy.hours}
-          onPolicyHoursChange={(value: number) =>
-            dispatch(changeCoverageHours(value))
+          coverageQuotes={policy.quoteEstimates}
+          selectedQuoteId={policy.selectedEstimateId}
+          onPolicyQuoteChange={(value: string) =>
+            dispatch(changeSelectedQuoteId(value))
           }
         />
         <CoverageLimit
-          selectedLimit={policy.limit}
-          coverageLimitOpts={props.coverageLimitOpts}
+          selectedLimit={policy.amount}
+          coverageLimitOpts={policyCoverageConfig.coverageLimitOpts}
           onPolicyLimitChange={(value: number) =>
-            dispatch(changeCoverageLimit(value))
+            dispatch(changeCoverageAmount(value))
           }
         />
         <div>
