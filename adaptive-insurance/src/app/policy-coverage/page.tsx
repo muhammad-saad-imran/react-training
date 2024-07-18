@@ -10,7 +10,6 @@ import { ICreateQuoteParams } from "@/store/api/types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   changeCoveragePolicy,
-  changeQuoteEstimates,
   selectPolicyCoverage,
 } from "@/store/feature/policy-coverage";
 import { getAddressFromQuote } from "@/utils/adaptiveApiUtils";
@@ -35,11 +34,10 @@ const PolicyCoveragePage = (props: Props) => {
 
   const quoteId = searchParams.get("quoteId") || "";
 
-  const { data: quote } = useGetQuoteQuery(quoteId);
-  const [createQuote, _] = useCreateQuoteMutation();
-  const address = getAddressFromQuote(quote);
+  const { data: quote, ...quoteQueryResult } = useGetQuoteQuery(quoteId);
+  const [createQuote, createQuoteResult] = useCreateQuoteMutation();
 
-  const policy = useAppSelector(selectPolicyCoverage);
+  const address = getAddressFromQuote(quote);
 
   let createQuoteParams: ICreateQuoteParams = {
     address,
@@ -47,6 +45,12 @@ const PolicyCoveragePage = (props: Props) => {
     step: "coverage",
     product: "Outage",
   };
+
+  const policy = useAppSelector(selectPolicyCoverage);
+
+  const loading = quoteQueryResult.isLoading || createQuoteResult.isLoading;
+  const disableSubmit =
+    loading || !quote?.data.quoteEstimates || !quote?.data.selectedEstimateId;
 
   // This initializes the policy state in redux that UI uses
   useEffect(() => {
@@ -56,18 +60,20 @@ const PolicyCoveragePage = (props: Props) => {
           quoteEstimates: quote.data.quoteEstimates,
           selectedEstimateId: quote.data.selectedEstimateId,
           amount: quote.data.quoteEstimates[0].coverageAmount,
+          effectiveDateUtc: quote.effectiveDateUtc,
         })
       );
     }
   }, [quote]);
 
+  // This initializes coverage policy and updates quotes when coverage amount changes
   useEffect(() => {
     const updateSelectedPolicy = async (params: ICreateQuoteParams) => {
       try {
         await createQuote(params);
       } catch (error: any) {
         console.log("error", error);
-        // router.push("/");
+        alert("Someting went wrong. Please try again later.");
       }
     };
 
@@ -96,6 +102,27 @@ const PolicyCoveragePage = (props: Props) => {
     }
   }, [policy.amount]);
 
+  async function onSubmit() {
+    if (quote?.data.selectedEstimateId !== policy.selectedEstimateId) {
+      try {
+        const params = {
+          ...createQuoteParams,
+          coverage: {
+            coverageAmount: policy.amount,
+            estimateId: policy.selectedEstimateId,
+            effectiveDate: moment().add(1, "days").format("MM/DD/YY"),
+          },
+        };
+        await createQuote(params);
+      } catch (error: any) {
+        console.log("error", error);
+        alert("Someting went wrong. Please try again later.");
+        return;
+      }
+    }
+    router.push(`/business-info/business-entity-details?quoteId=${quote?.id}`);
+  }
+
   return (
     <div className="pb-24">
       <PolicyCoverageUI
@@ -103,9 +130,8 @@ const PolicyCoveragePage = (props: Props) => {
       />
       <BottomNavBar
         buttonLabel="Next: Business Information"
-        onButtonClick={() =>
-          router.push("/business-info/business-entity-details")
-        }
+        onButtonClick={onSubmit}
+        disabled={disableSubmit}
       />
       <InstructionModal
         hide={isModelHidden}

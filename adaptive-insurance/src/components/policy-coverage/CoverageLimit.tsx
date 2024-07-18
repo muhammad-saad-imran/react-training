@@ -1,8 +1,10 @@
 import React from "react";
-import map from "lodash/map";
+import { map } from "lodash";
 import { CoverageCardContainer, CoverageLimitCard } from "./style";
+import { IQuoteEstimate } from "@/store/api/types";
 
 type Props = {
+  selectedDuration: number;
   coverageLimitOpts: Array<{ limit: number }>;
   selectedLimit: number;
   onPolicyLimitChange: (value: number) => void;
@@ -15,8 +17,8 @@ const CoverageLimit = (props: Props) => {
         Now, select your coverage limit
       </p>
       <p className="my-6 text-center md:text-left">
-        Should your business lose power for 12 hours, how much would you need to
-        cover operations?
+        Should your business lose power for {props.selectedDuration} hours, how
+        much would you need to cover operations?
       </p>
 
       <CoverageCardContainer>

@@ -1,19 +1,18 @@
 "use client";
 import React from "react";
-import map from "lodash/map";
 import moment from "moment";
+import { find, map, round } from "lodash";
 import { useAppSelector } from "@/store/hooks";
 import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
 import { HorizontalLine, QuoteContainer, QuoteWrapper } from "./style";
 import Button from "@/elements/buttons/Button";
 import BlueTickIcon from "@/elements/icons/BlueTickIcon";
-import { find, round } from "lodash";
-import { IQuoteEstimate } from "@/store/api/types";
 
 type Props = {};
 
 const QuoteCard = (props: Props) => {
   const policy = useAppSelector(selectPolicyCoverage);
+
   const selectedEstimate = find(policy.quoteEstimates, {
     productId: policy.selectedEstimateId,
   });
@@ -23,7 +22,9 @@ const QuoteCard = (props: Props) => {
       selectedEstimate?.duration || 16
     } hours of power loss`,
     `Coverage limit of $${selectedEstimate?.coverageAmount || 10000}`,
-    `Coverage starting as of ${moment().format("D MMM, YYYY")}`,
+    `Coverage starting as of ${moment
+      .utc(policy.effectiveDateUtc)
+      .format("D MMM, YYYY")}`,
     "Easy payment once your power goes out",
   ];
 

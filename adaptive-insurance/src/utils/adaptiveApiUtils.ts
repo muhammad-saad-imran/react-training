@@ -3,27 +3,14 @@ import { find } from "lodash";
 import { IAddress, ICoverage, IQuote, IQuoteEstimate } from "@/store/api/types";
 
 export const getCoverageFromQuote = (quote: IQuote | undefined): ICoverage => {
-  if (
-    !quote ||
-    !quote.data.quoteEstimates ||
-    !quote.data.selectedEstimateId ||
-    quote.data.selectedEstimateId === ""
-  ) {
-    return {
-      coverageAmount: 10000,
-      estimateId: "",
-      effectiveDate: moment().add(1, "days").format("MM/DD/YY"),
-    };
-  }
-
-  const selectedEstimate = find(quote.data.quoteEstimates, {
-    productId: quote.data.selectedEstimateId,
+  const selectedEstimate = find(quote?.data.quoteEstimates, {
+    productId: quote?.data.selectedEstimateId,
   }) as IQuoteEstimate;
 
   return {
     coverageAmount: selectedEstimate.coverageAmount,
     estimateId: selectedEstimate.productId,
-    effectiveDate: moment().add(1, "days").format("MM/DD/YY"),
+    effectiveDate: moment.utc(quote?.effectiveDateUtc).format("MM/DD/YY"),
   };
 };
 

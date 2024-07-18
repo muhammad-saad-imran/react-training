@@ -7,12 +7,14 @@ export interface IPolicyCoverageState {
   quoteEstimates: IQuoteEstimate[];
   selectedEstimateId: string;
   amount: number;
+  effectiveDateUtc: string;
 }
 
 const initialState = {
   quoteEstimates: [],
   selectedEstimateId: "",
   amount: 10000,
+  effectiveDateUtc: "",
 } satisfies IPolicyCoverageState as IPolicyCoverageState;
 
 const policyCoverageSlice = createSlice({
@@ -23,6 +25,7 @@ const policyCoverageSlice = createSlice({
       state.quoteEstimates = action.payload.quoteEstimates;
       state.selectedEstimateId = action.payload.selectedEstimateId;
       state.amount = action.payload.amount;
+      state.effectiveDateUtc = action.payload.effectiveDateUtc;
     },
     changeQuoteEstimates(state, action: PayloadAction<IQuoteEstimate[]>) {
       state.quoteEstimates = action.payload;

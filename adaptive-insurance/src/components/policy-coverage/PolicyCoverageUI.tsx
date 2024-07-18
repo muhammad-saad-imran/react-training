@@ -1,15 +1,16 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { find } from "lodash";
 import {
   changeCoverageAmount,
   changeSelectedQuoteId,
   selectPolicyCoverage,
 } from "@/store/feature/policy-coverage";
+import { policyCoverageConfig } from "@/config/policyCoverageConfig";
 import { HorizontalLine, PageWrapper, QuoteCardWrapper } from "./style";
 import HourCoverage from "./HourCoverage";
 import CoverageLimit from "./CoverageLimit";
 import QuoteCard from "./QuoteCard";
-import { policyCoverageConfig } from "@/config/policyCoverageConfig";
 
 type Props = {
   onShowModal: () => void;
@@ -18,6 +19,9 @@ type Props = {
 const PolicyCoverageUI = (props: Props) => {
   const dispatch = useAppDispatch();
   const policy = useAppSelector(selectPolicyCoverage);
+  const selectedEstimate = find(policy.quoteEstimates, {
+    productId: policy.selectedEstimateId,
+  });
   return (
     <PageWrapper>
       <div className="mr-auto md:pr-10 lg:px-32">
@@ -33,6 +37,7 @@ const PolicyCoverageUI = (props: Props) => {
           }
         />
         <CoverageLimit
+          selectedDuration={selectedEstimate?.duration || 16}
           selectedLimit={policy.amount}
           coverageLimitOpts={policyCoverageConfig.coverageLimitOpts}
           onPolicyLimitChange={(value: number) =>
