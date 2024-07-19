@@ -26,6 +26,7 @@ import { businessAddressSchema } from "@/validations/businessInfoValidations";
 import BusinessInfoFormsContainer from "@/components/business-info/BusinessInfoFormsContainer";
 import FormikInputField from "@/components/common/FormikInputField";
 import BottomNavBar from "@/components/common/BottomNavBar";
+import Loader from "@/components/common/Loader";
 
 type Props = {};
 
@@ -52,6 +53,8 @@ const BusinessMailingPage = (props: Props) => {
     },
   });
 
+  const loading = formik.isSubmitting || isLoading;
+
   const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
     ...extraAttrs,
     ...businessAddressConfig.inputs[fieldName],
@@ -66,7 +69,10 @@ const BusinessMailingPage = (props: Props) => {
     if (quote) {
       const policy = getPolicyFromQuote(quote);
       dispatch(changeCoveragePolicy(policy));
-      if (quote.insured && isEqual(businessInformation, initBusinessInfoState)) {
+      if (
+        quote.insured &&
+        isEqual(businessInformation, initBusinessInfoState)
+      ) {
         const businessInfo = getBusinessInfoFromQuote(quote);
         dispatch(setBusinessInformation(businessInfo));
       } else if (isEqual(businessAddress, initAddressState)) {
@@ -79,6 +85,7 @@ const BusinessMailingPage = (props: Props) => {
   return (
     <BusinessInfoFormsContainer title="Enter your business mailing address">
       <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
+        {loading && <Loader />}
         <FormikInputField {...getFieldAttrs("street")} />
         <FormikInputField {...getFieldAttrs("street2")} />
         <FormikInputField {...getFieldAttrs("city")} />
@@ -90,7 +97,7 @@ const BusinessMailingPage = (props: Props) => {
         />
         <BottomNavBar
           buttonLabel="Next: Business Revenue Range"
-          disabled={formik.isSubmitting || isLoading}
+          disabled={loading}
         />
       </form>
     </BusinessInfoFormsContainer>

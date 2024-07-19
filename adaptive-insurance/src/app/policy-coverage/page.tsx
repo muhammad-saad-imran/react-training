@@ -12,10 +12,14 @@ import {
   changeCoveragePolicy,
   selectPolicyCoverage,
 } from "@/store/feature/policy-coverage";
-import { getAddressFromQuote, getPolicyFromQuote } from "@/utils/adaptiveApiUtils";
+import {
+  getAddressFromQuote,
+  getPolicyFromQuote,
+} from "@/utils/adaptiveApiUtils";
 import BottomNavBar from "@/components/common/BottomNavBar";
 import InstructionModal from "@/components/policy-coverage/InstructionModal";
 import PolicyCoverageUI from "@/components/policy-coverage/PolicyCoverageUI";
+import Loader from "@/components/common/Loader";
 
 type Props = {};
 
@@ -69,7 +73,7 @@ const PolicyCoveragePage = (props: Props) => {
         alert("Someting went wrong. Please try again later.");
       }
     };
-
+    
     if (
       quote &&
       (!quote.data.quoteEstimates || !quote.data.selectedEstimateId)
@@ -93,7 +97,7 @@ const PolicyCoveragePage = (props: Props) => {
       };
       updateSelectedPolicy(params);
     }
-  }, [policy.amount]);
+  }, [quote, policy.amount]);
 
   async function onSubmit() {
     if (quote?.data.selectedEstimateId !== policy.selectedEstimateId) {
@@ -117,6 +121,7 @@ const PolicyCoveragePage = (props: Props) => {
 
   return (
     <div className="pb-24">
+      {loading && <Loader />}
       <PolicyCoverageUI
         onShowModal={() => setIsModelHidden((prevState) => !prevState)}
       />

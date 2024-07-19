@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import { map } from "lodash";
-import { useAutocompleteQuery } from "@/store/api/smartyStreetApiSlice";
+import { useAutocompleteQuery } from "@/store/api/baseApi";
 import { useCreateQuoteMutation } from "@/store/api/adaptiveApiSlice";
 import { IAddress, ICreateQuoteParams } from "@/store/api/types";
+import { initAddressState } from "@/store/feature/business-info";
 import { getQuoteConfig } from "@/config/getQuoteConfig";
 import { getQuoteSchema } from "@/validations/getQuoteValidation";
 import {
@@ -20,28 +21,21 @@ import {
 import Image from "next/image";
 import Button from "@/elements/buttons/Button";
 import FormikInputField from "@/components/common/FormikInputField";
-
-const initAddress: IAddress = {
-  street: "",
-  street2: "",
-  city: "",
-  state: "",
-  zipCode: "",
-};
+import Loader from "@/components/common/Loader";
 
 export default function Home() {
-  const [address, setAddress] = useState<IAddress>(initAddress);
+  const router = useRouter();
+
+  const [address, setAddress] = useState<IAddress>(initAddressState);
   const [autocompleteOptions, setAutocompleteOptions] = useState<string[]>([]);
 
-  const [createQuote, _] = useCreateQuoteMutation();
+  const [createQuote, createQuoteResult] = useCreateQuoteMutation();
 
   const createQuoteParams: ICreateQuoteParams = {
     address,
     step: "address",
     product: "Outage",
   };
-
-  const router = useRouter();
 
   const formik = useFormik({
     initialValues: getQuoteConfig.initialValues,
@@ -54,11 +48,10 @@ export default function Home() {
       } catch (error) {
         setSubmitting(false);
         alert("Something went wrong. Please try again later.");
-        console.log(error, "error");
       }
     },
   });
-  
+
   const { data, isLoading } = useAutocompleteQuery(formik.values.address);
 
   const options = map(
@@ -66,6 +59,10 @@ export default function Home() {
     (item: any) =>
       `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
   );
+
+  const loading = createQuoteResult.isLoading;
+  const disableSubmit =
+    isLoading || formik.isSubmitting || address === initAddressState;
 
   useEffect(() => {
     !isLoading && setAutocompleteOptions(options);
@@ -77,15 +74,16 @@ export default function Home() {
         street2: addr.secondary,
         zipCode: addr.zipcode,
         city: addr.city,
-        state: addr.state
+        state: addr.state,
       });
     } else {
-      setAddress(initAddress);
+      setAddress(initAddressState);
     }
   }, [data]);
 
   return (
     <PageWrapper>
+      {loading && <Loader />}
       <Wrapper>
         <LogoContainer>
           <Image
@@ -126,7 +124,7 @@ export default function Home() {
           <Button
             className="w-full md:w-2/5 text-sm"
             type="submit"
-            disabled={formik.isSubmitting || address === initAddress}
+            disabled={disableSubmit}
           >
             Get Your Quote
           </Button>

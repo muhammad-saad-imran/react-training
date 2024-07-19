@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { apiConfig } from "./config";
 
 // Define our single API slice object
-export const smartyStreetApiSlice = createApi({
+export const baseApi = createApi({
   // The cache reducer expects to be added at `state.api` (already default - this is optional)
   reducerPath: "smarty-street-api",
   // All of our requests will have URLs starting with '/fakeApi'
@@ -23,6 +23,6 @@ export const smartyStreetApiSlice = createApi({
 });
 
 // Export the auto-generated hook for the `getPosts` query endpoint
-export const { useAutocompleteQuery } = smartyStreetApiSlice;
+export const { useAutocompleteQuery } = baseApi;
 
-export default smartyStreetApiSlice;
+export default baseApi;

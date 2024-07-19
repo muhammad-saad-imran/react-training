@@ -28,6 +28,7 @@ import { businessRevenueConfig } from "@/config/businessRevenueConfig";
 import BusinessInfoFormsContainer from "@/components/business-info/BusinessInfoFormsContainer";
 import FormikInputField from "@/components/common/FormikInputField";
 import BottomNavBar from "@/components/common/BottomNavBar";
+import Loader from "@/components/common/Loader";
 
 type Props = {};
 
@@ -68,10 +69,9 @@ const BusinessRevenuePage = (props: Props) => {
           ...createQuoteParams,
           businessInformation: { ...businessInformation, ...values },
         };
-        console.log(params, "params")
         await createQuote(params);
       } catch (error) {
-        console.log(error, "error");
+        alert("Someting went wrong. Please try again later.");
       }
       setSubmitting(false);
     },
@@ -96,7 +96,10 @@ const BusinessRevenuePage = (props: Props) => {
     if (quote) {
       const policy = getPolicyFromQuote(quote);
       dispatch(changeCoveragePolicy(policy));
-      if (quote.insured && isEqual(businessInformation, initBusinessInfoState)) {
+      if (
+        quote.insured &&
+        isEqual(businessInformation, initBusinessInfoState)
+      ) {
         const businessInfo = getBusinessInfoFromQuote(quote);
         dispatch(setBusinessInformation(businessInfo));
       }
@@ -106,6 +109,7 @@ const BusinessRevenuePage = (props: Props) => {
   return (
     <BusinessInfoFormsContainer title="Business Revenue Range">
       <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
+        {loading && <Loader />}
         <FormikInputField {...getFieldAttrs("revenueRangeFrom")} />
         <FormikInputField {...getFieldAttrs("revenueRangeTo")} />
         <BottomNavBar buttonLabel="Next: Review and Pay" disabled={loading} />

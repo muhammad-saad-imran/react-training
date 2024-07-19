@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const BottomNavbarContainer = styled.div.attrs({
   className:
-    "flex w-full py-6 px-9 rounded-t-lg md:rounded-none flex items-center bg-white fixed bottom-0 left-0 z-50",
+    "flex w-full py-6 px-9 rounded-t-lg md:rounded-none flex items-center bg-white fixed bottom-0 left-0 z-30",
 })``;
 
 export const QuoteContainer = styled.div.attrs({
@@ -46,4 +46,8 @@ export const NavbarIconContainer = styled.div.attrs({
 
 export const InfoContainer = styled.div.attrs({
   className: "gap-2 ml-auto items-center hidden md:flex",
+})``;
+
+export const LoaderWrapper = styled.div.attrs({
+className: "w-screen h-screen absolute top-0 left-0 flex justify-center items-center z-40 bg-white"
 })``;
