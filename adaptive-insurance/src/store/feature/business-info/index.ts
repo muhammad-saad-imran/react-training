@@ -2,66 +2,57 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@/store";
 import {
-  IBusinessAddress,
   IBusinessDetails,
   IBusinessInfoState,
   IBusinessRevenue,
 } from "@/store/feature/business-info/types";
+import { IAddress } from "@/store/api/types";
 
-const initialState = {
+export const initAddressState = {
+  street: "",
+  street2: "",
+  state: "",
+  city: "",
+  zipCode: "",
+};
+
+export const initBusinessInfoState = {
   businessType: "",
   businessName: "",
   contactName: "",
   email: "",
-  alternateEmail: "",
+  alternativeEmail: "",
   phone: "",
   revenueRangeFrom: undefined,
   revenueRangeTo: undefined,
-  mailingAddress: {
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
-    country: "",
-    phone: "",
-  },
-  billingAddress: {
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
-    country: "",
-    phone: "",
-  },
+  mailingAddress: initAddressState,
+  billingAddress: initAddressState,
 } satisfies IBusinessInfoState as IBusinessInfoState;
 
 const businessInfoSlice = createSlice({
   name: "business-info",
-  initialState,
+  initialState: initBusinessInfoState,
   reducers: {
-    setBusinessDetails(state, action: PayloadAction<IBusinessDetails>) {
-      state = {
-        ...state,
-        businessType: action.payload.businessType,
-        businessName: action.payload.businessName,
-        contactName: action.payload.contactName,
-        email: action.payload.email,
-        alternateEmail: action.payload.alternateEmail,
-        phone: action.payload.phone,
-      };
+    setBusinessInformation(state, action: PayloadAction<IBusinessInfoState>) {
+      return { ...state, ...action.payload };
     },
-    setBusinessMailingAddress(state, action: PayloadAction<IBusinessAddress>) {
+    setBusinessDetails(state, action: PayloadAction<IBusinessDetails>) {
+      state.businessType = action.payload.businessType;
+      state.businessName = action.payload.businessName;
+      state.contactName = action.payload.contactName;
+      state.email = action.payload.email;
+      state.alternativeEmail = action.payload.alternativeEmail;
+      state.phone = action.payload.phone;
+    },
+    setBusinessMailingAddress(state, action: PayloadAction<IAddress>) {
       state.mailingAddress = action.payload;
     },
-    setBusinessBillingAddress(state, action: PayloadAction<IBusinessAddress>) {
+    setBusinessBillingAddress(state, action: PayloadAction<IAddress>) {
       state.billingAddress = action.payload;
     },
     setBusinessRevenue(state, action: PayloadAction<IBusinessRevenue>) {
-      state = {
-        ...state,
-        revenueRangeFrom: action.payload.revenueRangeFrom,
-        revenueRangeTo: action.payload.revenueRangeTo,
-      };
+      state.revenueRangeFrom = action.payload.revenueRangeFrom;
+      state.revenueRangeTo = action.payload.revenueRangeTo;
     },
   },
 });
@@ -71,11 +62,22 @@ export const {
   setBusinessMailingAddress,
   setBusinessBillingAddress,
   setBusinessRevenue,
+  setBusinessInformation,
 } = businessInfoSlice.actions;
 
 export default businessInfoSlice;
 
-export const selectBusinessDetails = (state: RootState) => state.businessInfo;
+export const selectBusinessInformation = (state: RootState) =>
+  state.businessInfo;
+
+export const selectBusinessDetails = (state: RootState) => ({
+  businessType: state.businessInfo.businessType,
+  businessName: state.businessInfo.businessName,
+  contactName: state.businessInfo.contactName,
+  email: state.businessInfo.email,
+  alternativeEmail: state.businessInfo.alternativeEmail,
+  phone: state.businessInfo.phone,
+});
 
 export const selectBusinessMailingAddress = (state: RootState) =>
   state.businessInfo.mailingAddress;

@@ -1,14 +1,16 @@
+import { IAddress } from "@/store/api/types";
+
 export interface IBusinessInfoState {
   businessType: string;
   businessName: string;
   contactName: string;
   email: string;
-  alternateEmail: string;
+  alternativeEmail: string;
   phone: string;
   revenueRangeFrom: number | undefined;
   revenueRangeTo: number | undefined;
-  mailingAddress: IBusinessAddress;
-  billingAddress: IBusinessAddress;
+  mailingAddress: IAddress;
+  billingAddress: IAddress;
 }
 
 export interface IBusinessDetails {
@@ -16,16 +18,7 @@ export interface IBusinessDetails {
   businessName: string;
   contactName: string;
   email: string;
-  alternateEmail: string;
-  phone: string;
-}
-
-export interface IBusinessAddress {
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
+  alternativeEmail: string;
   phone: string;
 }
 

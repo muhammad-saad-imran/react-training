@@ -1,13 +1,23 @@
 "use client";
-import React from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useFormik } from "formik";
+import { isEqual } from "lodash";
 import { useMask } from "@react-input/mask";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
+  initBusinessInfoState,
   selectBusinessDetails,
+  selectBusinessInformation,
   setBusinessDetails,
+  setBusinessInformation,
 } from "@/store/feature/business-info";
+import { useGetQuoteQuery } from "@/store/api/adaptiveApiSlice";
+import { changeCoveragePolicy } from "@/store/feature/policy-coverage";
+import {
+  getBusinessInfoFromQuote,
+  getPolicyFromQuote,
+} from "@/utils/adaptiveApiUtils";
 import { businessDetailsSchema } from "@/validations/businessInfoValidations";
 import { businessDetailsConfig } from "@/config/businessDetailsConfig";
 import BusinessInfoFormsContainer from "@/components/business-info/BusinessInfoFormsContainer";
@@ -18,17 +28,24 @@ type Props = {};
 
 const BusinessEntityPage = (props: Props) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const dispatch = useAppDispatch();
   const businessDetails = useAppSelector(selectBusinessDetails);
+  const businessInformation = useAppSelector(selectBusinessInformation);
+
+  const quoteId = searchParams.get("quoteId") || "";
+
+  const { data: quote, isLoading } = useGetQuoteQuery(quoteId);
 
   const formik = useFormik<any>({
+    enableReinitialize: true,
     initialValues: businessDetails,
     validationSchema: businessDetailsSchema,
     onSubmit: (values, { setSubmitting }) => {
       dispatch(setBusinessDetails(values));
       setSubmitting(false);
-      router.push("business-mailing-address");
+      router.push(`business-mailing-address?quoteId=${quoteId}`);
     },
   });
 
@@ -42,6 +59,17 @@ const BusinessEntityPage = (props: Props) => {
     handleBlur: formik.handleBlur,
   });
 
+  useEffect(() => {
+    if (quote) {
+      const policy = getPolicyFromQuote(quote);
+      dispatch(changeCoveragePolicy(policy));
+      if (quote.insured && isEqual(businessInformation, initBusinessInfoState)) {
+        const businessInfo = getBusinessInfoFromQuote(quote);
+        dispatch(setBusinessInformation(businessInfo));
+      }
+    }
+  }, [quote]);
+
   return (
     <BusinessInfoFormsContainer title="Enter your business details">
       <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
@@ -49,15 +77,15 @@ const BusinessEntityPage = (props: Props) => {
         <FormikInputField {...getFieldAttrs("businessName")} />
         <FormikInputField {...getFieldAttrs("contactName")} />
         <FormikInputField {...getFieldAttrs("email")} />
-        <FormikInputField {...getFieldAttrs("alternateEmail")} />
+        <FormikInputField {...getFieldAttrs("alternativeEmail")} />
         <FormikInputField
           {...getFieldAttrs("phone", {
-            ref: useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } }),
+            ref: useMask({ mask: "+___________", replacement: { _: /\d/ } }),
           })}
         />
         <BottomNavBar
           buttonLabel="Next: Business Mailing Address"
-          disabled={formik.isSubmitting}
+          disabled={formik.isSubmitting || isLoading}
         />
       </form>
     </BusinessInfoFormsContainer>

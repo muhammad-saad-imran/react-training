@@ -12,7 +12,7 @@ import {
   changeCoveragePolicy,
   selectPolicyCoverage,
 } from "@/store/feature/policy-coverage";
-import { getAddressFromQuote } from "@/utils/adaptiveApiUtils";
+import { getAddressFromQuote, getPolicyFromQuote } from "@/utils/adaptiveApiUtils";
 import BottomNavBar from "@/components/common/BottomNavBar";
 import InstructionModal from "@/components/policy-coverage/InstructionModal";
 import PolicyCoverageUI from "@/components/policy-coverage/PolicyCoverageUI";
@@ -55,14 +55,8 @@ const PolicyCoveragePage = (props: Props) => {
   // This initializes the policy state in redux that UI uses
   useEffect(() => {
     if (quote && quote.data.quoteEstimates && quote.data.selectedEstimateId) {
-      dispatch(
-        changeCoveragePolicy({
-          quoteEstimates: quote.data.quoteEstimates,
-          selectedEstimateId: quote.data.selectedEstimateId,
-          amount: quote.data.quoteEstimates[0].coverageAmount,
-          effectiveDateUtc: quote.effectiveDateUtc,
-        })
-      );
+      const policy = getPolicyFromQuote(quote);
+      dispatch(changeCoveragePolicy(policy));
     }
   }, [quote]);
 
@@ -72,7 +66,6 @@ const PolicyCoveragePage = (props: Props) => {
       try {
         await createQuote(params);
       } catch (error: any) {
-        console.log("error", error);
         alert("Someting went wrong. Please try again later.");
       }
     };
@@ -115,7 +108,6 @@ const PolicyCoveragePage = (props: Props) => {
         };
         await createQuote(params);
       } catch (error: any) {
-        console.log("error", error);
         alert("Someting went wrong. Please try again later.");
         return;
       }

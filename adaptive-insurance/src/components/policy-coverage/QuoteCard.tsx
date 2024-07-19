@@ -29,9 +29,9 @@ const QuoteCard = (props: Props) => {
   ];
 
   const premium = selectedEstimate?.premiumAmount
-    ? selectedEstimate.premiumAmount / 12
-    : 13;
-
+    ? selectedEstimate.premiumAmount
+    : 0;
+    
   return (
     <QuoteWrapper>
       <QuoteContainer>
@@ -43,7 +43,6 @@ const QuoteCard = (props: Props) => {
 
         <div>
           <p className="text-5xl font-bold mt-3">${round(premium, 2)}</p>
-          <p className="text-sm mt-2 md:text-center">Billed Monthly</p>
         </div>
       </QuoteContainer>
 

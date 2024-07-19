@@ -40,10 +40,10 @@ export const businessDetailsConfig: any = {
       label: "Email *",
       name: "email",
     },
-    alternateEmail: {
+    alternativeEmail: {
       type: "email",
       label: "Alternative Email",
-      name: "alternateEmail",
+      name: "alternativeEmail",
     },
     phone: {
       label: "Phone *",
