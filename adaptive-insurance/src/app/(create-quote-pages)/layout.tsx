@@ -1,8 +1,10 @@
 "use client";
 import React from "react";
 import QuoteCard from "@/components/policy-coverage/QuoteCard";
-import { QuoteCardWrapper } from "@/components/policy-coverage/style";
-import { BusinessFormWrapper, BusinessInfoPageWrapper } from "@/components/business-info/style";
+import {
+  PageWrapper,
+  QuoteCardWrapper,
+} from "@/components/policy-coverage/style";
 
 const Layout = ({
   children,
@@ -11,14 +13,14 @@ const Layout = ({
 }>) => {
   return (
     <div className="pb-24">
-      <BusinessInfoPageWrapper>
-        <BusinessFormWrapper>{children}</BusinessFormWrapper>
+      <PageWrapper>
+        <div className="mr-auto md:pr-10 lg:px-32 w-full">{children}</div>
         <QuoteCardWrapper>
           <div className="fixed right-10">
             <QuoteCard />
           </div>
         </QuoteCardWrapper>
-      </BusinessInfoPageWrapper>
+      </PageWrapper>
     </div>
   );
 };

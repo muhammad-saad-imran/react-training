@@ -1,4 +1,3 @@
-import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
 import businessInfoSlice from "@/store/feature/business-info";
 import adaptiveApiSlice from "@/store/api/adaptiveApiSlice";

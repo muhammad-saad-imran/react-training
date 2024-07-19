@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFormik } from "formik";
 import { isEqual } from "lodash";
@@ -36,19 +36,22 @@ const BusinessRevenuePage = (props: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const quoteId = searchParams.get("quoteId") || "";
+
+  const { data: quote, ...quoteQueryResult } = useGetQuoteQuery(quoteId);
+  const [createQuote, createQuoteResult] = useCreateQuoteMutation();
+
+  const [loading, setLoading] = useState(quote ? false : true);
+
   const dispatch = useAppDispatch();
   const businessRevenue = useAppSelector(selectBusinessRevenue);
   const businessInformation = useAppSelector(
     selectBusinessInformation
   ) as IBusinessInformation;
 
-  const quoteId = searchParams.get("quoteId") || "";
-
-  const { data: quote, ...quoteQueryResult } = useGetQuoteQuery(quoteId);
-  const [createQuote, createQuoteResult] = useCreateQuoteMutation();
-
   const address = getAddressFromQuote(quote);
   const coverage = getCoverageFromQuote(quote);
+  const quoteBusinessInfo = getBusinessInfoFromQuote(quote);
 
   const createQuoteParams: ICreateQuoteParams = {
     address,
@@ -69,7 +72,9 @@ const BusinessRevenuePage = (props: Props) => {
           ...createQuoteParams,
           businessInformation: { ...businessInformation, ...values },
         };
-        await createQuote(params);
+        if (!isEqual(params.businessInformation, quoteBusinessInfo))
+          await createQuote(params);
+        router.push(`/review-quote?quoteId=${quoteId}`);
       } catch (error) {
         alert("Someting went wrong. Please try again later.");
       }
@@ -77,10 +82,24 @@ const BusinessRevenuePage = (props: Props) => {
     },
   });
 
-  const loading =
+  const disableSubmit =
     createQuoteResult.isLoading ||
     quoteQueryResult.isLoading ||
     formik.isSubmitting;
+
+  // Quotes query error handling
+  if (quoteQueryResult.isError) {
+    return router.push("/");
+  }
+
+  if (quote) {
+    const completed = quote.data.metadata.completed_sections;
+    if (!completed.address) {
+      return router.push("/");
+    } else if (!completed.coverage) {
+      return router.push(`/policy-coverage?quoteId=${quoteId}`);
+    }
+  }
 
   const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
     ...extraAttrs,
@@ -103,6 +122,7 @@ const BusinessRevenuePage = (props: Props) => {
         const businessInfo = getBusinessInfoFromQuote(quote);
         dispatch(setBusinessInformation(businessInfo));
       }
+      setLoading(false);
     }
   }, [quote]);
 
@@ -112,7 +132,10 @@ const BusinessRevenuePage = (props: Props) => {
         {loading && <Loader />}
         <FormikInputField {...getFieldAttrs("revenueRangeFrom")} />
         <FormikInputField {...getFieldAttrs("revenueRangeTo")} />
-        <BottomNavBar buttonLabel="Next: Review and Pay" disabled={loading} />
+        <BottomNavBar
+          buttonLabel="Next: Review and Pay"
+          disabled={disableSubmit}
+        />
       </form>
     </BusinessInfoFormsContainer>
   );

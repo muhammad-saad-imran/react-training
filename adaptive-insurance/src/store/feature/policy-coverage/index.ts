@@ -36,6 +36,9 @@ const policyCoverageSlice = createSlice({
     changeSelectedQuoteId(state, action: PayloadAction<string>) {
       state.selectedEstimateId = action.payload;
     },
+    changeEffectiveDate(state, action: PayloadAction<string>) {
+      state.effectiveDateUtc = action.payload;
+    },
   },
 });
 
@@ -44,6 +47,7 @@ export const {
   changeCoverageAmount,
   changeQuoteEstimates,
   changeSelectedQuoteId,
+  changeEffectiveDate
 } = policyCoverageSlice.actions;
 
 export default policyCoverageSlice;

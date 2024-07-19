@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFormik } from "formik";
-import { isEqual } from "lodash";
+import { isEmpty, isEqual } from "lodash";
 import { useMask } from "@react-input/mask";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -37,7 +37,7 @@ const BusinessEntityPage = (props: Props) => {
 
   const quoteId = searchParams.get("quoteId") || "";
 
-  const { data: quote, isLoading } = useGetQuoteQuery(quoteId);
+  const { data: quote, isLoading, isError } = useGetQuoteQuery(quoteId);
 
   const formik = useFormik<any>({
     enableReinitialize: true,
@@ -51,6 +51,20 @@ const BusinessEntityPage = (props: Props) => {
   });
 
   const loading = formik.isSubmitting || isLoading;
+
+  // Quotes query error handling
+  if (isError) {
+    return router.push("/");
+  }
+
+  if (quote) {
+    const completed = quote.data.metadata.completed_sections;
+    if (!completed.address) {
+      return router.push("/");
+    } else if (!completed.coverage) {
+      return router.push(`/policy-coverage?quoteId=${quoteId}`);
+    }
+  }
 
   const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
     ...extraAttrs,

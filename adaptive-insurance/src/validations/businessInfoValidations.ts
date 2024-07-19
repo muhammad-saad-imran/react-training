@@ -1,4 +1,4 @@
-import { number, object, string } from "yup";
+import { number, object, ref, string } from "yup";
 
 export const businessDetailsSchema = object({
   businessType: string().required("Business Type is a required field"),
@@ -26,11 +26,6 @@ export const businessRevenueSchema = object({
     .moreThan(0, "Please enter valid revenue")
     .required("Revenue From is a required field"),
   revenueRangeTo: number()
-    .required("Revenue To is a required field")
-    .when(["revenueRangeFrom"], ([revenueRangeFrom]) => {
-      return number().moreThan(
-        revenueRangeFrom,
-        "Please enter valid revenue range"
-      );
-    }),
+    .moreThan(ref("revenueRangeFrom"), "Please enter a valid revenue range")
+    .required("Revenue To is a required field"),
 });
