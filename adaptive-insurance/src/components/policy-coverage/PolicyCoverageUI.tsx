@@ -8,14 +8,14 @@ import {
   changeSelectedQuoteId,
   selectPolicyCoverage,
 } from "@/store/feature/policy-coverage";
-import { policyCoverageConfig } from "@/config/policyCoverageConfig";
 import { IAddress } from "@/store/api/types";
-import { HorizontalLine } from "./style";
+import { policyCoverageConfig } from "@/config/policyCoverageConfig";
+import { HorizontalLine } from "@/components/policy-coverage/style";
 import { InputFieldContainer } from "@/components/common/style";
-import HourCoverage from "./HourCoverage";
-import CoverageLimit from "./CoverageLimit";
 import QuoteCard from "./QuoteCard";
 import Input from "@/elements/inputs/Input";
+import HourCoverage from "@/components/policy-coverage/HourCoverage";
+import CoverageLimit from "@/components/policy-coverage/CoverageLimit";
 
 type Props = {
   onShowModal: () => void;
@@ -30,10 +30,8 @@ const PolicyCoverageUI = (props: Props) => {
   });
 
   const date = new Date();
-  date.setUTCHours(0, 0, 0, 0);
-  date.setUTCDate(date.getUTCDate() + 1);
-  const minDate = moment(date).format("YYYY-MM-DD");
-  const valDate =
+  const minDate = moment(date).add(1, "days").format("YYYY-MM-DD");
+  const selectedDate =
     policy.effectiveDateUtc === ""
       ? minDate
       : moment.utc(policy.effectiveDateUtc).format("YYYY-MM-DD");
@@ -69,7 +67,7 @@ const PolicyCoverageUI = (props: Props) => {
         <p>Effective Date</p>
         <Input
           type="date"
-          value={valDate}
+          value={selectedDate}
           min={minDate}
           onChange={handleDateChange}
         />

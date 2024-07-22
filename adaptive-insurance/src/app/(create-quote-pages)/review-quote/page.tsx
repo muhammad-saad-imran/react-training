@@ -8,7 +8,7 @@ import {
 import { changeCoveragePolicy } from "@/store/feature/policy-coverage";
 import { useAppDispatch } from "@/store/hooks";
 import { setBusinessInformation } from "@/store/feature/business-info";
-import { ICreateQuoteParams } from "@/store/api/types";
+import { IAddress, ICreateQuoteParams } from "@/store/api/types";
 import {
   getAddressFromQuote,
   getBusinessInfoFromQuote,
@@ -19,6 +19,7 @@ import BottomNavBar from "@/components/common/BottomNavBar";
 import { Title } from "@/components/business-info/style";
 import Error from "next/error";
 import Loader from "@/components/common/Loader";
+import DisabledInputField from "@/components/common/DisabledInputField";
 
 type Props = {};
 
@@ -94,12 +95,48 @@ const ReviewPage = (props: Props) => {
   return (
     <div>
       {loading && <Loader />}
-      <div className="flex flex-col gap-10">
-        <div className="flex flex-col gap-5">
-          <Title>Business Details</Title>
-        </div>
+      <div className="flex flex-col gap-5">
+        {/* <div className="flex flex-col gap-5">
+          <Title>Review and Checkout</Title>
+          </div> */}
 
-        <div className="flex flex-col gap-5">
+        <Title>Review and Checkout</Title>
+        <DisabledInputField
+          label="Business Name"
+          value={businessInformation.businessName}
+        />
+        <DisabledInputField
+          label="Business Type"
+          value={businessInformation.businessType}
+        />
+        <DisabledInputField
+          label="Contact Name"
+          value={businessInformation.contactName}
+        />
+        <DisabledInputField label="Email" value={businessInformation.email} />
+        <DisabledInputField
+          label="Alternative Email"
+          value={businessInformation.alternativeEmail}
+        />
+        <DisabledInputField label="Phone" value={businessInformation.phone} />
+        <DisabledInputField
+          label="Business Address"
+          value={getCompleteAddress(address)}
+        />
+        <DisabledInputField
+          label="Mailing Address"
+          value={getCompleteAddress(businessInformation.mailingAddress)}
+        />
+        <DisabledInputField
+          label="Billing Address"
+          value={getCompleteAddress(businessInformation.billingAddress)}
+        />
+        <DisabledInputField
+          label="Revenue Range"
+          value={`${businessInformation.revenueRangeFrom} - ${businessInformation.revenueRangeTo}`}
+        />
+
+        {/* <div className="flex flex-col gap-5">
           <Title>Mailing Address</Title>
         </div>
 
@@ -109,7 +146,7 @@ const ReviewPage = (props: Props) => {
 
         <div className="flex flex-col gap-5">
           <Title>Revenue</Title>
-        </div>
+        </div> */}
       </div>
       <BottomNavBar
         buttonLabel="Next: Checkout"
@@ -119,5 +156,9 @@ const ReviewPage = (props: Props) => {
     </div>
   );
 };
+
+function getCompleteAddress(address: IAddress) {
+  return `${address.street}, ${address.city}, ${address.state}, ${address.zipCode}`;
+}
 
 export default ReviewPage;

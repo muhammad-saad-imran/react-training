@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { HorizontalLine, ModalContainer } from "./style";
+import { HorizontalLine, ModalContainer } from "@/components/policy-coverage/style";
 import Modal from "@/components//common/Modal";
 
 type Props = {

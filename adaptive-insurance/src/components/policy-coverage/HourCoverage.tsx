@@ -1,7 +1,7 @@
 import React from "react";
 import map from "lodash/map";
 import { IAddress, IQuoteEstimate } from "@/store/api/types";
-import { HoursCard, Title } from "./style";
+import { HoursCard, Title } from "@/components/policy-coverage/style";
 
 type Props = {
   address: IAddress;

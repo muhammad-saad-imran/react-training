@@ -4,7 +4,7 @@ import moment from "moment";
 import { find, map, round } from "lodash";
 import { useAppSelector } from "@/store/hooks";
 import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
-import { HorizontalLine, QuoteContainer, QuoteWrapper } from "./style";
+import { HorizontalLine, QuoteContainer, QuoteWrapper } from "@/components/policy-coverage/style";
 import Button from "@/elements/buttons/Button";
 import BlueTickIcon from "@/elements/icons/BlueTickIcon";
 

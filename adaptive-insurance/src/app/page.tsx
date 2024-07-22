@@ -67,8 +67,7 @@ export default function Home() {
     (item: any) =>
       `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
   );
-
-  const loading = createQuoteResult.isLoading;
+  
   const disableSubmit =
     isLoading || formik.isSubmitting || address === initAddressState;
 
@@ -91,7 +90,7 @@ export default function Home() {
 
   return (
     <PageWrapper>
-      {loading && <Loader />}
+      {createQuoteResult.isLoading && <Loader />}
       <Wrapper>
         <LogoContainer>
           <Image

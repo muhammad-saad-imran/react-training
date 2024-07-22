@@ -38,7 +38,13 @@ export const getCoverageFromQuote = (quote: IQuote | undefined): ICoverage => {
   return {
     coverageAmount: selectedEstimate?.coverageAmount || 10000,
     estimateId: selectedEstimate?.productId || "",
-    effectiveDate: moment.utc(quote?.effectiveDateUtc).format("MM/DD/YY"),
+    effectiveDate: moment
+      .utc(
+        quote?.effectiveDateUtc
+          ? quote?.effectiveDateUtc
+          : new Date().toISOString()
+      )
+      .format("MM/DD/YY"),
   };
 };
 

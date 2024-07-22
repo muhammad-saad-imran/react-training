@@ -1,6 +1,6 @@
 import React from "react";
-import { IconContainer, ModalContainer, ModalWrapper } from "./style";
 import CrossIcon from "@/elements/icons/CrossIcon";
+import { IconContainer, ModalContainer, ModalWrapper } from "@/components/common/style";
 
 type Props = {
   children: React.ReactNode;

@@ -1,7 +1,6 @@
 import React from "react";
 import { map } from "lodash";
-import { CoverageCardContainer, CoverageLimitCard } from "./style";
-import { IQuoteEstimate } from "@/store/api/types";
+import { CoverageCardContainer, CoverageLimitCard } from "@/components/policy-coverage/style";
 
 type Props = {
   selectedDuration: number;

@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import moment from "moment";
 import {
@@ -9,10 +9,7 @@ import {
 import { ICreateQuoteParams } from "@/store/api/types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-  changeCoverageAmount,
   changeCoveragePolicy,
-  changeEffectiveDate,
-  changeSelectedQuoteId,
   selectPolicyCoverage,
 } from "@/store/feature/policy-coverage";
 import {
@@ -23,13 +20,6 @@ import BottomNavBar from "@/components/common/BottomNavBar";
 import InstructionModal from "@/components/policy-coverage/InstructionModal";
 import PolicyCoverageUI from "@/components/policy-coverage/PolicyCoverageUI";
 import Loader from "@/components/common/Loader";
-import { find, isEmpty } from "lodash";
-import { policyCoverageConfig } from "@/config/policyCoverageConfig";
-import QuoteCard from "@/components/policy-coverage/QuoteCard";
-import { HorizontalLine } from "@/components/policy-coverage/style";
-import HourCoverage from "@/components/policy-coverage/HourCoverage";
-import CoverageLimit from "@/components/policy-coverage/CoverageLimit";
-import Input from "@/elements/inputs/Input";
 
 type Props = {};
 
@@ -61,9 +51,6 @@ const PolicyCoveragePage = (props: Props) => {
   };
 
   const policy = useAppSelector(selectPolicyCoverage);
-  const selectedEstimate = find(policy.quoteEstimates, {
-    productId: policy.selectedEstimateId,
-  });
 
   const loading = quoteQueryResult.isLoading;
   const disableSubmit =
@@ -105,6 +92,7 @@ const PolicyCoveragePage = (props: Props) => {
       quote &&
       (!quote.data.quoteEstimates || !quote.data.selectedEstimateId)
     ) {
+      // init policy coverage & quote estimates
       const params = {
         ...createQuoteParams,
         coverage: initCoverage,
@@ -114,12 +102,13 @@ const PolicyCoveragePage = (props: Props) => {
       quote &&
       quote.data.quoteEstimates[0].coverageAmount !== policy.amount
     ) {
+      // update quote estimates when coverage amount changes
       const params = {
         ...createQuoteParams,
         coverage: {
           coverageAmount: policy.amount,
           estimateId: policy.selectedEstimateId,
-          effectiveDate: moment().add(1, "days").format("MM/DD/YY"),
+          effectiveDate: getCoverageDate(policy.effectiveDateUtc),
         },
       };
       updateSelectedPolicy(params);
@@ -137,7 +126,7 @@ const PolicyCoveragePage = (props: Props) => {
           coverage: {
             coverageAmount: policy.amount,
             estimateId: policy.selectedEstimateId,
-            effectiveDate: policy.effectiveDateUtc,
+            effectiveDate: getCoverageDate(policy.effectiveDateUtc),
           },
         };
         await createQuote(params);
@@ -168,5 +157,13 @@ const PolicyCoveragePage = (props: Props) => {
     </>
   );
 };
+
+function getCoverageDate(selectedUtc: string) {
+  return moment
+    .utc(
+      selectedUtc && selectedUtc === "" ? new Date().toISOString() : selectedUtc
+    )
+    .format("MM/DD/YY");
+}
 
 export default PolicyCoveragePage;

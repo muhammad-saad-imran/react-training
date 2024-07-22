@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
-import "./globals.css";
+import "@/app/global.css";
 import Navbar from "@/components/common/Navbar";
-import StoreProvider from "./StoreProvider";
+import StoreProvider from "@/app/StoreProvider";
 
 const dm_sans = DM_Sans({ subsets: ["latin"] });
 

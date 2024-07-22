@@ -2,7 +2,7 @@ import React from "react";
 import map from "lodash/map";
 import Input from "@/elements/inputs/Input";
 import SelectInput from "@/elements/inputs/SelectInput";
-import { ErrorMessageText, InputFieldContainer } from "./style";
+import { ErrorMessageText, InputFieldContainer } from "@/components/common/style";
 
 type Props = {
   label?: string;
