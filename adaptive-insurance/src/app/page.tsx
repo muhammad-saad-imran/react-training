@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import { map } from "lodash";
 import { useAutocompleteQuery } from "@/store/api/baseApi";
@@ -26,10 +26,10 @@ import Loader from "@/components/common/Loader";
 export default function Home() {
   const router = useRouter();
 
+  const [createQuote, createQuoteResult] = useCreateQuoteMutation();
+
   const [address, setAddress] = useState<IAddress>(initAddressState);
   const [autocompleteOptions, setAutocompleteOptions] = useState<string[]>([]);
-
-  const [createQuote, createQuoteResult] = useCreateQuoteMutation();
 
   const createQuoteParams: ICreateQuoteParams = {
     address,
@@ -52,7 +52,15 @@ export default function Home() {
     },
   });
 
-  const { data, isLoading } = useAutocompleteQuery(formik.values.address);
+  const { data, isLoading, isError, error } = useAutocompleteQuery(
+    formik.values.address
+  );
+
+  // SmartyStreets api error handling
+  if (isError) {
+    if ("data" in error && error.status === 404) return notFound();
+    else throw error;
+  }
 
   const options = map(
     data?.suggestions,
