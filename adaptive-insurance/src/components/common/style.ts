@@ -49,5 +49,11 @@ export const InfoContainer = styled.div.attrs({
 })``;
 
 export const LoaderWrapper = styled.div.attrs({
-className: "w-screen h-screen absolute top-0 left-0 flex justify-center items-center z-40 bg-white"
+  className:
+    "w-screen h-screen absolute top-0 left-0 flex justify-center items-center z-40 bg-white",
+})``;
+
+export const ErrorWrapper = styled.div.attrs({
+  className:
+    "h-full flex flex-col gap-4 justify-center items-center md:justify-start md:pt-32",
 })``;

@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useFormik } from "formik";
 import { isEmpty, isEqual } from "lodash";
 import { useMask } from "@react-input/mask";
@@ -39,7 +39,9 @@ const BusinessBillingPage = (props: Props) => {
 
   const quoteId = searchParams.get("quoteId") || "";
 
-  const { data: quote, isLoading, isError } = useGetQuoteQuery(quoteId);
+  const { data: quote, isLoading, isError, error } = useGetQuoteQuery(quoteId);
+
+  const [loading, setLoading] = useState(quote ? false : true);
 
   const formik = useFormik<any>({
     enableReinitialize: true,
@@ -52,19 +54,18 @@ const BusinessBillingPage = (props: Props) => {
     },
   });
 
-  const loading = formik.isSubmitting || isLoading;
-
   // Quotes query error handling
   if (isError) {
-    return router.push("/");
+    if ("status" in error && error.status === 404) return notFound();
+    else throw error;
   }
 
   if (quote) {
     const completed = quote.data.metadata.completed_sections;
     if (!completed.address) {
-      return router.push("/");
+      router.push("/");
     } else if (!completed.coverage) {
-      return router.push(`/policy-coverage?quoteId=${quoteId}`);
+      router.push(`/policy-coverage?quoteId=${quoteId}`);
     }
   }
 
@@ -92,6 +93,7 @@ const BusinessBillingPage = (props: Props) => {
         const address = getAddressFromQuote(quote);
         dispatch(setBusinessBillingAddress(address));
       }
+      setLoading(false);
     }
   }, [quote]);
 
@@ -110,7 +112,7 @@ const BusinessBillingPage = (props: Props) => {
         />
         <BottomNavBar
           buttonLabel="Next: Business Revenue Range"
-          disabled={loading}
+          disabled={formik.isSubmitting || isLoading}
         />
       </form>
     </BusinessInfoFormsContainer>

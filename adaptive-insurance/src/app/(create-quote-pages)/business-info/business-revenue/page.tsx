@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useFormik } from "formik";
 import { isEqual } from "lodash";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -89,15 +89,17 @@ const BusinessRevenuePage = (props: Props) => {
 
   // Quotes query error handling
   if (quoteQueryResult.isError) {
-    return router.push("/");
+    const error = quoteQueryResult.error;
+    if ("status" in error && error.status === 404) return notFound();
+    else throw error;
   }
 
   if (quote) {
     const completed = quote.data.metadata.completed_sections;
     if (!completed.address) {
-      return router.push("/");
+      router.push("/");
     } else if (!completed.coverage) {
-      return router.push(`/policy-coverage?quoteId=${quoteId}`);
+      router.push(`/policy-coverage?quoteId=${quoteId}`);
     }
   }
 

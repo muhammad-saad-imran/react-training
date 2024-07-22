@@ -1,12 +1,16 @@
 import moment from "moment";
 import { find } from "lodash";
-import { IAddress, ICoverage, IQuote } from "@/store/api/types";
-import { IBusinessInfoState } from "@/store/feature/business-info/types";
+import {
+  IAddress,
+  IBusinessInformation,
+  ICoverage,
+  IQuote,
+} from "@/store/api/types";
 import { initAddressState } from "@/store/feature/business-info";
 
 export const getBusinessInfoFromQuote = (
   quote: IQuote | undefined
-): IBusinessInfoState => ({
+): IBusinessInformation => ({
   businessName: quote?.insured?.businessName || "",
   businessType: quote?.insured?.businessType || "",
   contactName: quote?.insured?.contactName || "",
@@ -15,8 +19,8 @@ export const getBusinessInfoFromQuote = (
   phone: quote?.insured?.phone || "",
   email: quote?.insured?.email || "",
   alternativeEmail: quote?.insured?.alternativeEmail || "",
-  revenueRangeFrom: quote?.insured?.revenueRangeFrom,
-  revenueRangeTo: quote?.insured?.revenueRangeTo,
+  revenueRangeFrom: quote?.insured?.revenueRangeFrom || 0,
+  revenueRangeTo: quote?.insured?.revenueRangeTo || 0,
 });
 
 export const getPolicyFromQuote = (quote: IQuote | undefined) => ({

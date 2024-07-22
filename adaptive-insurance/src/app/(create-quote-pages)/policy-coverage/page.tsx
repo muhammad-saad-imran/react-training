@@ -1,6 +1,6 @@
 "use client";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import moment from "moment";
 import {
   useCreateQuoteMutation,
@@ -71,13 +71,15 @@ const PolicyCoveragePage = (props: Props) => {
 
   // Quotes query error handling
   if (quoteQueryResult.isError) {
-    return router.push("/");
+    const error = quoteQueryResult.error;
+    if ("data" in error && error.status === 404) return notFound();
+    else throw error;
   }
 
   if (quote) {
     const completed = quote.data.metadata.completed_sections;
     if (!completed.address) {
-      return router.push("/");
+      router.push("/");
     }
   }
 
