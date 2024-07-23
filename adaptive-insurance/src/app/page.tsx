@@ -1,14 +1,14 @@
-"use client";
-import { useEffect, useState } from "react";
-import { notFound, useRouter } from "next/navigation";
-import { useFormik } from "formik";
-import { map } from "lodash";
-import { useAutocompleteQuery } from "@/store/api/baseApi";
-import { useCreateQuoteMutation } from "@/store/api/adaptiveApiSlice";
-import { IAddress, ICreateQuoteParams } from "@/store/api/types";
-import { initAddressState } from "@/store/feature/business-info";
-import { getQuoteConfig } from "@/config/getQuoteConfig";
-import { getQuoteSchema } from "@/validations/getQuoteValidation";
+'use client';
+import { useEffect, useState } from 'react';
+import { notFound, useRouter } from 'next/navigation';
+import { useFormik } from 'formik';
+import { map } from 'lodash';
+import { useAutocompleteQuery } from '@/store/api/baseApi';
+import { useCreateQuoteMutation } from '@/store/api/adaptiveApiSlice';
+import { IAddress, ICreateQuoteParams } from '@/store/api/types';
+import { initAddressState } from '@/store/feature/business-info';
+import { getQuoteConfig } from '@/config/getQuoteConfig';
+import { getQuoteSchema } from '@/validations/getQuoteValidation';
 import {
   AutocompleteContainer,
   AutocompleteItems,
@@ -17,11 +17,11 @@ import {
   LogoContainer,
   PageWrapper,
   Wrapper,
-} from "@/components/get-quote/style";
-import Image from "next/image";
-import Button from "@/elements/buttons/Button";
-import FormikInputField from "@/components/common/FormikInputField";
-import Loader from "@/components/common/Loader";
+} from '@/components/get-quote/style';
+import Image from 'next/image';
+import Button from '@/elements/buttons/Button';
+import FormikInputField from '@/components/common/FormikInputField';
+import Loader from '@/components/common/Loader';
 
 export default function Home() {
   const router = useRouter();
@@ -30,11 +30,12 @@ export default function Home() {
 
   const [address, setAddress] = useState<IAddress>(initAddressState);
   const [autocompleteOptions, setAutocompleteOptions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const createQuoteParams: ICreateQuoteParams = {
     address,
-    step: "address",
-    product: "Outage",
+    step: 'address',
+    product: 'Outage',
   };
 
   const formik = useFormik({
@@ -42,10 +43,12 @@ export default function Home() {
     validationSchema: getQuoteSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
+        setLoading(true);
         const res = await createQuote(createQuoteParams).unwrap();
         router.push(`policy-coverage?quoteId=${res.id}`);
       } catch (error) {
-        alert("Something went wrong. Please try again later.");
+        alert('Something went wrong. Please try again later.');
+        setLoading(false);
         setSubmitting(false);
       }
     },
@@ -56,8 +59,8 @@ export default function Home() {
   );
 
   // SmartyStreets api error handling
-  if (formik.values.address !== "" && isError) {
-    if ("data" in error && error.status === 404) return notFound();
+  if (formik.values.address !== '' && isError) {
+    if ('data' in error && error.status === 404) return notFound();
     else throw error;
   }
 
@@ -68,7 +71,7 @@ export default function Home() {
   );
 
   const disableSubmit =
-    isLoading || formik.isSubmitting || address === initAddressState;
+    loading || isLoading || formik.isSubmitting || address === initAddressState;
 
   useEffect(() => {
     !isLoading && setAutocompleteOptions(options);
@@ -89,12 +92,12 @@ export default function Home() {
 
   return (
     <PageWrapper>
-      {createQuoteResult.isLoading && <Loader />}
+      {loading && <Loader />}
       <Wrapper>
         <LogoContainer>
           <Image
             className="size-20 md:size-24"
-            src={"/logo.svg"}
+            src={'/logo.svg'}
             alt=""
             width={50}
             height={50}
@@ -114,12 +117,12 @@ export default function Home() {
             />
             {autocompleteOptions.length > 0 &&
               autocompleteOptions[0] !== formik.values.address &&
-              formik.values.address !== "" && (
+              formik.values.address !== '' && (
                 <AutocompleteItems>
                   {map(autocompleteOptions, (item: string, index: number) => (
                     <AutocompleteOptions
                       key={index}
-                      onClick={() => formik.setFieldValue("address", item)}
+                      onClick={() => formik.setFieldValue('address', item)}
                     >
                       {item}
                     </AutocompleteOptions>
@@ -128,7 +131,7 @@ export default function Home() {
               )}
           </AutocompleteContainer>
           <Button
-            className="w-full md:w-2/5 text-sm"
+            className="w-full text-sm md:w-2/5"
             type="submit"
             disabled={disableSubmit}
           >
