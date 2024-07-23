@@ -24,7 +24,7 @@ export const ErrorMessageText = styled.p.attrs({
 
 export const ModalWrapper = styled.div.attrs({
   className:
-    "absolute top-0 h-screen w-screen bg-black/[0.65] flex justify-center items-center z-50",
+    "absolute top-0 left-0 h-screen w-screen bg-black/[0.65] flex justify-center items-center z-50",
 })``;
 
 export const ModalContainer = styled.div.attrs({

@@ -12,7 +12,7 @@ const DisabledInputField = (props: Props) => {
   return (
     <InputFieldContainer>
       {props.label && <p>{props.label}</p>}
-      <Input type={props.type} value={props.value} disabled />
+      <Input className="bg-white" type={props.type} value={props.value} disabled />
     </InputFieldContainer>
   );
 };

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useFormik } from "formik";
-import { isEqual } from "lodash";
+import { isEmpty, isEqual } from "lodash";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   initBusinessInfoState,
@@ -73,7 +73,7 @@ const BusinessRevenuePage = (props: Props) => {
           businessInformation: { ...businessInformation, ...values },
         };
         if (!isEqual(params.businessInformation, quoteBusinessInfo))
-          await createQuote(params);
+          await createQuote(params).unwrap();
         router.push(`/review-quote?quoteId=${quoteId}`);
       } catch (error) {
         alert("Someting went wrong. Please try again later.");
@@ -88,9 +88,13 @@ const BusinessRevenuePage = (props: Props) => {
     formik.isSubmitting;
 
   // Quotes query error handling
-  if (quoteQueryResult.isError) {
+  if (
+    quoteQueryResult.isError ||
+    (!quoteQueryResult.isLoading && isEmpty(quote))
+  ) {
     const error = quoteQueryResult.error;
-    if ("status" in error && error.status === 404) return notFound();
+    if (isEmpty(quote) || (error && "status" in error && error.status === 404))
+      return notFound();
     else throw error;
   }
 

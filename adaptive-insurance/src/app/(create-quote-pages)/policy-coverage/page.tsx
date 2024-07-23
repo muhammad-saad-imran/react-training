@@ -2,24 +2,29 @@
 import React, { useEffect, useState } from "react";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import moment from "moment";
+import { isEmpty } from "lodash";
 import {
   useCreateQuoteMutation,
   useGetQuoteQuery,
 } from "@/store/api/adaptiveApiSlice";
 import { ICreateQuoteParams } from "@/store/api/types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setBusinessInformation } from "@/store/feature/business-info";
 import {
   changeCoveragePolicy,
+  IPolicyCoverageState,
   selectPolicyCoverage,
 } from "@/store/feature/policy-coverage";
 import {
   getAddressFromQuote,
+  getBusinessInfoFromQuote,
   getPolicyFromQuote,
 } from "@/utils/adaptiveApiUtils";
 import BottomNavBar from "@/components/common/BottomNavBar";
 import InstructionModal from "@/components/policy-coverage/InstructionModal";
 import PolicyCoverageUI from "@/components/policy-coverage/PolicyCoverageUI";
 import Loader from "@/components/common/Loader";
+import { getCoverage } from "@/utils/quoteUtils";
 
 type Props = {};
 
@@ -41,25 +46,33 @@ const PolicyCoveragePage = (props: Props) => {
   const { data: quote, ...quoteQueryResult } = useGetQuoteQuery(quoteId);
   const [createQuote, createQuoteResult] = useCreateQuoteMutation();
 
+  const [loading, setLoading] = useState(quote ? false : true);
+
   const address = getAddressFromQuote(quote);
 
   let createQuoteParams: ICreateQuoteParams = {
-    address,
     quoteId,
+    address,
     step: "coverage",
     product: "Outage",
   };
 
   const policy = useAppSelector(selectPolicyCoverage);
 
-  const loading = quoteQueryResult.isLoading;
   const disableSubmit =
-    loading || !quote?.data.quoteEstimates || !quote?.data.selectedEstimateId;
+    quoteQueryResult.isLoading ||
+    createQuoteResult.isLoading ||
+    !quote?.data.quoteEstimates ||
+    !quote?.data.selectedEstimateId;
 
   // Quotes query error handling
-  if (quoteQueryResult.isError) {
+  if (
+    quoteQueryResult.isError ||
+    (!quoteQueryResult.isLoading && isEmpty(quote))
+  ) {
     const error = quoteQueryResult.error;
-    if ("data" in error && error.status === 404) return notFound();
+    if (isEmpty(quote) || (error && "status" in error && error.status === 404))
+      return notFound();
     else throw error;
   }
 
@@ -70,25 +83,15 @@ const PolicyCoveragePage = (props: Props) => {
     }
   }
 
-  // This initializes the policy state in redux that UI uses
+  // Initialize the policy state in redux that UI uses
   useEffect(() => {
     if (quote && quote.data.quoteEstimates && quote.data.selectedEstimateId) {
       const policy = getPolicyFromQuote(quote);
+      const businessInfo = getBusinessInfoFromQuote(quote);
       dispatch(changeCoveragePolicy(policy));
-    }
-  }, [quote]);
-
-  // This initializes coverage policy and updates quotes when coverage amount changes
-  useEffect(() => {
-    const updateSelectedPolicy = async (params: ICreateQuoteParams) => {
-      try {
-        await createQuote(params);
-      } catch (error: any) {
-        alert("Someting went wrong. Please try again later.");
-      }
-    };
-
-    if (
+      dispatch(setBusinessInformation(businessInfo));
+      setLoading(false);
+    } else if (
       quote &&
       (!quote.data.quoteEstimates || !quote.data.selectedEstimateId)
     ) {
@@ -97,23 +100,31 @@ const PolicyCoveragePage = (props: Props) => {
         ...createQuoteParams,
         coverage: initCoverage,
       };
-      updateSelectedPolicy(params);
-    } else if (
+      updatePolicy(params);
+    }
+  }, [quote]);
+
+  // Updates quote estimates when coverage amount changes
+  useEffect(() => {
+    if (
       quote &&
       quote.data.quoteEstimates[0].coverageAmount !== policy.amount
     ) {
-      // update quote estimates when coverage amount changes
       const params = {
         ...createQuoteParams,
-        coverage: {
-          coverageAmount: policy.amount,
-          estimateId: policy.selectedEstimateId,
-          effectiveDate: getCoverageDate(policy.effectiveDateUtc),
-        },
+        coverage: getCoverage(policy),
       };
-      updateSelectedPolicy(params);
+      updatePolicy(params);
     }
   }, [policy.amount]);
+
+  const updatePolicy = async (params: ICreateQuoteParams) => {
+    try {
+      await createQuote(params);
+    } catch (error: any) {
+      alert("Someting went wrong. Please try again later.");
+    }
+  };
 
   async function onSubmit() {
     if (
@@ -123,11 +134,7 @@ const PolicyCoveragePage = (props: Props) => {
       try {
         const params = {
           ...createQuoteParams,
-          coverage: {
-            coverageAmount: policy.amount,
-            estimateId: policy.selectedEstimateId,
-            effectiveDate: getCoverageDate(policy.effectiveDateUtc),
-          },
+          coverage: getCoverage(policy),
         };
         await createQuote(params);
       } catch (error: any) {
@@ -142,7 +149,7 @@ const PolicyCoveragePage = (props: Props) => {
     <>
       {loading && <Loader />}
       <PolicyCoverageUI
-        onShowModal={() => setIsModelHidden(true)}
+        onShowModal={() => setIsModelHidden(false)}
         address={address}
       />
       <BottomNavBar
@@ -157,13 +164,5 @@ const PolicyCoveragePage = (props: Props) => {
     </>
   );
 };
-
-function getCoverageDate(selectedUtc: string) {
-  return moment
-    .utc(
-      selectedUtc && selectedUtc === "" ? new Date().toISOString() : selectedUtc
-    )
-    .format("MM/DD/YY");
-}
 
 export default PolicyCoveragePage;

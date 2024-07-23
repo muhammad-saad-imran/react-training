@@ -1,6 +1,10 @@
 import React from "react";
 import { map } from "lodash";
-import { CoverageCardContainer, CoverageLimitCard } from "@/components/policy-coverage/style";
+import {
+  CoverageCardContainer,
+  CoverageLimitCard,
+} from "@/components/policy-coverage/style";
+import { currencyFormat } from "@/utils/quoteUtils";
 
 type Props = {
   selectedDuration: number;
@@ -29,7 +33,7 @@ const CoverageLimit = (props: Props) => {
             onClick={() => props.onPolicyLimitChange(coverage.limit)}
           >
             <p className="font-bold md:text-xl lg:text-2xl">
-              ${coverage.limit}
+              {currencyFormat(coverage.limit)}
             </p>
           </CoverageLimitCard>
         ))}

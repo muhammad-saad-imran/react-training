@@ -4,7 +4,12 @@ import moment from "moment";
 import { find, map, round } from "lodash";
 import { useAppSelector } from "@/store/hooks";
 import { selectPolicyCoverage } from "@/store/feature/policy-coverage";
-import { HorizontalLine, QuoteContainer, QuoteWrapper } from "@/components/policy-coverage/style";
+import { currencyFormat } from "@/utils/quoteUtils";
+import {
+  HorizontalLine,
+  QuoteContainer,
+  QuoteWrapper,
+} from "@/components/policy-coverage/style";
 import Button from "@/elements/buttons/Button";
 import BlueTickIcon from "@/elements/icons/BlueTickIcon";
 
@@ -21,7 +26,9 @@ const QuoteCard = (props: Props) => {
     `Coverage starting after ${
       selectedEstimate?.duration || 16
     } hours of power loss`,
-    `Coverage limit of $${selectedEstimate?.coverageAmount || 10000}`,
+    `Coverage limit of ${currencyFormat(
+      selectedEstimate?.coverageAmount || 10000
+    )}`,
     `Coverage starting as of ${moment
       .utc(policy.effectiveDateUtc)
       .format("D MMM, YYYY")}`,
@@ -31,7 +38,7 @@ const QuoteCard = (props: Props) => {
   const premium = selectedEstimate?.premiumAmount
     ? selectedEstimate.premiumAmount
     : 0;
-    
+
   return (
     <QuoteWrapper>
       <QuoteContainer>
@@ -42,7 +49,7 @@ const QuoteCard = (props: Props) => {
         </div>
 
         <div>
-          <p className="text-5xl font-bold mt-3">${round(premium, 2)}</p>
+          <p className="text-5xl font-bold mt-3">{currencyFormat(premium)}</p>
         </div>
       </QuoteContainer>
 

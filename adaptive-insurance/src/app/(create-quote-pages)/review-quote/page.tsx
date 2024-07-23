@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
+import { isEmpty } from "lodash";
 import {
   useCreateQuoteMutation,
   useGetQuoteQuery,
@@ -9,6 +10,7 @@ import { changeCoveragePolicy } from "@/store/feature/policy-coverage";
 import { useAppDispatch } from "@/store/hooks";
 import { setBusinessInformation } from "@/store/feature/business-info";
 import { IAddress, ICreateQuoteParams } from "@/store/api/types";
+import { currencyFormat } from "@/utils/quoteUtils";
 import {
   getAddressFromQuote,
   getBusinessInfoFromQuote,
@@ -55,9 +57,13 @@ const ReviewPage = (props: Props) => {
     quoteQueryResult.isLoading || createQuoteResult.isLoading;
 
   // Quotes query error handling
-  if (quoteQueryResult.isError) {
+  if (
+    quoteQueryResult.isError ||
+    (!quoteQueryResult.isLoading && isEmpty(quote))
+  ) {
     const error = quoteQueryResult.error;
-    if ("data" in error && error.status === 404) return notFound();
+    if (isEmpty(quote) || (error && "status" in error && error.status === 404))
+      return notFound();
     else throw error;
   }
 
@@ -68,7 +74,7 @@ const ReviewPage = (props: Props) => {
     } else if (!completed.coverage) {
       router.push(`/policy-coverage?quoteId=${quoteId}`);
     } else if (!completed.businessInformation) {
-      router.push(`/business-entity-details?quoteId=${quoteId}`);
+      router.push(`/business-info/business-entity-details?quoteId=${quoteId}`);
     }
   }
 
@@ -93,61 +99,46 @@ const ReviewPage = (props: Props) => {
   }, [quote]);
 
   return (
-    <div>
+    <div className="flex flex-col gap-5">
       {loading && <Loader />}
-      <div className="flex flex-col gap-5">
-        {/* <div className="flex flex-col gap-5">
-          <Title>Review and Checkout</Title>
-          </div> */}
 
-        <Title>Review and Checkout</Title>
-        <DisabledInputField
-          label="Business Name"
-          value={businessInformation.businessName}
-        />
-        <DisabledInputField
-          label="Business Type"
-          value={businessInformation.businessType}
-        />
-        <DisabledInputField
-          label="Contact Name"
-          value={businessInformation.contactName}
-        />
-        <DisabledInputField label="Email" value={businessInformation.email} />
-        <DisabledInputField
-          label="Alternative Email"
-          value={businessInformation.alternativeEmail}
-        />
-        <DisabledInputField label="Phone" value={businessInformation.phone} />
-        <DisabledInputField
-          label="Business Address"
-          value={getCompleteAddress(address)}
-        />
-        <DisabledInputField
-          label="Mailing Address"
-          value={getCompleteAddress(businessInformation.mailingAddress)}
-        />
-        <DisabledInputField
-          label="Billing Address"
-          value={getCompleteAddress(businessInformation.billingAddress)}
-        />
-        <DisabledInputField
-          label="Revenue Range"
-          value={`${businessInformation.revenueRangeFrom} - ${businessInformation.revenueRangeTo}`}
-        />
-
-        {/* <div className="flex flex-col gap-5">
-          <Title>Mailing Address</Title>
-        </div>
-
-        <div className="flex flex-col gap-5">
-          <Title>Billing Address</Title>
-        </div>
-
-        <div className="flex flex-col gap-5">
-          <Title>Revenue</Title>
-        </div> */}
-      </div>
+      <Title>Review Information</Title>
+      <DisabledInputField
+        label="Business Name"
+        value={businessInformation.businessName}
+      />
+      <DisabledInputField
+        label="Business Type"
+        value={businessInformation.businessType}
+      />
+      <DisabledInputField
+        label="Contact Name"
+        value={businessInformation.contactName}
+      />
+      <DisabledInputField label="Email" value={businessInformation.email} />
+      <DisabledInputField
+        label="Alternative Email"
+        value={businessInformation.alternativeEmail}
+      />
+      <DisabledInputField label="Phone" value={businessInformation.phone} />
+      <DisabledInputField
+        label="Business Address"
+        value={getCompleteAddress(address)}
+      />
+      <DisabledInputField
+        label="Mailing Address"
+        value={getCompleteAddress(businessInformation.mailingAddress)}
+      />
+      <DisabledInputField
+        label="Billing Address"
+        value={getCompleteAddress(businessInformation.billingAddress)}
+      />
+      <DisabledInputField
+        label="Revenue Range"
+        value={`${currencyFormat(
+          businessInformation.revenueRangeFrom
+        )} - ${currencyFormat(businessInformation.revenueRangeTo)}`}
+      />
       <BottomNavBar
         buttonLabel="Next: Checkout"
         disabled={disableSubmit}

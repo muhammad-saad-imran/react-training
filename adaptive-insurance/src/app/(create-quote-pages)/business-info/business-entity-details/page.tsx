@@ -53,8 +53,9 @@ const BusinessEntityPage = (props: Props) => {
   });
 
   // Quotes query error handling
-  if (isError) {
-    if ("status" in error && error.status === 404) return notFound();
+  if (isError || (!isLoading && isEmpty(quote))) {
+    if (isEmpty(quote) || (error && "status" in error && error.status === 404))
+      return notFound();
     else throw error;
   }
 

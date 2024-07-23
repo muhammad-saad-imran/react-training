@@ -43,11 +43,10 @@ export default function Home() {
     onSubmit: async (values, { setSubmitting }) => {
       try {
         const res = await createQuote(createQuoteParams).unwrap();
-        setSubmitting(false);
         router.push(`policy-coverage?quoteId=${res.id}`);
       } catch (error) {
-        setSubmitting(false);
         alert("Something went wrong. Please try again later.");
+        setSubmitting(false);
       }
     },
   });
@@ -57,7 +56,7 @@ export default function Home() {
   );
 
   // SmartyStreets api error handling
-  if (isError) {
+  if (formik.values.address !== "" && isError) {
     if ("data" in error && error.status === 404) return notFound();
     else throw error;
   }
@@ -67,7 +66,7 @@ export default function Home() {
     (item: any) =>
       `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
   );
-  
+
   const disableSubmit =
     isLoading || formik.isSubmitting || address === initAddressState;
 
