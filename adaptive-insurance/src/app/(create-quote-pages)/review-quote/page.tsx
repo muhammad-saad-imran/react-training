@@ -67,13 +67,19 @@ const ReviewPage = (props: Props) => {
     else throw error;
   }
 
-  if (quote) {
+  if (!quoteQueryResult.isFetching && quote) {
     const completed = quote.data.metadata.completed_sections;
     if (!completed.address) {
       router.push("/");
     } else if (!completed.coverage) {
       router.push(`/policy-coverage?quoteId=${quoteId}`);
     } else if (!completed.businessInformation) {
+      console.log(
+        "BusinessInformation route",
+        completed,
+        quote,
+        quoteQueryResult
+      );
       router.push(`/business-info/business-entity-details?quoteId=${quoteId}`);
     }
   }

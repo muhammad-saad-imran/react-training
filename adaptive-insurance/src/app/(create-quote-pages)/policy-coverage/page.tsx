@@ -76,7 +76,7 @@ const PolicyCoveragePage = (props: Props) => {
     else throw error;
   }
 
-  if (quote) {
+  if (!quoteQueryResult.isFetching && quote) {
     const completed = quote.data.metadata.completed_sections;
     if (!completed.address) {
       router.push("/");

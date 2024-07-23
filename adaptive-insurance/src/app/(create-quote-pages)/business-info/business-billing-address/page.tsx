@@ -39,7 +39,7 @@ const BusinessBillingPage = (props: Props) => {
 
   const quoteId = searchParams.get("quoteId") || "";
 
-  const { data: quote, isLoading, isError, error } = useGetQuoteQuery(quoteId);
+  const { data: quote, isLoading, isError, error, isFetching } = useGetQuoteQuery(quoteId);
 
   const [loading, setLoading] = useState(quote ? false : true);
 
@@ -61,7 +61,7 @@ const BusinessBillingPage = (props: Props) => {
     else throw error;
   }
 
-  if (quote) {
+  if (isFetching && quote) {
     const completed = quote.data.metadata.completed_sections;
     if (!completed.address) {
       router.push("/");

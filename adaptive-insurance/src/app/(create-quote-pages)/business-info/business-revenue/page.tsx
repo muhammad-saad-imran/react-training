@@ -72,13 +72,13 @@ const BusinessRevenuePage = (props: Props) => {
           ...createQuoteParams,
           businessInformation: { ...businessInformation, ...values },
         };
-        if (!isEqual(params.businessInformation, quoteBusinessInfo))
-          await createQuote(params).unwrap();
-        router.push(`/review-quote?quoteId=${quoteId}`);
+        await createQuote(params);
       } catch (error) {
         alert("Someting went wrong. Please try again later.");
+        return;
       }
       setSubmitting(false);
+      router.push(`/review-quote?quoteId=${quoteId}`);
     },
   });
 
@@ -98,7 +98,7 @@ const BusinessRevenuePage = (props: Props) => {
     else throw error;
   }
 
-  if (quote) {
+  if (!quoteQueryResult.isFetching && quote) {
     const completed = quote.data.metadata.completed_sections;
     if (!completed.address) {
       router.push("/");
