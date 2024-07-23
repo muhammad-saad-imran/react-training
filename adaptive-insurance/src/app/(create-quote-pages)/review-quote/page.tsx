@@ -74,12 +74,6 @@ const ReviewPage = (props: Props) => {
     } else if (!completed.coverage) {
       router.push(`/policy-coverage?quoteId=${quoteId}`);
     } else if (!completed.businessInformation) {
-      console.log(
-        "BusinessInformation route",
-        completed,
-        quote,
-        quoteQueryResult
-      );
       router.push(`/business-info/business-entity-details?quoteId=${quoteId}`);
     }
   }
