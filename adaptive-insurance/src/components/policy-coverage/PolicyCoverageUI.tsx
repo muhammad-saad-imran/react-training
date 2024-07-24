@@ -1,24 +1,28 @@
-import React, { ChangeEvent } from "react";
-import { find } from "lodash";
-import moment from "moment";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import React, { ChangeEvent } from 'react';
+import { find } from 'lodash';
+import moment from 'moment';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeCoverageAmount,
   changeEffectiveDate,
   changeSelectedQuoteId,
   selectPolicyCoverage,
-} from "@/store/feature/policy-coverage";
-import { IAddress } from "@/store/api/types";
-import { policyCoverageConfig } from "@/config/policyCoverageConfig";
-import { HorizontalLine } from "@/components/policy-coverage/style";
-import { InputFieldContainer } from "@/components/common/style";
-import QuoteCard from "./QuoteCard";
-import Input from "@/elements/inputs/Input";
-import HourCoverage from "@/components/policy-coverage/HourCoverage";
-import CoverageLimit from "@/components/policy-coverage/CoverageLimit";
+} from '@/store/feature/policy-coverage';
+import { IAddress } from '@/store/api/types';
+import { policyCoverageConfig } from '@/config/policyCoverageConfig';
+import { HorizontalLine } from '@/components/policy-coverage/style';
+import {
+  ErrorMessageText,
+  InputFieldContainer,
+} from '@/components/common/style';
+import QuoteCard from './QuoteCard';
+import Input from '@/elements/inputs/Input';
+import HourCoverage from '@/components/policy-coverage/HourCoverage';
+import CoverageLimit from '@/components/policy-coverage/CoverageLimit';
 
 type Props = {
   onShowModal: () => void;
+  dateInputError: string;
   address: IAddress;
 };
 
@@ -30,11 +34,11 @@ const PolicyCoverageUI = (props: Props) => {
   });
 
   const date = new Date();
-  const minDate = moment(date).add(1, "days").format("YYYY-MM-DD");
+  const minDate = moment(date).add(1, 'days').format('YYYY-MM-DD');
   const selectedDate =
-    policy.effectiveDateUtc === ""
+    policy.effectiveDateUtc === ''
       ? minDate
-      : moment.utc(policy.effectiveDateUtc).format("YYYY-MM-DD");
+      : moment.utc(policy.effectiveDateUtc).format('YYYY-MM-DD');
 
   function handleDateChange(e: ChangeEvent<HTMLInputElement>) {
     const newDate = new Date(e.currentTarget.value);
@@ -71,10 +75,13 @@ const PolicyCoverageUI = (props: Props) => {
           min={minDate}
           onChange={handleDateChange}
         />
+        {props.dateInputError !== '' && (
+          <ErrorMessageText>{props.dateInputError}</ErrorMessageText>
+        )}
       </InputFieldContainer>
       <div>
         <p
-          className="font-bold underline cursor-pointer w-fit"
+          className="w-fit cursor-pointer font-bold underline"
           onClick={props.onShowModal}
         >
           See what this means

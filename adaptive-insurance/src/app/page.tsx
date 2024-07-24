@@ -8,7 +8,7 @@ import { useCreateQuoteMutation } from '@/store/api/adaptiveApiSlice';
 import { IAddress, ICreateQuoteParams } from '@/store/api/types';
 import { initAddressState } from '@/store/feature/business-info';
 import { getQuoteConfig } from '@/config/getQuoteConfig';
-import { getQuoteSchema } from '@/validations/getQuoteValidation';
+import { getQuoteSchema } from '@/validations/quoteValidations';
 import {
   AutocompleteContainer,
   AutocompleteItems,
@@ -18,10 +18,12 @@ import {
   PageWrapper,
   Wrapper,
 } from '@/components/get-quote/style';
+import { ErrorMessageText } from '@/components/common/style';
 import Image from 'next/image';
 import Button from '@/elements/buttons/Button';
 import FormikInputField from '@/components/common/FormikInputField';
 import Loader from '@/components/common/Loader';
+import toast from 'react-hot-toast';
 
 export default function Home() {
   const router = useRouter();
@@ -30,7 +32,8 @@ export default function Home() {
 
   const [address, setAddress] = useState<IAddress>(initAddressState);
   const [autocompleteOptions, setAutocompleteOptions] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [inputError, setInputError] = useState<string | undefined>();
+  const [apiLoading, setApiLoading] = useState(false);
 
   const createQuoteParams: ICreateQuoteParams = {
     address,
@@ -43,12 +46,15 @@ export default function Home() {
     validationSchema: getQuoteSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        setLoading(true);
+        setApiLoading(true);
         const res = await createQuote(createQuoteParams).unwrap();
         router.push(`policy-coverage?quoteId=${res.id}`);
-      } catch (error) {
-        alert('Something went wrong. Please try again later.');
-        setLoading(false);
+      } catch (error: any) {
+        setApiLoading(false);
+        if (error?.status === 400) {
+          toast.error('Please provide a valid address');
+          setInputError('Please provide a valid address');
+        } else toast.error('Something went wrong. Try again.');
         setSubmitting(false);
       }
     },
@@ -71,7 +77,10 @@ export default function Home() {
   );
 
   const disableSubmit =
-    loading || isLoading || formik.isSubmitting || address === initAddressState;
+    apiLoading ||
+    isLoading ||
+    formik.isSubmitting ||
+    address === initAddressState;
 
   useEffect(() => {
     !isLoading && setAutocompleteOptions(options);
@@ -92,7 +101,7 @@ export default function Home() {
 
   return (
     <PageWrapper>
-      {loading && <Loader />}
+      {apiLoading && <Loader />}
       <Wrapper>
         <LogoContainer>
           <Image
@@ -115,6 +124,9 @@ export default function Home() {
               handleBlur={formik.handleBlur}
               {...getQuoteConfig.inputs.address}
             />
+            {inputError && autocompleteOptions.length === 0 && (
+              <ErrorMessageText className="p-1">{inputError}</ErrorMessageText>
+            )}
             {autocompleteOptions.length > 0 &&
               autocompleteOptions[0] !== formik.values.address &&
               formik.values.address !== '' && (

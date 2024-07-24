@@ -1,5 +1,10 @@
 import { number, object, ref, string } from "yup";
 
+export const getQuoteSchema = object({
+  address: string().required(''),
+});
+
+
 export const businessDetailsSchema = object({
   businessType: string().required("Business Type is a required field"),
   businessName: string().required("Business Name is a required field"),

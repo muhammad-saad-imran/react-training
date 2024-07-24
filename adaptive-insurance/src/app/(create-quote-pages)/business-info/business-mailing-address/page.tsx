@@ -20,9 +20,8 @@ import {
   getPolicyFromQuote,
 } from "@/utils/adaptiveApiUtils";
 import { changeCoveragePolicy } from "@/store/feature/policy-coverage";
-import { IAddress } from "@/store/api/types";
 import { businessAddressConfig } from "@/config/businessAddressConfig";
-import { businessAddressSchema } from "@/validations/businessInfoValidations";
+import { businessAddressSchema } from "@/validations/quoteValidations";
 import BusinessInfoFormsContainer from "@/components/business-info/BusinessInfoFormsContainer";
 import FormikInputField from "@/components/common/FormikInputField";
 import BottomNavBar from "@/components/common/BottomNavBar";
@@ -62,7 +61,7 @@ const BusinessMailingPage = (props: Props) => {
     else throw error;
   }
 
-  if (isFetching && quote) {
+  if (!isFetching && quote) {
     const completed = quote.data.metadata.completed_sections;
     if (!completed.address) {
       router.push("/");
@@ -70,16 +69,6 @@ const BusinessMailingPage = (props: Props) => {
       router.push(`/policy-coverage?quoteId=${quoteId}`);
     }
   }
-
-  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
-    ...extraAttrs,
-    ...businessAddressConfig.inputs[fieldName],
-    value: formik.values[fieldName],
-    error: formik.errors[fieldName],
-    touched: formik.touched[fieldName],
-    handleChange: formik.handleChange,
-    handleBlur: formik.handleBlur,
-  });
 
   useEffect(() => {
     if (quote) {
@@ -98,6 +87,16 @@ const BusinessMailingPage = (props: Props) => {
       setLoading(false);
     }
   }, [quote]);
+
+  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
+    ...extraAttrs,
+    ...businessAddressConfig.inputs[fieldName],
+    value: formik.values[fieldName],
+    error: formik.errors[fieldName],
+    touched: formik.touched[fieldName],
+    handleChange: formik.handleChange,
+    handleBlur: formik.handleBlur,
+  });
 
   return (
     <BusinessInfoFormsContainer title="Enter your business mailing address">

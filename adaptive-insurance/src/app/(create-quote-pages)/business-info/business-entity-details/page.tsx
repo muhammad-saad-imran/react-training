@@ -18,7 +18,7 @@ import {
   getBusinessInfoFromQuote,
   getPolicyFromQuote,
 } from "@/utils/adaptiveApiUtils";
-import { businessDetailsSchema } from "@/validations/businessInfoValidations";
+import { businessDetailsSchema } from "@/validations/quoteValidations";
 import { businessDetailsConfig } from "@/config/businessDetailsConfig";
 import BusinessInfoFormsContainer from "@/components/business-info/BusinessInfoFormsContainer";
 import BottomNavBar from "@/components/common/BottomNavBar";
@@ -59,7 +59,7 @@ const BusinessEntityPage = (props: Props) => {
     else throw error;
   }
 
-  if (isFetching && quote) {
+  if (!isFetching && quote) {
     const completed = quote.data.metadata.completed_sections;
     if (!completed.address) {
       router.push("/");
@@ -67,16 +67,6 @@ const BusinessEntityPage = (props: Props) => {
       router.push(`/policy-coverage?quoteId=${quoteId}`);
     }
   }
-
-  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
-    ...extraAttrs,
-    ...businessDetailsConfig.inputs[fieldName],
-    value: formik.values[fieldName],
-    error: formik.errors[fieldName],
-    touched: formik.touched[fieldName],
-    handleChange: formik.handleChange,
-    handleBlur: formik.handleBlur,
-  });
 
   useEffect(() => {
     if (quote) {
@@ -92,6 +82,16 @@ const BusinessEntityPage = (props: Props) => {
       setLoading(false);
     }
   }, [quote]);
+
+  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
+    ...extraAttrs,
+    ...businessDetailsConfig.inputs[fieldName],
+    value: formik.values[fieldName],
+    error: formik.errors[fieldName],
+    touched: formik.touched[fieldName],
+    handleChange: formik.handleChange,
+    handleBlur: formik.handleBlur,
+  });
 
   return (
     <BusinessInfoFormsContainer title="Enter your business details">

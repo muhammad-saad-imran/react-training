@@ -1,9 +1,10 @@
-import moment from "moment";
-import { IPolicyCoverageState } from "@/store/feature/policy-coverage";
+import moment from 'moment';
+import { IPolicyCoverageState } from '@/store/feature/policy-coverage';
+import { IAddress } from '@/store/api/types';
 
-const USDollar = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
+const USDollar = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
 });
 
 export function currencyFormat(price: number) {
@@ -18,12 +19,17 @@ export function getCoverage(policy: IPolicyCoverageState) {
   };
 }
 
-export function getCoverageDate(selectedUtc: string) {
+export function getCoverageDate(selectedUtc?: string) {
   return moment
     .utc(
-      !selectedUtc || selectedUtc === ""
+      !selectedUtc || selectedUtc === ''
         ? new Date().toISOString()
         : selectedUtc
     )
-    .format("MM/DD/YY");
+    .add(1, 'days')
+    .format('MM/DD/YY');
+}
+
+export function getCompleteAddress(address: IAddress) {
+  return `${address.street}, ${address.city}, ${address.state}, ${address.zipCode}`;
 }

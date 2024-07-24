@@ -19,7 +19,7 @@ export const InputFieldContainer = styled.div.attrs({
 })``;
 
 export const ErrorMessageText = styled.p.attrs({
-  className: 'text-rose-800 text-sm capitalize',
+  className: 'text-rose-800 text-sm',
 })``;
 
 export const ModalWrapper = styled.div.attrs({
