@@ -6,12 +6,12 @@ export const CoverageCardContainer = styled.div.attrs({
 })``;
 
 export const CoverageLimitCard = styled.div.attrs<{
-  selectedLimit: number;
-  limit: number;
+  $selectedLimit: number;
+  $limit: number;
 }>((props) => ({
   className:
     'border rounded-lg flex flex-col justify-center items-center p-9 w-40 md:w-36 lg:w-48 cursor-pointer ' +
-    (props.selectedLimit === props.limit
+    (props.$selectedLimit === props.$limit
       ? 'bg-white border-deep-blue shadow-xl'
       : 'border-gray text-gray'),
 }))``;
@@ -21,12 +21,12 @@ export const Title = styled.p.attrs({
 })``;
 
 export const HoursCard = styled.div.attrs<{
-  selectedId: string;
-  id: string;
+  $selectedId: string;
+  $id: string;
 }>((props) => ({
   className:
     'border rounded-lg flex flex-col items-center w-full md:size-36 lg:size-48 p-4 cursor-pointer ' +
-    (props.selectedId === props.id
+    (props.$selectedId === props.$id
       ? 'bg-white border-deep-blue shadow-xl'
       : 'border-gray text-gray'),
 }))``;

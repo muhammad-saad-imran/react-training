@@ -26,8 +26,8 @@ const HourCoverage = (props: Props) => {
         {map(props.coverageQuotes, (coverage: IQuoteEstimate) => (
           <HoursCard
             key={coverage.productId}
-            selectedId={props.selectedQuoteId}
-            id={coverage.productId}
+            $selectedId={props.selectedQuoteId}
+            $id={coverage.productId}
             onClick={() => props.onPolicyQuoteChange(coverage.productId)}
           >
             <p className="font-bold text-xl lg:text-4xl mt-auto mb-auto">

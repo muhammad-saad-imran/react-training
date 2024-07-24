@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import { map } from 'lodash';
+import toast from 'react-hot-toast';
 import { useAutocompleteQuery } from '@/store/api/baseApi';
 import { useCreateQuoteMutation } from '@/store/api/adaptiveApiSlice';
 import { IAddress, ICreateQuoteParams } from '@/store/api/types';
@@ -23,7 +24,6 @@ import Image from 'next/image';
 import Button from '@/elements/buttons/Button';
 import FormikInputField from '@/components/common/FormikInputField';
 import Loader from '@/components/common/Loader';
-import toast from 'react-hot-toast';
 
 export default function Home() {
   const router = useRouter();

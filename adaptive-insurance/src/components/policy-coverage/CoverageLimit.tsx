@@ -28,8 +28,8 @@ const CoverageLimit = (props: Props) => {
         {map(props.coverageLimitOpts, (coverage: any, index: number) => (
           <CoverageLimitCard
             key={index}
-            selectedLimit={props.selectedLimit}
-            limit={coverage.limit}
+            $selectedLimit={props.selectedLimit}
+            $limit={coverage.limit}
             onClick={() => props.onPolicyLimitChange(coverage.limit)}
           >
             <p className="font-bold md:text-xl lg:text-2xl">
