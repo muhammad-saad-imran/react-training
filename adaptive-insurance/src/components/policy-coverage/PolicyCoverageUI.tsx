@@ -35,6 +35,7 @@ const PolicyCoverageUI = (props: Props) => {
 
   const date = new Date();
   const minDate = moment(date).add(1, 'days').format('YYYY-MM-DD');
+  const maxDate = moment(date).add(89, 'days').format('YYYY-MM-DD');
   const selectedDate =
     policy.effectiveDateUtc === ''
       ? minDate
@@ -71,8 +72,9 @@ const PolicyCoverageUI = (props: Props) => {
         <p>Effective Date</p>
         <Input
           type="date"
-          value={selectedDate}
           min={minDate}
+          max={maxDate}
+          value={selectedDate}
           onChange={handleDateChange}
         />
         {props.dateInputError !== '' && (
