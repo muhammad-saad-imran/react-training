@@ -51,11 +51,11 @@ export default function Home() {
         router.push(`policy-coverage?quoteId=${res.id}`);
       } catch (error: any) {
         setApiLoading(false);
+        setSubmitting(false);
         if (error?.status === 400) {
           toast.error('Please provide a valid address');
           setInputError('Please provide a valid address');
         } else toast.error('Something went wrong. Try again.');
-        setSubmitting(false);
       }
     },
   });
