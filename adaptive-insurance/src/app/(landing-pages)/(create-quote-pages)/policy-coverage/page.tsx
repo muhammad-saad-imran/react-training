@@ -98,6 +98,7 @@ const PolicyCoveragePage = (props: Props) => {
   useEffect(() => {
     if (
       quote &&
+      quote.data.quoteEstimates &&
       quote.data.quoteEstimates[0].coverageAmount !== policy.amount
     ) {
       updatePolicy();
