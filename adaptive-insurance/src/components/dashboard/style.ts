@@ -62,6 +62,6 @@ export const TopbarWrapper = styled(NavbarWrapper).attrs({
   className: 'md:hidden pl-3',
 })``;
 
-export const DashboardLayoutWrapper = styled.div.attrs({
+export const DashboardPageWrapper = styled.div.attrs({
   className: 'h-full w-full overflow-auto bg-anti-white md:w-4/5',
 })``;

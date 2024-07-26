@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import {
-  DashboardLayoutWrapper,
+  DashboardPageWrapper,
   SidebarOverlay,
   TopbarWrapper,
 } from '@/components/dashboard/style';
@@ -27,14 +27,14 @@ const DashboardLayout = (props: Props) => {
       </TopbarWrapper>
       <Sidebar isOpen={isOpen} />
       <SidebarOverlay onClick={toggleSidebar} $isOpen={isOpen} />
-      <DashboardLayoutWrapper>
+      <DashboardPageWrapper>
         <Toaster
           position="top-center"
           gutter={8}
           toastOptions={{ className: 'w-96' }}
         />
         <div className="h-full pt-20 md:pt-0">{props.children}</div>
-      </DashboardLayoutWrapper>
+      </DashboardPageWrapper>
     </div>
   );
 };

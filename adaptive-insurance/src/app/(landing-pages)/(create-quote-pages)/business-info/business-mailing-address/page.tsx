@@ -1,10 +1,10 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { notFound, useRouter, useSearchParams } from "next/navigation";
-import { useFormik } from "formik";
-import { isEmpty, isEqual } from "lodash";
-import { useMask } from "@react-input/mask";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { notFound, useRouter, useSearchParams } from 'next/navigation';
+import { useFormik } from 'formik';
+import { isEmpty, isEqual } from 'lodash';
+import { useMask } from '@react-input/mask';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   initAddressState,
   initBusinessInfoState,
@@ -12,20 +12,20 @@ import {
   selectBusinessMailingAddress,
   setBusinessInformation,
   setBusinessMailingAddress,
-} from "@/store/feature/business-info";
-import { useGetQuoteQuery } from "@/store/api/adaptiveApiSlice";
+} from '@/store/feature/business-info';
+import { useGetQuoteQuery } from '@/store/api/adaptiveApiSlice';
 import {
   getAddressFromQuote,
   getBusinessInfoFromQuote,
   getPolicyFromQuote,
-} from "@/utils/adaptiveApiUtils";
-import { changeCoveragePolicy } from "@/store/feature/policy-coverage";
-import { businessAddressConfig } from "@/config/businessAddressConfig";
-import { businessAddressSchema } from "@/validations/quoteValidations";
-import BusinessInfoFormsContainer from "@/components/business-info/BusinessInfoFormsContainer";
-import FormikInputField from "@/components/common/FormikInputField";
-import BottomNavBar from "@/components/common/BottomNavBar";
-import Loader from "@/components/common/Loader";
+} from '@/utils/adaptiveApiUtils';
+import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
+import { businessAddressConfig } from '@/config/businessAddressConfig';
+import { businessAddressSchema } from '@/validations/quoteValidations';
+import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoFormsContainer';
+import FormikInputField from '@/components/common/FormikInputField';
+import BottomNavBar from '@/components/common/BottomNavBar';
+import Loader from '@/components/common/Loader';
 
 type Props = {};
 
@@ -37,9 +37,15 @@ const BusinessMailingPage = (props: Props) => {
   const businessAddress = useAppSelector(selectBusinessMailingAddress);
   const businessInformation = useAppSelector(selectBusinessInformation);
 
-  const quoteId = searchParams.get("quoteId") || "";
+  const quoteId = searchParams.get('quoteId') || '';
 
-  const { data: quote, isLoading, isError, error, isFetching } = useGetQuoteQuery(quoteId);
+  const {
+    data: quote,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+  } = useGetQuoteQuery(quoteId);
 
   const [loading, setLoading] = useState(quote ? false : true);
 
@@ -54,21 +60,7 @@ const BusinessMailingPage = (props: Props) => {
     },
   });
 
-  // Quotes query error handling
-  if (isError || (!isLoading && isEmpty(quote))) {
-    if (isEmpty(quote) || (error && "status" in error && error.status === 404))
-      return notFound();
-    else throw error;
-  }
-
-  if (!isFetching && quote) {
-    const completed = quote.data.metadata.completed_sections;
-    if (!completed.address) {
-      router.push("/");
-    } else if (!completed.coverage) {
-      router.push(`/policy-coverage?quoteId=${quoteId}`);
-    }
-  }
+  const zipMaskRef = useMask({ mask: '_____', replacement: { _: /\d/ } });
 
   useEffect(() => {
     if (quote) {
@@ -86,7 +78,23 @@ const BusinessMailingPage = (props: Props) => {
       }
       setLoading(false);
     }
-  }, [quote]);
+  }, [quote, businessAddress, businessInformation, dispatch]);
+
+  // Quotes query error handling
+  if (isError || (!isLoading && isEmpty(quote))) {
+    if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
+      return notFound();
+    else throw error;
+  }
+
+  if (!isFetching && quote) {
+    const completed = quote.data.metadata.completed_sections;
+    if (!completed.address) {
+      router.push('/');
+    } else if (!completed.coverage) {
+      router.push(`/policy-coverage?quoteId=${quoteId}`);
+    }
+  }
 
   const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
     ...extraAttrs,
@@ -102,13 +110,13 @@ const BusinessMailingPage = (props: Props) => {
     <BusinessInfoFormsContainer title="Enter your business mailing address">
       <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
         {loading && <Loader />}
-        <FormikInputField {...getFieldAttrs("street")} />
-        <FormikInputField {...getFieldAttrs("street2")} />
-        <FormikInputField {...getFieldAttrs("city")} />
-        <FormikInputField {...getFieldAttrs("state")} />
+        <FormikInputField {...getFieldAttrs('street')} />
+        <FormikInputField {...getFieldAttrs('street2')} />
+        <FormikInputField {...getFieldAttrs('city')} />
+        <FormikInputField {...getFieldAttrs('state')} />
         <FormikInputField
-          {...getFieldAttrs("zipCode", {
-            ref: useMask({ mask: "_____", replacement: { _: /\d/ } }),
+          {...getFieldAttrs('zipCode', {
+            ref: zipMaskRef,
           })}
         />
         <BottomNavBar

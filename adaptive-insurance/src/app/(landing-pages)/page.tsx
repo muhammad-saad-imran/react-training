@@ -64,12 +64,6 @@ export default function Home() {
     formik.values.address
   );
 
-  // SmartyStreets api error handling
-  if (formik.values.address !== '' && isError) {
-    if ('data' in error && error.status === 404) return notFound();
-    else throw error;
-  }
-
   const options = map(
     data?.suggestions,
     (item: any) =>
@@ -97,7 +91,13 @@ export default function Home() {
     } else {
       setAddress(initAddressState);
     }
-  }, [data]);
+  }, [data, isLoading, options]);
+
+  // SmartyStreets api error handling
+  if (formik.values.address !== '' && isError) {
+    if ('data' in error && error.status === 404) return notFound();
+    else throw error;
+  }
 
   return (
     <PageWrapper>

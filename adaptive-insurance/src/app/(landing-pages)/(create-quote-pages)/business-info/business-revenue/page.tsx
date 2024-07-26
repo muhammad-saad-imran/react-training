@@ -89,6 +89,21 @@ const BusinessRevenuePage = (props: Props) => {
     quoteQueryResult.isLoading ||
     formik.isSubmitting;
 
+  useEffect(() => {
+    if (quote) {
+      const policy = getPolicyFromQuote(quote);
+      dispatch(changeCoveragePolicy(policy));
+      if (
+        quote.insured &&
+        isEqual(businessInformation, initBusinessInfoState)
+      ) {
+        const businessInfo = getBusinessInfoFromQuote(quote);
+        dispatch(setBusinessInformation(businessInfo));
+      }
+      setLoading(false);
+    }
+  }, [quote, businessInformation, dispatch]);
+
   // Quotes query error handling
   if (
     quoteQueryResult.isError ||
@@ -108,21 +123,6 @@ const BusinessRevenuePage = (props: Props) => {
       router.push(`/policy-coverage?quoteId=${quoteId}`);
     }
   }
-
-  useEffect(() => {
-    if (quote) {
-      const policy = getPolicyFromQuote(quote);
-      dispatch(changeCoveragePolicy(policy));
-      if (
-        quote.insured &&
-        isEqual(businessInformation, initBusinessInfoState)
-      ) {
-        const businessInfo = getBusinessInfoFromQuote(quote);
-        dispatch(setBusinessInformation(businessInfo));
-      }
-      setLoading(false);
-    }
-  }, [quote]);
 
   const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
     ...extraAttrs,

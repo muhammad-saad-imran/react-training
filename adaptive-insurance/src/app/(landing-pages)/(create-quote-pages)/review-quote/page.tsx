@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { isEmpty } from 'lodash';
 import toast from 'react-hot-toast';
@@ -43,18 +43,51 @@ const ReviewPage = (props: Props) => {
   const coverage = getCoverageFromQuote(quote);
   const businessInformation = getBusinessInfoFromQuote(quote);
 
-  const createQuoteParams: ICreateQuoteParams = {
-    quoteId,
-    address,
-    coverage,
-    businessInformation,
-    checkout: {},
-    step: 'checkout',
-    product: 'Outage',
-  };
+  const createQuoteParams: ICreateQuoteParams = useMemo(
+    () => ({
+      quoteId,
+      address,
+      coverage,
+      businessInformation,
+      checkout: {},
+      step: 'checkout',
+      product: 'Outage',
+    }),
+    [quoteId, address, coverage, businessInformation]
+  );
 
   const disableSubmit =
     quoteQueryResult.isLoading || createQuoteResult.isLoading;
+
+  useEffect(() => {
+    const completeQuoteCheckout = async () => {
+      try {
+        await createQuote(createQuoteParams).unwrap();
+      } catch (error: any) {
+        if (error?.status === 400 && Array.isArray(error?.data?.message)) {
+          error?.data?.message.map((err: string) => toast.error(err));
+        } else toast.error('An error ocurred while checking out');
+      }
+    };
+
+    if (!quoteQueryResult.isFetching && quote) {
+      const completed = quote.data.metadata.completed_sections;
+      dispatch(changeCoveragePolicy(policy));
+      dispatch(setBusinessInformation(businessInformation));
+      if (!completed.checkout) {
+        completeQuoteCheckout();
+      }
+      setLoading(false);
+    }
+  }, [
+    quote,
+    businessInformation,
+    dispatch,
+    createQuote,
+    createQuoteParams,
+    quoteQueryResult.isFetching,
+    policy,
+  ]);
 
   // Quotes query error handling
   if (
@@ -77,28 +110,6 @@ const ReviewPage = (props: Props) => {
       router.push(`/business-info/business-entity-details?quoteId=${quoteId}`);
     }
   }
-
-  useEffect(() => {
-    const completeQuoteCheckout = async () => {
-      try {
-        await createQuote(createQuoteParams).unwrap();
-      } catch (error: any) {
-        if (error?.status === 400 && Array.isArray(error?.data?.message)) {
-          error?.data?.message.map((err: string) => toast.error(err));
-        } else toast.error('An error ocurred while checking out');
-      }
-    };
-
-    if (!quoteQueryResult.isFetching && quote) {
-      const completed = quote.data.metadata.completed_sections;
-      dispatch(changeCoveragePolicy(policy));
-      dispatch(setBusinessInformation(businessInformation));
-      if (!completed.checkout) {
-        completeQuoteCheckout();
-      }
-      setLoading(false);
-    }
-  }, [quote]);
 
   return (
     <div className="flex flex-col gap-5">

@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { isEmpty } from 'lodash';
 import toast from 'react-hot-toast';
@@ -46,37 +46,36 @@ const PolicyCoveragePage = (props: Props) => {
 
   const policy = useAppSelector(selectPolicyCoverage);
 
-  let createQuoteParams: ICreateQuoteParams = {
-    quoteId,
-    address,
-    coverage: getCoverage(policy),
-    step: 'coverage',
-    product: 'Outage',
-  };
+  let createQuoteParams: ICreateQuoteParams = useMemo(
+    () => ({
+      quoteId,
+      address,
+      coverage: getCoverage(policy),
+      step: 'coverage',
+      product: 'Outage',
+    }),
+    [quoteId, address, policy]
+  );
+
+  const updatePolicy = useCallback(async () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await createQuote(createQuoteParams).unwrap();
+        resolve(res);
+      } catch (error: any) {
+        if (error?.status === 400 && Array.isArray(error?.data?.message)) {
+          error?.data?.message.map((err: string) => toast.error(err));
+        } else toast.error('Something went wrong. Try again.');
+        reject(error);
+      }
+    });
+  }, [createQuoteParams, createQuote]);
 
   const disableSubmit =
     quoteQueryResult.isLoading ||
     createQuoteResult.isLoading ||
     !quote?.data.quoteEstimates ||
     !quote?.data.selectedEstimateId;
-
-  // Quotes query error handling
-  if (
-    quoteQueryResult.isError ||
-    (!quoteQueryResult.isLoading && isEmpty(quote))
-  ) {
-    const error = quoteQueryResult.error;
-    if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
-      return notFound();
-    else throw error;
-  }
-
-  if (!quoteQueryResult.isFetching && quote) {
-    const completed = quote.data.metadata.completed_sections;
-    if (!completed.address) {
-      router.push('/');
-    }
-  }
 
   // Initialize the policy state in redux that UI uses
   useEffect(() => {
@@ -93,7 +92,7 @@ const PolicyCoveragePage = (props: Props) => {
       // init policy coverage & quote estimates
       updatePolicy();
     }
-  }, [quote]);
+  }, [quote, dispatch, updatePolicy]);
 
   // Updates quote estimates when coverage amount changes
   useEffect(() => {
@@ -103,21 +102,7 @@ const PolicyCoveragePage = (props: Props) => {
     ) {
       updatePolicy();
     }
-  }, [policy.amount]);
-
-  async function updatePolicy() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const res = await createQuote(createQuoteParams).unwrap();
-        resolve(res);
-      } catch (error: any) {
-        if (error?.status === 400 && Array.isArray(error?.data?.message)) {
-          error?.data?.message.map((err: string) => toast.error(err));
-        } else toast.error('Something went wrong. Try again.');
-        reject(error);
-      }
-    });
-  }
+  }, [policy.amount, quote, updatePolicy]);
 
   async function onSubmit() {
     try {
@@ -136,6 +121,24 @@ const PolicyCoveragePage = (props: Props) => {
           if (err.includes('effective date')) setDateInputError(err);
         });
       }
+    }
+  }
+
+  // Quotes query error handling
+  if (
+    quoteQueryResult.isError ||
+    (!quoteQueryResult.isLoading && isEmpty(quote))
+  ) {
+    const error = quoteQueryResult.error;
+    if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
+      return notFound();
+    else throw error;
+  }
+
+  if (!quoteQueryResult.isFetching && quote) {
+    const completed = quote.data.metadata.completed_sections;
+    if (!completed.address) {
+      router.push('/');
     }
   }
 
