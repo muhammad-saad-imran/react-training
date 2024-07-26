@@ -1,8 +1,8 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
-import { isEqual, map } from 'lodash';
+import { map } from 'lodash';
 import toast from 'react-hot-toast';
 import { useAutocompleteQuery } from '@/store/api/baseApi';
 import { useCreateQuoteMutation } from '@/store/api/adaptiveApiSlice';
@@ -64,14 +64,10 @@ export default function Home() {
     formik.values.address
   );
 
-  const options = useMemo(
-    () =>
-      map(
-        data?.suggestions,
-        (item: any) =>
-          `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
-      ),
-    [data]
+  const options = map(
+    data?.suggestions,
+    (item: any) =>
+      `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
   );
 
   const disableSubmit =
@@ -95,7 +91,7 @@ export default function Home() {
     } else {
       setAddress(initAddressState);
     }
-  }, [data]);
+  }, [data, isLoading, options]);
 
   // SmartyStreets api error handling
   if (formik.values.address !== '' && isError) {

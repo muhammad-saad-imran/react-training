@@ -1,7 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "@/store";
-import { IQuoteEstimate } from "@/store/api/types";
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '@/store';
+import { IQuoteEstimate } from '@/store/api/types';
 
 export interface IPolicyCoverageState {
   quoteEstimates: IQuoteEstimate[];
@@ -10,16 +10,16 @@ export interface IPolicyCoverageState {
   effectiveDateUtc: string;
 }
 
-const initialState = {
+export const initPolicyState = {
   quoteEstimates: [],
-  selectedEstimateId: "",
+  selectedEstimateId: '',
   amount: 10000,
-  effectiveDateUtc: "",
+  effectiveDateUtc: '',
 } satisfies IPolicyCoverageState as IPolicyCoverageState;
 
 const policyCoverageSlice = createSlice({
-  name: "policy",
-  initialState,
+  name: 'policy',
+  initialState: initPolicyState,
   reducers: {
     changeCoveragePolicy(state, action: PayloadAction<IPolicyCoverageState>) {
       state.quoteEstimates = action.payload.quoteEstimates;
@@ -47,7 +47,7 @@ export const {
   changeCoverageAmount,
   changeQuoteEstimates,
   changeSelectedQuoteId,
-  changeEffectiveDate
+  changeEffectiveDate,
 } = policyCoverageSlice.actions;
 
 export default policyCoverageSlice;
