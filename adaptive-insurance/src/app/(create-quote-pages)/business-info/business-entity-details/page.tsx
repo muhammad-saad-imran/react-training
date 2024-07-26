@@ -1,29 +1,29 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { notFound, useRouter, useSearchParams } from "next/navigation";
-import { useFormik } from "formik";
-import { isEmpty, isEqual } from "lodash";
-import { useMask } from "@react-input/mask";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { notFound, useRouter, useSearchParams } from 'next/navigation';
+import { useFormik } from 'formik';
+import { isEmpty, isEqual } from 'lodash';
+import { useMask } from '@react-input/mask';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   initBusinessInfoState,
   selectBusinessDetails,
   selectBusinessInformation,
   setBusinessDetails,
   setBusinessInformation,
-} from "@/store/feature/business-info";
-import { useGetQuoteQuery } from "@/store/api/adaptiveApiSlice";
-import { changeCoveragePolicy } from "@/store/feature/policy-coverage";
+} from '@/store/feature/business-info';
+import { useGetQuoteQuery } from '@/store/api/adaptiveApiSlice';
+import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
 import {
   getBusinessInfoFromQuote,
   getPolicyFromQuote,
-} from "@/utils/adaptiveApiUtils";
-import { businessDetailsSchema } from "@/validations/quoteValidations";
-import { businessDetailsConfig } from "@/config/businessDetailsConfig";
-import BusinessInfoFormsContainer from "@/components/business-info/BusinessInfoFormsContainer";
-import BottomNavBar from "@/components/common/BottomNavBar";
-import FormikInputField from "@/components/common/FormikInputField";
-import Loader from "@/components/common/Loader";
+} from '@/utils/adaptiveApiUtils';
+import { businessDetailsSchema } from '@/validations/quoteValidations';
+import { businessDetailsConfig } from '@/config/businessDetailsConfig';
+import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoFormsContainer';
+import BottomNavBar from '@/components/common/BottomNavBar';
+import FormikInputField from '@/components/common/FormikInputField';
+import Loader from '@/components/common/Loader';
 
 type Props = {};
 
@@ -35,9 +35,15 @@ const BusinessEntityPage = (props: Props) => {
   const businessDetails = useAppSelector(selectBusinessDetails);
   const businessInformation = useAppSelector(selectBusinessInformation);
 
-  const quoteId = searchParams.get("quoteId") || "";
+  const quoteId = searchParams.get('quoteId') || '';
 
-  const { data: quote, isLoading, isError, error, isFetching } = useGetQuoteQuery(quoteId);
+  const {
+    data: quote,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+  } = useGetQuoteQuery(quoteId);
 
   const [loading, setLoading] = useState(quote ? false : true);
 
@@ -52,21 +58,10 @@ const BusinessEntityPage = (props: Props) => {
     },
   });
 
-  // Quotes query error handling
-  if (isError || (!isLoading && isEmpty(quote))) {
-    if (isEmpty(quote) || (error && "status" in error && error.status === 404))
-      return notFound();
-    else throw error;
-  }
-
-  if (!isFetching && quote) {
-    const completed = quote.data.metadata.completed_sections;
-    if (!completed.address) {
-      router.push("/");
-    } else if (!completed.coverage) {
-      router.push(`/policy-coverage?quoteId=${quoteId}`);
-    }
-  }
+  const phoneMaskRef = useMask({
+    mask: '+___________',
+    replacement: { _: /\d/ },
+  });
 
   useEffect(() => {
     if (quote) {
@@ -93,18 +88,34 @@ const BusinessEntityPage = (props: Props) => {
     handleBlur: formik.handleBlur,
   });
 
+  // Quotes query error handling
+  if (isError || (!isLoading && isEmpty(quote))) {
+    if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
+      return notFound();
+    else throw error;
+  }
+
+  if (!isFetching && quote) {
+    const completed = quote.data.metadata.completed_sections;
+    if (!completed.address) {
+      router.push('/');
+    } else if (!completed.coverage) {
+      router.push(`/policy-coverage?quoteId=${quoteId}`);
+    }
+  }
+
   return (
     <BusinessInfoFormsContainer title="Enter your business details">
       <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
         {loading && <Loader />}
-        <FormikInputField {...getFieldAttrs("businessType")} />
-        <FormikInputField {...getFieldAttrs("businessName")} />
-        <FormikInputField {...getFieldAttrs("contactName")} />
-        <FormikInputField {...getFieldAttrs("email")} />
-        <FormikInputField {...getFieldAttrs("alternativeEmail")} />
+        <FormikInputField {...getFieldAttrs('businessType')} />
+        <FormikInputField {...getFieldAttrs('businessName')} />
+        <FormikInputField {...getFieldAttrs('contactName')} />
+        <FormikInputField {...getFieldAttrs('email')} />
+        <FormikInputField {...getFieldAttrs('alternativeEmail')} />
         <FormikInputField
-          {...getFieldAttrs("phone", {
-            ref: useMask({ mask: "+___________", replacement: { _: /\d/ } }),
+          {...getFieldAttrs('phone', {
+            ref: phoneMaskRef,
           })}
         />
         <BottomNavBar

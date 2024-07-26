@@ -89,26 +89,6 @@ const BusinessRevenuePage = (props: Props) => {
     quoteQueryResult.isLoading ||
     formik.isSubmitting;
 
-  // Quotes query error handling
-  if (
-    quoteQueryResult.isError ||
-    (!quoteQueryResult.isLoading && isEmpty(quote))
-  ) {
-    const error = quoteQueryResult.error;
-    if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
-      return notFound();
-    else throw error;
-  }
-
-  if (!quoteQueryResult.isFetching && quote) {
-    const completed = quote.data.metadata.completed_sections;
-    if (!completed.address) {
-      router.push('/');
-    } else if (!completed.coverage) {
-      router.push(`/policy-coverage?quoteId=${quoteId}`);
-    }
-  }
-
   useEffect(() => {
     if (quote) {
       const policy = getPolicyFromQuote(quote);
@@ -133,6 +113,26 @@ const BusinessRevenuePage = (props: Props) => {
     handleChange: formik.handleChange,
     handleBlur: formik.handleBlur,
   });
+
+  // Quotes query error handling
+  if (
+    quoteQueryResult.isError ||
+    (!quoteQueryResult.isLoading && isEmpty(quote))
+  ) {
+    const error = quoteQueryResult.error;
+    if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
+      return notFound();
+    else throw error;
+  }
+
+  if (!quoteQueryResult.isFetching && quote) {
+    const completed = quote.data.metadata.completed_sections;
+    if (!completed.address) {
+      router.push('/');
+    } else if (!completed.coverage) {
+      router.push(`/policy-coverage?quoteId=${quoteId}`);
+    }
+  }
 
   return (
     <BusinessInfoFormsContainer title="Business Revenue Range">

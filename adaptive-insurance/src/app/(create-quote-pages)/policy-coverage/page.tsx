@@ -64,30 +64,11 @@ const PolicyCoveragePage = (props: Props) => {
     !quote?.data.quoteEstimates ||
     !quote?.data.selectedEstimateId;
 
-  // Quotes query error handling
-  if (
-    quoteQueryResult.isError ||
-    (!quoteQueryResult.isLoading && isEmpty(quote))
-  ) {
-    const error = quoteQueryResult.error;
-    if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
-      return notFound();
-    else throw error;
-  }
-
-  if (!quoteQueryResult.isFetching && quote) {
-    const completed = quote.data.metadata.completed_sections;
-    if (!completed.address) {
-      router.push('/');
-    }
-  }
-
   // Initialize the policy state in redux that UI uses
   useEffect(() => {
     if (quote && quote.data.quoteEstimates && quote.data.selectedEstimateId) {
       const quotePolicy = getPolicyFromQuote(quote);
-      if (isEqual(policy, initPolicyState))
-        dispatch(changeCoveragePolicy(quotePolicy));
+      dispatch(changeCoveragePolicy(quotePolicy));
       setLoading(false);
     } else if (
       quote &&
@@ -142,6 +123,24 @@ const PolicyCoveragePage = (props: Props) => {
           if (err.includes('effective date')) setDateInputError(err);
         });
       }
+    }
+  }
+
+  // Quotes query error handling
+  if (
+    quoteQueryResult.isError ||
+    (!quoteQueryResult.isLoading && isEmpty(quote))
+  ) {
+    const error = quoteQueryResult.error;
+    if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
+      return notFound();
+    else throw error;
+  }
+
+  if (!quoteQueryResult.isFetching && quote) {
+    const completed = quote.data.metadata.completed_sections;
+    if (!completed.address) {
+      router.push('/');
     }
   }
 
