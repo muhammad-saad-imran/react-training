@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import { map } from 'lodash';
@@ -64,10 +64,14 @@ export default function Home() {
     formik.values.address
   );
 
-  const options = map(
-    data?.suggestions,
-    (item: any) =>
-      `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
+  const options = useMemo(
+    () =>
+      map(
+        data?.suggestions,
+        (item: any) =>
+          `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
+      ),
+    [data]
   );
 
   const disableSubmit =
@@ -95,7 +99,7 @@ export default function Home() {
 
   // SmartyStreets api error handling
   if (formik.values.address !== '' && isError) {
-    if ('data' in error && error.status === 404) return notFound();
+    if ('status' in error && error.status === 404) return notFound();
     else throw error;
   }
 
