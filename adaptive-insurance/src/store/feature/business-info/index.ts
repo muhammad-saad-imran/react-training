@@ -3,10 +3,9 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@/store";
 import {
   IBusinessDetails,
-  IBusinessInfoState,
   IBusinessRevenue,
 } from "@/store/feature/business-info/types";
-import { IAddress } from "@/store/api/types";
+import { IAddress, IBusinessInformation } from "@/store/api/types";
 
 export const initAddressState = {
   street: "",
@@ -27,13 +26,13 @@ export const initBusinessInfoState = {
   revenueRangeTo: 0,
   mailingAddress: initAddressState,
   billingAddress: initAddressState,
-} satisfies IBusinessInfoState as IBusinessInfoState;
+} satisfies IBusinessInformation as IBusinessInformation;
 
 const businessInfoSlice = createSlice({
   name: "business-info",
   initialState: initBusinessInfoState,
   reducers: {
-    setBusinessInformation(state, action: PayloadAction<IBusinessInfoState>) {
+    setBusinessInformation(state, action: PayloadAction<IBusinessInformation>) {
       return { ...state, ...action.payload };
     },
     setBusinessDetails(state, action: PayloadAction<IBusinessDetails>) {

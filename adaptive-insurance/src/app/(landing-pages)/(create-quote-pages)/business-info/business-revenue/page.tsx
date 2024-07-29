@@ -47,9 +47,7 @@ const BusinessRevenuePage = (props: Props) => {
 
   const dispatch = useAppDispatch();
   const businessRevenue = useAppSelector(selectBusinessRevenue);
-  const businessInformation = useAppSelector(
-    selectBusinessInformation
-  ) as IBusinessInformation;
+  const businessInformation = useAppSelector(selectBusinessInformation);
 
   const address = getAddressFromQuote(quote);
   const coverage = getCoverageFromQuote(quote);
@@ -69,7 +67,6 @@ const BusinessRevenuePage = (props: Props) => {
     validationSchema: businessRevenueSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        dispatch(setBusinessRevenue(values));
         const params = {
           ...createQuoteParams,
           businessInformation: { ...businessInformation, ...values },
@@ -100,11 +97,12 @@ const BusinessRevenuePage = (props: Props) => {
         quote.insured &&
         isEqual(businessInformation, initBusinessInfoState)
       ) {
-        dispatch(setBusinessInformation(businessInfoFromQuote));
+        const businessInfo = getBusinessInfoFromQuote(quote);
+        dispatch(setBusinessInformation(businessInfo));
       }
       setLoading(false);
     }
-  }, [quote]);
+  }, [quote, businessInformation, dispatch]);
 
   const getFieldAttrs = (
     fieldName: keyof IBusinessRevenue,

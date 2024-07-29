@@ -1,7 +1,7 @@
 'use client';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import toast from 'react-hot-toast';
 import {
   useCreateQuoteMutation,
@@ -11,6 +11,7 @@ import { ICreateQuoteParams } from '@/store/api/types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeCoveragePolicy,
+  initPolicyState,
   selectPolicyCoverage,
 } from '@/store/feature/policy-coverage';
 import {
@@ -33,14 +34,17 @@ const PolicyCoveragePage = (props: Props) => {
   const [isModelHidden, setIsModelHidden] = useState(true);
   const [dateInputError, setDateInputError] = useState('');
 
-  const quoteId = searchParams.get('quoteId') || '';
+  const quoteId = useMemo(
+    () => searchParams.get('quoteId') || '',
+    [searchParams]
+  );
 
   const { data: quote, ...quoteQueryResult } = useGetQuoteQuery(quoteId);
   const [createQuote, createQuoteResult] = useCreateQuoteMutation();
 
   const [loading, setLoading] = useState(quote ? false : true);
 
-  const address = getAddressFromQuote(quote);
+  const address = useMemo(() => getAddressFromQuote(quote), [quote]);
 
   const policy = useAppSelector(selectPolicyCoverage);
 
@@ -61,33 +65,7 @@ const PolicyCoveragePage = (props: Props) => {
     !quote?.data.quoteEstimates ||
     !quote?.data.selectedEstimateId;
 
-  // Initialize the policy state in redux that UI uses
-  useEffect(() => {
-    if (quote && quote.data.quoteEstimates && quote.data.selectedEstimateId) {
-      const quotePolicy = getPolicyFromQuote(quote);
-      dispatch(changeCoveragePolicy(quotePolicy));
-      setLoading(false);
-    } else if (
-      quote &&
-      (!quote.data.quoteEstimates || !quote.data.selectedEstimateId)
-    ) {
-      // init policy coverage & quote estimates
-      updatePolicy();
-    }
-  }, [quote, dispatch, updatePolicy]);
-
-  // Updates quote estimates when coverage amount changes
-  useEffect(() => {
-    if (
-      quote &&
-      quote.data.quoteEstimates &&
-      quote.data.quoteEstimates[0].coverageAmount !== policy.amount
-    ) {
-      updatePolicy();
-    }
-  }, [policy.amount]);
-
-  async function updatePolicy() {
+  const updatePolicy = async () => {
     try {
       const res = await createQuote(createQuoteParams).unwrap();
       return res;
@@ -99,7 +77,28 @@ const PolicyCoveragePage = (props: Props) => {
       }
       throw error;
     }
-  }
+  };
+
+  // Initialize the policy state in redux that UI uses
+  useEffect(() => {
+    if (quote && quote.data.quoteEstimates) {
+      const quotePolicy = getPolicyFromQuote(quote);
+      dispatch(changeCoveragePolicy(quotePolicy));
+      setLoading(false);
+    }
+  }, [quote, dispatch]);
+
+  useEffect(() => {
+    const hasQuote = !!quote;
+    const hasQuoteEstimates = !!quote?.data?.quoteEstimates;
+    const coverageAmountMismatch =
+      hasQuoteEstimates &&
+      quote.data.quoteEstimates[0].coverageAmount !== policy.amount;
+
+    if (hasQuote && (coverageAmountMismatch || !hasQuoteEstimates)) {
+      updatePolicy();
+    }
+  }, [policy.amount]);
 
   async function onSubmit() {
     try {

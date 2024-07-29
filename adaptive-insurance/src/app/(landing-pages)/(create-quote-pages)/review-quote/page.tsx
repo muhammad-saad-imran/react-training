@@ -10,6 +10,7 @@ import {
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
 import { useAppDispatch } from '@/store/hooks';
 import { ICreateQuoteParams } from '@/store/api/types';
+import { setBusinessInformation } from '@/store/feature/business-info';
 import { currencyFormat, getCompleteAddress } from '@/utils/quoteUtils';
 import {
   getAddressFromQuote,
@@ -37,10 +38,13 @@ const ReviewPage = (props: Props) => {
 
   const [loading, setLoading] = useState(quote ? false : true);
 
-  const address = getAddressFromQuote(quote);
-  const policy = getPolicyFromQuote(quote);
-  const coverage = getCoverageFromQuote(quote);
-  const businessInformation = getBusinessInfoFromQuote(quote);
+  const address = useMemo(() => getAddressFromQuote(quote), [quote]);
+  const policy = useMemo(() => getPolicyFromQuote(quote), [quote]);
+  const coverage = useMemo(() => getCoverageFromQuote(quote), [quote]);
+  const businessInformation = useMemo(
+    () => getBusinessInfoFromQuote(quote),
+    [quote]
+  );
 
   const createQuoteParams: ICreateQuoteParams = useMemo(
     () => ({
@@ -74,27 +78,6 @@ const ReviewPage = (props: Props) => {
     if (!quoteQueryResult.isFetching && quote) {
       const completed = quote.data.metadata.completed_sections;
       dispatch(changeCoveragePolicy(policy));
-      if (!completed.checkout) {
-        completeQuoteCheckout();
-      }
-      setLoading(false);
-    }
-  }, [quote]);
-
-  useEffect(() => {
-    const completeQuoteCheckout = async () => {
-      try {
-        await createQuote(createQuoteParams).unwrap();
-      } catch (error: any) {
-        if (error?.status === 400 && Array.isArray(error?.data?.message)) {
-          error?.data?.message.map((err: string) => toast.error(err));
-        } else toast.error('An error ocurred while checking out');
-      }
-    };
-
-    if (!quoteQueryResult.isFetching && quote) {
-      const completed = quote.data.metadata.completed_sections;
-      dispatch(changeCoveragePolicy(policy));
       dispatch(setBusinessInformation(businessInformation));
       if (!completed.checkout) {
         completeQuoteCheckout();
@@ -103,12 +86,12 @@ const ReviewPage = (props: Props) => {
     }
   }, [
     quote,
+    policy,
     businessInformation,
-    dispatch,
-    createQuote,
     createQuoteParams,
     quoteQueryResult.isFetching,
-    policy,
+    dispatch,
+    createQuote,
   ]);
 
   // Quotes query error handling
