@@ -84,26 +84,24 @@ const PolicyCoveragePage = (props: Props) => {
     if (
       quote &&
       quote.data.quoteEstimates &&
-      quote.data.quoteEstimates[0].coverageAmount !== policy.amount &&
-      !createQuoteResult.isLoading
+      quote.data.quoteEstimates[0].coverageAmount !== policy.amount
     ) {
-      console.log('update policy', policy.amount, quote);
       updatePolicy();
     }
   }, [policy.amount]);
 
   async function updatePolicy() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const res = await createQuote(createQuoteParams).unwrap();
-        resolve(res);
-      } catch (error: any) {
-        if (error?.status === 400 && Array.isArray(error?.data?.message)) {
-          error?.data?.message.map((err: string) => toast.error(err));
-        } else toast.error('Something went wrong. Try again.');
-        reject(error);
+    try {
+      const res = await createQuote(createQuoteParams).unwrap();
+      return res;
+    } catch (error: any) {
+      if (error?.status === 400 && Array.isArray(error?.data?.message)) {
+        error?.data?.message.forEach((err: string) => toast.error(err));
+      } else {
+        toast.error('Something went wrong. Try again.');
       }
-    });
+      throw error;
+    }
   }
 
   async function onSubmit() {

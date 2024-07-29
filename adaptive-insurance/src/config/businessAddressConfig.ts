@@ -58,7 +58,7 @@ const stateOptions = [
   { label: "Wyoming", value: "WY" },
 ];
 
-export const businessAddressConfig: any = {
+export const businessAddressConfig = {
   initialValues: {
     street: "",
     street2: "",

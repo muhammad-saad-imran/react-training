@@ -1,4 +1,4 @@
-export const businessDetailsConfig: any = {
+export const businessDetailsConfig = {
   initialValues: {
     businessType: "",
     businessName: "",

@@ -72,7 +72,7 @@ export default function Home() {
     },
   });
 
-  const { data, isLoading, isError, error } = useAutocompleteQuery(
+  const { data, isFetching, isError, error } = useAutocompleteQuery(
     formik.values.address
   );
 
@@ -88,12 +88,12 @@ export default function Home() {
 
   const disableSubmit =
     apiLoading ||
-    isLoading ||
+    isFetching ||
     formik.isSubmitting ||
     address === initAddressState;
 
   useEffect(() => {
-    !isLoading && setAutocompleteOptions(options);
+    !isFetching && setAutocompleteOptions(options);
 
     if (data?.suggestions.length === 1) {
       let addr = data?.suggestions[0];
@@ -107,11 +107,11 @@ export default function Home() {
     } else {
       setAddress(initAddressState);
     }
-  }, [data, options, isLoading]);
+  }, [data, options, isFetching]);
 
   // SmartyStreets api error handling
   if (formik.values.address !== '' && isError) {
-    if ('data' in error && error.status === 404) return notFound();
+    if ('status' in error && error.status === 404) return notFound();
     else throw error;
   }
 

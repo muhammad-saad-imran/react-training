@@ -26,6 +26,7 @@ import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoF
 import FormikInputField from '@/components/common/FormikInputField';
 import BottomNavBar from '@/components/common/BottomNavBar';
 import Loader from '@/components/common/Loader';
+import { IAddress } from '@/store/api/types';
 
 type Props = {};
 
@@ -49,7 +50,7 @@ const BusinessMailingPage = (props: Props) => {
 
   const [loading, setLoading] = useState(quote ? false : true);
 
-  const formik = useFormik<any>({
+  const formik = useFormik({
     enableReinitialize: true,
     initialValues: businessAddress,
     validationSchema: businessAddressSchema,
@@ -80,7 +81,7 @@ const BusinessMailingPage = (props: Props) => {
     }
   }, [quote]);
 
-  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
+  const getFieldAttrs = (fieldName: keyof IAddress, extraAttrs: any = {}) => ({
     ...extraAttrs,
     ...businessAddressConfig.inputs[fieldName],
     value: formik.values[fieldName],

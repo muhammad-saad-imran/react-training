@@ -30,6 +30,7 @@ import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoF
 import FormikInputField from '@/components/common/FormikInputField';
 import BottomNavBar from '@/components/common/BottomNavBar';
 import Loader from '@/components/common/Loader';
+import { IBusinessRevenue } from '@/store/feature/business-info/types';
 
 type Props = {};
 
@@ -52,6 +53,7 @@ const BusinessRevenuePage = (props: Props) => {
 
   const address = getAddressFromQuote(quote);
   const coverage = getCoverageFromQuote(quote);
+  const businessInfoFromQuote = getBusinessInfoFromQuote(quote);
 
   const createQuoteParams: ICreateQuoteParams = {
     quoteId,
@@ -61,7 +63,7 @@ const BusinessRevenuePage = (props: Props) => {
     product: 'Outage',
   };
 
-  const formik = useFormik<any>({
+  const formik = useFormik({
     enableReinitialize: true,
     initialValues: businessRevenue,
     validationSchema: businessRevenueSchema,
@@ -72,7 +74,8 @@ const BusinessRevenuePage = (props: Props) => {
           ...createQuoteParams,
           businessInformation: { ...businessInformation, ...values },
         };
-        await createQuote(params).unwrap();
+        if (!isEqual(businessInfoFromQuote, params))
+          await createQuote(params).unwrap();
         router.push(`/review-quote?quoteId=${quoteId}`);
       } catch (error: any) {
         if (error?.status === 400 && Array.isArray(error?.data?.message)) {
@@ -97,14 +100,16 @@ const BusinessRevenuePage = (props: Props) => {
         quote.insured &&
         isEqual(businessInformation, initBusinessInfoState)
       ) {
-        const businessInfo = getBusinessInfoFromQuote(quote);
-        dispatch(setBusinessInformation(businessInfo));
+        dispatch(setBusinessInformation(businessInfoFromQuote));
       }
       setLoading(false);
     }
   }, [quote]);
 
-  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
+  const getFieldAttrs = (
+    fieldName: keyof IBusinessRevenue,
+    extraAttrs: any = {}
+  ) => ({
     ...extraAttrs,
     ...businessRevenueConfig.inputs[fieldName],
     value: formik.values[fieldName],

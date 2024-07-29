@@ -24,6 +24,7 @@ import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoF
 import BottomNavBar from '@/components/common/BottomNavBar';
 import FormikInputField from '@/components/common/FormikInputField';
 import Loader from '@/components/common/Loader';
+import { IBusinessDetails } from '@/store/feature/business-info/types';
 
 type Props = {};
 
@@ -47,7 +48,7 @@ const BusinessEntityPage = (props: Props) => {
 
   const [loading, setLoading] = useState(quote ? false : true);
 
-  const formik = useFormik<any>({
+  const formik = useFormik({
     enableReinitialize: true,
     initialValues: businessDetails,
     validationSchema: businessDetailsSchema,
@@ -78,7 +79,10 @@ const BusinessEntityPage = (props: Props) => {
     }
   }, [quote]);
 
-  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
+  const getFieldAttrs = (
+    fieldName: keyof IBusinessDetails,
+    extraAttrs: any = {}
+  ) => ({
     ...extraAttrs,
     ...businessDetailsConfig.inputs[fieldName],
     value: formik.values[fieldName],

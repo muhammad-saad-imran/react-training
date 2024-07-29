@@ -7,8 +7,8 @@ export interface IBusinessInfoState {
   email: string;
   alternativeEmail: string;
   phone: string;
-  revenueRangeFrom: number | undefined;
-  revenueRangeTo: number | undefined;
+  revenueRangeFrom: number;
+  revenueRangeTo: number;
   mailingAddress: IAddress;
   billingAddress: IAddress;
 }
@@ -23,6 +23,6 @@ export interface IBusinessDetails {
 }
 
 export interface IBusinessRevenue {
-  revenueRangeFrom: number | undefined;
-  revenueRangeTo: number | undefined;
+  revenueRangeFrom: number;
+  revenueRangeTo: number;
 }

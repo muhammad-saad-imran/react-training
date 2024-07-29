@@ -19,6 +19,7 @@ import {
   getBusinessInfoFromQuote,
   getPolicyFromQuote,
 } from '@/utils/adaptiveApiUtils';
+import { IAddress } from '@/store/api/types';
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
 import { businessAddressConfig } from '@/config/businessAddressConfig';
 import { businessAddressSchema } from '@/validations/quoteValidations';
@@ -49,7 +50,7 @@ const BusinessBillingPage = (props: Props) => {
 
   const [loading, setLoading] = useState(quote ? false : true);
 
-  const formik = useFormik<any>({
+  const formik = useFormik({
     enableReinitialize: true,
     initialValues: businessAddress,
     validationSchema: businessAddressSchema,
@@ -80,7 +81,7 @@ const BusinessBillingPage = (props: Props) => {
     }
   }, [quote]);
 
-  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
+  const getFieldAttrs = (fieldName: keyof IAddress, extraAttrs: any = {}) => ({
     ...extraAttrs,
     ...businessAddressConfig.inputs[fieldName],
     value: formik.values[fieldName],
