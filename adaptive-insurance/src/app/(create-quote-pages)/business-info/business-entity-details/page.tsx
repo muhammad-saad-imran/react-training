@@ -14,6 +14,7 @@ import {
 } from '@/store/feature/business-info';
 import { useGetQuoteQuery } from '@/store/api/adaptiveApiSlice';
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
+import { IBusinessDetails } from '@/store/feature/business-info/types';
 import {
   getBusinessInfoFromQuote,
   getPolicyFromQuote,
@@ -24,7 +25,6 @@ import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoF
 import BottomNavBar from '@/components/common/BottomNavBar';
 import FormikInputField from '@/components/common/FormikInputField';
 import Loader from '@/components/common/Loader';
-import { IBusinessDetails } from '@/store/feature/business-info/types';
 
 type Props = {};
 
