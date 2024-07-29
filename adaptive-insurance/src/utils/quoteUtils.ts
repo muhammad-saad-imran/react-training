@@ -20,13 +20,10 @@ export function getCoverage(policy: IPolicyCoverageState) {
 }
 
 export function getCoverageDate(selectedUtc?: string) {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
   return moment
-    .utc(
-      !selectedUtc || selectedUtc === ''
-        ? new Date().toISOString()
-        : selectedUtc
-    )
-    .add(1, 'days')
+    .utc(!selectedUtc || selectedUtc === '' ? date.toISOString() : selectedUtc)
     .format('MM/DD/YY');
 }
 

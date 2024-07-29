@@ -9,14 +9,12 @@ import {
 } from '@/store/api/adaptiveApiSlice';
 import { ICreateQuoteParams } from '@/store/api/types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setBusinessInformation } from '@/store/feature/business-info';
 import {
   changeCoveragePolicy,
   selectPolicyCoverage,
 } from '@/store/feature/policy-coverage';
 import {
   getAddressFromQuote,
-  getBusinessInfoFromQuote,
   getPolicyFromQuote,
 } from '@/utils/adaptiveApiUtils';
 import { getCoverage } from '@/utils/quoteUtils';
@@ -57,20 +55,6 @@ const PolicyCoveragePage = (props: Props) => {
     [quoteId, address, policy]
   );
 
-  const updatePolicy = useCallback(async () => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const res = await createQuote(createQuoteParams).unwrap();
-        resolve(res);
-      } catch (error: any) {
-        if (error?.status === 400 && Array.isArray(error?.data?.message)) {
-          error?.data?.message.map((err: string) => toast.error(err));
-        } else toast.error('Something went wrong. Try again.');
-        reject(error);
-      }
-    });
-  }, [createQuoteParams, createQuote]);
-
   const disableSubmit =
     quoteQueryResult.isLoading ||
     createQuoteResult.isLoading ||
@@ -80,10 +64,8 @@ const PolicyCoveragePage = (props: Props) => {
   // Initialize the policy state in redux that UI uses
   useEffect(() => {
     if (quote && quote.data.quoteEstimates && quote.data.selectedEstimateId) {
-      const policy = getPolicyFromQuote(quote);
-      const businessInfo = getBusinessInfoFromQuote(quote);
-      dispatch(changeCoveragePolicy(policy));
-      dispatch(setBusinessInformation(businessInfo));
+      const quotePolicy = getPolicyFromQuote(quote);
+      dispatch(changeCoveragePolicy(quotePolicy));
       setLoading(false);
     } else if (
       quote &&
@@ -103,7 +85,21 @@ const PolicyCoveragePage = (props: Props) => {
     ) {
       updatePolicy();
     }
-  }, [policy.amount, quote, updatePolicy]);
+  }, [policy.amount]);
+
+  async function updatePolicy() {
+    try {
+      const res = await createQuote(createQuoteParams).unwrap();
+      return res;
+    } catch (error: any) {
+      if (error?.status === 400 && Array.isArray(error?.data?.message)) {
+        error?.data?.message.forEach((err: string) => toast.error(err));
+      } else {
+        toast.error('Something went wrong. Try again.');
+      }
+      throw error;
+    }
+  }
 
   async function onSubmit() {
     try {

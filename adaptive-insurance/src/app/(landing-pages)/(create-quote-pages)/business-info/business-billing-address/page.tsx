@@ -19,6 +19,7 @@ import {
   getBusinessInfoFromQuote,
   getPolicyFromQuote,
 } from '@/utils/adaptiveApiUtils';
+import { IAddress } from '@/store/api/types';
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
 import { businessAddressConfig } from '@/config/businessAddressConfig';
 import { businessAddressSchema } from '@/validations/quoteValidations';
@@ -49,7 +50,7 @@ const BusinessBillingPage = (props: Props) => {
 
   const [loading, setLoading] = useState(quote ? false : true);
 
-  const formik = useFormik<any>({
+  const formik = useFormik({
     enableReinitialize: true,
     initialValues: businessAddress,
     validationSchema: businessAddressSchema,
@@ -80,6 +81,16 @@ const BusinessBillingPage = (props: Props) => {
     }
   }, [quote, dispatch, businessInformation, businessAddress]);
 
+  const getFieldAttrs = (fieldName: keyof IAddress, extraAttrs: any = {}) => ({
+    ...extraAttrs,
+    ...businessAddressConfig.inputs[fieldName],
+    value: formik.values[fieldName],
+    error: formik.errors[fieldName],
+    touched: formik.touched[fieldName],
+    handleChange: formik.handleChange,
+    handleBlur: formik.handleBlur,
+  });
+
   // Quotes query error handling
   if (isError || (!isLoading && isEmpty(quote))) {
     if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
@@ -95,16 +106,6 @@ const BusinessBillingPage = (props: Props) => {
       router.push(`/policy-coverage?quoteId=${quoteId}`);
     }
   }
-
-  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
-    ...extraAttrs,
-    ...businessAddressConfig.inputs[fieldName],
-    value: formik.values[fieldName],
-    error: formik.errors[fieldName],
-    touched: formik.touched[fieldName],
-    handleChange: formik.handleChange,
-    handleBlur: formik.handleBlur,
-  });
 
   return (
     <BusinessInfoFormsContainer title="Enter your business billing address">

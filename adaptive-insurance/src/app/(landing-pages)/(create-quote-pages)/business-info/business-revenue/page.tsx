@@ -24,6 +24,7 @@ import {
 } from '@/utils/adaptiveApiUtils';
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
 import { IBusinessInformation, ICreateQuoteParams } from '@/store/api/types';
+import { IBusinessRevenue } from '@/store/feature/business-info/types';
 import { businessRevenueSchema } from '@/validations/quoteValidations';
 import { businessRevenueConfig } from '@/config/businessRevenueConfig';
 import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoFormsContainer';
@@ -52,6 +53,7 @@ const BusinessRevenuePage = (props: Props) => {
 
   const address = getAddressFromQuote(quote);
   const coverage = getCoverageFromQuote(quote);
+  const businessInfoFromQuote = getBusinessInfoFromQuote(quote);
 
   const createQuoteParams: ICreateQuoteParams = {
     quoteId,
@@ -61,7 +63,7 @@ const BusinessRevenuePage = (props: Props) => {
     product: 'Outage',
   };
 
-  const formik = useFormik<any>({
+  const formik = useFormik({
     enableReinitialize: true,
     initialValues: businessRevenue,
     validationSchema: businessRevenueSchema,
@@ -72,7 +74,8 @@ const BusinessRevenuePage = (props: Props) => {
           ...createQuoteParams,
           businessInformation: { ...businessInformation, ...values },
         };
-        await createQuote(params).unwrap();
+        if (!isEqual(businessInfoFromQuote, params))
+          await createQuote(params).unwrap();
         router.push(`/review-quote?quoteId=${quoteId}`);
       } catch (error: any) {
         if (error?.status === 400 && Array.isArray(error?.data?.message)) {
@@ -97,12 +100,24 @@ const BusinessRevenuePage = (props: Props) => {
         quote.insured &&
         isEqual(businessInformation, initBusinessInfoState)
       ) {
-        const businessInfo = getBusinessInfoFromQuote(quote);
-        dispatch(setBusinessInformation(businessInfo));
+        dispatch(setBusinessInformation(businessInfoFromQuote));
       }
       setLoading(false);
     }
-  }, [quote, businessInformation, dispatch]);
+  }, [quote]);
+
+  const getFieldAttrs = (
+    fieldName: keyof IBusinessRevenue,
+    extraAttrs: any = {}
+  ) => ({
+    ...extraAttrs,
+    ...businessRevenueConfig.inputs[fieldName],
+    value: formik.values[fieldName],
+    error: formik.errors[fieldName],
+    touched: formik.touched[fieldName],
+    handleChange: formik.handleChange,
+    handleBlur: formik.handleBlur,
+  });
 
   // Quotes query error handling
   if (
@@ -123,16 +138,6 @@ const BusinessRevenuePage = (props: Props) => {
       router.push(`/policy-coverage?quoteId=${quoteId}`);
     }
   }
-
-  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
-    ...extraAttrs,
-    ...businessRevenueConfig.inputs[fieldName],
-    value: formik.values[fieldName],
-    error: formik.errors[fieldName],
-    touched: formik.touched[fieldName],
-    handleChange: formik.handleChange,
-    handleBlur: formik.handleBlur,
-  });
 
   return (
     <BusinessInfoFormsContainer title="Business Revenue Range">

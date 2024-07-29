@@ -9,8 +9,7 @@ import {
 } from '@/store/api/adaptiveApiSlice';
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
 import { useAppDispatch } from '@/store/hooks';
-import { setBusinessInformation } from '@/store/feature/business-info';
-import { IAddress, ICreateQuoteParams } from '@/store/api/types';
+import { ICreateQuoteParams } from '@/store/api/types';
 import { currencyFormat, getCompleteAddress } from '@/utils/quoteUtils';
 import {
   getAddressFromQuote,
@@ -57,7 +56,30 @@ const ReviewPage = (props: Props) => {
   );
 
   const disableSubmit =
-    quoteQueryResult.isLoading || createQuoteResult.isLoading;
+    quoteQueryResult.isLoading ||
+    createQuoteResult.isLoading ||
+    !quote?.programInfo;
+
+  useEffect(() => {
+    const completeQuoteCheckout = async () => {
+      try {
+        await createQuote(createQuoteParams).unwrap();
+      } catch (error: any) {
+        if (error?.status === 400 && Array.isArray(error?.data?.message)) {
+          error?.data?.message.map((err: string) => toast.error(err));
+        } else toast.error('An error ocurred while checking out');
+      }
+    };
+
+    if (!quoteQueryResult.isFetching && quote) {
+      const completed = quote.data.metadata.completed_sections;
+      dispatch(changeCoveragePolicy(policy));
+      if (!completed.checkout) {
+        completeQuoteCheckout();
+      }
+      setLoading(false);
+    }
+  }, [quote]);
 
   useEffect(() => {
     const completeQuoteCheckout = async () => {
@@ -155,7 +177,9 @@ const ReviewPage = (props: Props) => {
       <BottomNavBar
         buttonLabel="Next: Checkout"
         disabled={disableSubmit}
-        onButtonClick={() => window.open('https://www.google.com/', '_blank')}
+        onButtonClick={() =>
+          window.open(quote?.programInfo[0].data.program_url, '_blank')
+        }
       />
     </div>
   );

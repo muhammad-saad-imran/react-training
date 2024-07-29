@@ -1,4 +1,4 @@
-export const businessRevenueConfig: { initialValues: any; inputs: any } = {
+export const businessRevenueConfig = {
   initialValues: {
     revenueFrom: "",
     revenueTo: "",

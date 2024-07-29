@@ -23,8 +23,8 @@ export const initBusinessInfoState = {
   email: "",
   alternativeEmail: "",
   phone: "",
-  revenueRangeFrom: undefined,
-  revenueRangeTo: undefined,
+  revenueRangeFrom: 0,
+  revenueRangeTo: 0,
   mailingAddress: initAddressState,
   billingAddress: initAddressState,
 } satisfies IBusinessInfoState as IBusinessInfoState;

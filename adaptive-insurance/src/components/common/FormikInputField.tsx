@@ -31,7 +31,7 @@ const FormikInputField = (props: Props, ref: any) => {
           onChange={props.handleChange}
           value={props.value}
         >
-          <option disabled selected value="">
+          <option disabled value="">
             Select
           </option>
           {map(props.options, (item: any, index: number) => (

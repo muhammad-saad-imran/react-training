@@ -1,13 +1,22 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import { map } from 'lodash';
 import toast from 'react-hot-toast';
+import { useAppDispatch } from '@/store/hooks';
 import { useAutocompleteQuery } from '@/store/api/baseApi';
 import { useCreateQuoteMutation } from '@/store/api/adaptiveApiSlice';
 import { IAddress, ICreateQuoteParams } from '@/store/api/types';
-import { initAddressState } from '@/store/feature/business-info';
+import {
+  changeCoveragePolicy,
+  initPolicyState,
+} from '@/store/feature/policy-coverage';
+import {
+  initAddressState,
+  initBusinessInfoState,
+  setBusinessInformation,
+} from '@/store/feature/business-info';
 import { getQuoteConfig } from '@/config/getQuoteConfig';
 import { getQuoteSchema } from '@/validations/quoteValidations';
 import {
@@ -27,6 +36,7 @@ import Loader from '@/components/common/Loader';
 
 export default function Home() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const [createQuote, createQuoteResult] = useCreateQuoteMutation();
 
@@ -48,6 +58,8 @@ export default function Home() {
       try {
         setApiLoading(true);
         const res = await createQuote(createQuoteParams).unwrap();
+        dispatch(changeCoveragePolicy(initPolicyState));
+        dispatch(setBusinessInformation(initBusinessInfoState));
         router.push(`policy-coverage?quoteId=${res.id}`);
       } catch (error: any) {
         setApiLoading(false);
@@ -60,24 +72,28 @@ export default function Home() {
     },
   });
 
-  const { data, isLoading, isError, error } = useAutocompleteQuery(
+  const { data, isFetching, isError, error } = useAutocompleteQuery(
     formik.values.address
   );
 
-  const options = map(
-    data?.suggestions,
-    (item: any) =>
-      `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
+  const options = useMemo(
+    () =>
+      map(
+        data?.suggestions,
+        (item: any) =>
+          `${item.street_line}, ${item.city}, ${item.state}, ${item.zipcode}`
+      ),
+    [data]
   );
 
   const disableSubmit =
     apiLoading ||
-    isLoading ||
+    isFetching ||
     formik.isSubmitting ||
     address === initAddressState;
 
   useEffect(() => {
-    !isLoading && setAutocompleteOptions(options);
+    !isFetching && setAutocompleteOptions(options);
 
     if (data?.suggestions.length === 1) {
       let addr = data?.suggestions[0];
@@ -91,11 +107,11 @@ export default function Home() {
     } else {
       setAddress(initAddressState);
     }
-  }, [data, isLoading, options]);
+  }, [data, options, isFetching]);
 
   // SmartyStreets api error handling
   if (formik.values.address !== '' && isError) {
-    if ('data' in error && error.status === 404) return notFound();
+    if ('status' in error && error.status === 404) return notFound();
     else throw error;
   }
 

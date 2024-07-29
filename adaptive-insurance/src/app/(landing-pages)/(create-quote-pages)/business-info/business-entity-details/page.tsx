@@ -14,6 +14,7 @@ import {
 } from '@/store/feature/business-info';
 import { useGetQuoteQuery } from '@/store/api/adaptiveApiSlice';
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
+import { IBusinessDetails } from '@/store/feature/business-info/types';
 import {
   getBusinessInfoFromQuote,
   getPolicyFromQuote,
@@ -47,7 +48,7 @@ const BusinessEntityPage = (props: Props) => {
 
   const [loading, setLoading] = useState(quote ? false : true);
 
-  const formik = useFormik<any>({
+  const formik = useFormik({
     enableReinitialize: true,
     initialValues: businessDetails,
     validationSchema: businessDetailsSchema,
@@ -78,6 +79,19 @@ const BusinessEntityPage = (props: Props) => {
     }
   }, [quote, businessInformation, dispatch]);
 
+  const getFieldAttrs = (
+    fieldName: keyof IBusinessDetails,
+    extraAttrs: any = {}
+  ) => ({
+    ...extraAttrs,
+    ...businessDetailsConfig.inputs[fieldName],
+    value: formik.values[fieldName],
+    error: formik.errors[fieldName],
+    touched: formik.touched[fieldName],
+    handleChange: formik.handleChange,
+    handleBlur: formik.handleBlur,
+  });
+
   // Quotes query error handling
   if (isError || (!isLoading && isEmpty(quote))) {
     if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
@@ -93,16 +107,6 @@ const BusinessEntityPage = (props: Props) => {
       router.push(`/policy-coverage?quoteId=${quoteId}`);
     }
   }
-
-  const getFieldAttrs = (fieldName: string, extraAttrs: any = {}) => ({
-    ...extraAttrs,
-    ...businessDetailsConfig.inputs[fieldName],
-    value: formik.values[fieldName],
-    error: formik.errors[fieldName],
-    touched: formik.touched[fieldName],
-    handleChange: formik.handleChange,
-    handleBlur: formik.handleBlur,
-  });
 
   return (
     <BusinessInfoFormsContainer title="Enter your business details">
