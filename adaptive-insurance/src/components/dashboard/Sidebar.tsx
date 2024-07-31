@@ -1,9 +1,12 @@
 'use client';
-import { SidebarOpts, SidebarOverlay, SidebarWrapper } from '@/components/dashboard/style';
-import { HorizontalLine } from '@/components/policy-coverage/style';
+import React from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
+import {
+  SidebarOpts,
+  SidebarWrapper,
+} from '@/components/dashboard/style';
+import { HorizontalLine } from '@/components/policy-coverage/style';
 
 type Props = {
   isOpen: boolean;
@@ -18,7 +21,7 @@ const Sidebar = (props: Props) => {
       <HorizontalLine />
       <div className="flex w-full flex-col gap-2">
         <SidebarOpts
-          $selected={pathname === '/dashboard/quotes'}
+          $selected={pathname.includes('/dashboard/quotes')}
           onClick={() => router.push('/dashboard/quotes')}
         >
           Quotes
