@@ -1,5 +1,5 @@
-import { LoaderWrapper } from "@/components/common/style";
 import React from "react";
+import { LoaderWrapper } from "@/components/common/style";
 import { MoonLoader } from "react-spinners";
 
 type Props = {};

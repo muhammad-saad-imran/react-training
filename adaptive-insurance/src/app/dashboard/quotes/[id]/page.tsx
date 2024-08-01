@@ -1,10 +1,21 @@
 'use client';
-import Button from '@/elements/buttons/Button';
+import React from 'react';
+import { notFound, useParams, useRouter } from 'next/navigation';
+import { find, isEmpty } from 'lodash';
 import { useGetQuoteQuery } from '@/store/api/adaptiveApiSlice';
 import { currencyFormat } from '@/utils/quoteUtils';
-import { find, isEmpty } from 'lodash';
-import { notFound, useParams, useRouter } from 'next/navigation';
-import React from 'react';
+import { getAddressFromQuote } from '@/utils/adaptiveApiUtils';
+import {
+  Title,
+  DetailsContainer,
+  QuoteDetailsContainer,
+  PageWrapper,
+  PaymentContainer,
+} from '@/components/quotes/style';
+import Link from 'next/link';
+import Button from '@/elements/buttons/Button';
+import Loader from '@/components/common/Loader';
+import ArrowIcon from '@/elements/icons/ArrowIcon';
 
 type Props = {};
 
@@ -20,15 +31,20 @@ const QuoteDetailsPage = (props: Props) => {
     isLoading,
   } = useGetQuoteQuery(id);
 
+  const address = getAddressFromQuote(quote);
   const selectedEstimate = find(quote?.data?.quoteEstimates, {
     productId: quote?.data?.selectedEstimateId,
   });
 
+  const fullAddress = `${address.street}, ${address.street2}${address.street2 !== '' ? '' : ','} ${address.city}, ${address.state}, ${address.zipCode}`;
+  const documentUrl = quote?.documents?.quote[0]?.documentUrl || '#';
+  const programUrl = quote?.programInfo[0]?.data?.program_url || '#';
+
   // Quotes query error handling
   if (isError || (!isLoading && isEmpty(quote))) {
     if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
-      console.log('Not found.');
-    else console.log('Something went wrong.');
+      return notFound();
+    else throw error;
   }
 
   if (!isFetching && quote) {
@@ -45,28 +61,91 @@ const QuoteDetailsPage = (props: Props) => {
   }
 
   return (
-    <div className="p-3 pt-8">
-      <p className="mb-10 text-center text-5xl">Quote Details</p>
-      {/* <p>Coverage: {selectedEstimate?.coverageAmount}</p>
-      <p>Duration: {selectedEstimate?.duration}</p>
-      <p>Amount: {selectedEstimate?.premiumAmount}</p> */}
-      <div className="flex items-center justify-center">
-        <div className="flex w-[40rem] flex-col rounded-xl bg-white p-8 shadow-md">
-          <p className="mb-6 text-xl">Pay in-Full</p>
-          <div className="flex justify-between text-slate-500">
-            <p>Gross Premium</p>
-            <p>{currencyFormat(selectedEstimate?.premiumAmount as number)}</p>
+    <PageWrapper>
+      {isLoading && <Loader />}
+      <Title>Quote Details</Title>
+
+      <QuoteDetailsContainer className="text-sm md:hidden md:text-base">
+        <PaymentContainer>
+          <p className="text-lg md:text-xl">Pay in-Full</p>
+          <div>
+            <div className="flex justify-between text-slate-500">
+              <p>Gross Premium</p>
+              <p>{currencyFormat(selectedEstimate?.premiumAmount as number)}</p>
+            </div>
+            <div className="flex justify-between">
+              <p className="text-slate-500">Total</p>
+              <p className="text-base md:text-lg">
+                {currencyFormat(selectedEstimate?.premiumAmount as number)}
+              </p>
+            </div>
           </div>
-          <div className="mb-5 flex justify-between">
-            <p className="text-slate-500">Total</p>
-            <p className="text-lg">
-              {currencyFormat(selectedEstimate?.premiumAmount as number)}
-            </p>
+          <Button onClick={() => window.open(programUrl, '_blank')}>Pay</Button>
+        </PaymentContainer>
+      </QuoteDetailsContainer>
+
+      <QuoteDetailsContainer>
+        <div className="flex w-full gap-10">
+          <DetailsContainer>
+            <div>
+              <p className="text-slate-500">Quote Id </p>
+              <p className="text-base md:text-lg">{quote?.id}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Quote Number</p>
+              <p className="text-base md:text-lg">{quote?.quoteNumber}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Business Address</p>
+              <p className="text-base md:text-lg">{fullAddress}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Coverage Amount </p>
+              <p className="text-base md:text-lg">
+                {currencyFormat(selectedEstimate?.coverageAmount || 0)}
+              </p>
+            </div>
+            <div>
+              <p className="text-slate-500">Duration </p>
+              <p className="text-base md:text-lg">
+                {selectedEstimate?.duration} hours
+              </p>
+            </div>
+            <Link
+              className="text-base underline md:text-lg"
+              href={documentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Invoice
+            </Link>
+          </DetailsContainer>
+
+          <div className="hidden md:block">
+            <PaymentContainer>
+              <p className="md:text-xl">Pay in-Full</p>
+              <div>
+                <div className="flex justify-between text-slate-500">
+                  <p>Gross Premium</p>
+                  <p>
+                    {currencyFormat(selectedEstimate?.premiumAmount as number)}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-slate-500">Total</p>
+                  <p className="md:text-lg">
+                    {currencyFormat(selectedEstimate?.premiumAmount as number)}
+                  </p>
+                </div>
+              </div>
+              <Button onClick={() => window.open(programUrl, '_blank')}>
+                Pay
+              </Button>
+            </PaymentContainer>
           </div>
-          <Button>Pay</Button>
         </div>
-      </div>
-    </div>
+      </QuoteDetailsContainer>
+    </PageWrapper>
   );
 };
 

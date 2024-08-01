@@ -38,3 +38,26 @@ export const StatusWrapper = styled.div<{ $color: string }>`
   width: fit-content;
   padding: 0 4px;
 `;
+
+export const PageWrapper = styled.div.attrs({
+  className:
+    'flex h-full flex-col items-center gap-10 overflow-auto p-10 md:pt-16',
+})``;
+
+export const QuoteDetailsContainer = styled.div.attrs({
+  className:
+    'flex w-full max-w-6xl h-fit flex-col gap-8 rounded-xl bg-white p-8 shadow-md',
+})``;
+
+export const DetailsContainer = styled.div.attrs({
+  className:
+    'flex w-full flex-col gap-9 md:border-r border-slate-300 pr-8 text-sm md:text-base',
+})``;
+
+export const PaymentContainer = styled.div.attrs({
+  className: 'flex w-full flex-col gap-6',
+})``;
+
+export const Title = styled.div.attrs({
+  className: 'text-center text-4xl text-black',
+})``;

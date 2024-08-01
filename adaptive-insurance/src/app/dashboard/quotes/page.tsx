@@ -18,6 +18,17 @@ type Props = {};
 
 const statusArray = ['Active', 'Payment due', 'Incomplete', 'Need Action'];
 
+let tableData = [];
+
+for (let i = 0; i < 50; i++)
+  tableData.push({
+    key: i,
+    customer: faker.company.name(),
+    status: faker.helpers.arrayElement(statusArray),
+    premium: faker.finance.amount({ min: 5000, max: 50000 }),
+    date: faker.date.future(),
+  });
+
 function getColor(status: string) {
   if (status === 'Active') return 'green';
   else if (status === 'Incomplete') return '#A9A9A9';
@@ -28,17 +39,6 @@ function getColor(status: string) {
 const QuotesPage = (props: Props) => {
   const router = useRouter();
   const quoteId = 'ec2bee2c-a6c9-4886-9b65-8f235d036de5';
-
-  let tableData = [];
-
-  for (let i = 0; i < 50; i++)
-    tableData.push({
-      key: i,
-      customer: faker.person.fullName(),
-      status: faker.helpers.arrayElement(statusArray),
-      premium: faker.finance.amount({ min: 5000, max: 50000 }),
-      date: faker.date.future(),
-    });
 
   let pieChartData = [
     {
