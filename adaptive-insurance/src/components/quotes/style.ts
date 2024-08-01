@@ -55,7 +55,7 @@ export const DetailsContainer = styled.div.attrs({
 })``;
 
 export const PaymentContainer = styled.div.attrs({
-  className: 'flex w-full flex-col gap-6',
+  className: 'flex w-full flex-col gap-6 md:min-w-56 lg:min-w-80',
 })``;
 
 export const Title = styled.div.attrs({

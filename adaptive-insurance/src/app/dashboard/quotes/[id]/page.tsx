@@ -15,7 +15,6 @@ import {
 import Link from 'next/link';
 import Button from '@/elements/buttons/Button';
 import Loader from '@/components/common/Loader';
-import ArrowIcon from '@/elements/icons/ArrowIcon';
 
 type Props = {};
 
@@ -36,7 +35,7 @@ const QuoteDetailsPage = (props: Props) => {
     productId: quote?.data?.selectedEstimateId,
   });
 
-  const fullAddress = `${address.street}, ${address.street2}${address.street2 !== '' ? '' : ','} ${address.city}, ${address.state}, ${address.zipCode}`;
+  const fullAddress = `${address.street}, ${address.street2}${address.street2 === '' ? '' : ','} ${address.city}, ${address.state}, ${address.zipCode}`;
   const documentUrl = quote?.documents?.quote[0]?.documentUrl || '#';
   const programUrl = quote?.programInfo[0]?.data?.program_url || '#';
 
@@ -94,6 +93,12 @@ const QuoteDetailsPage = (props: Props) => {
             <div>
               <p className="text-slate-500">Quote Number</p>
               <p className="text-base md:text-lg">{quote?.quoteNumber}</p>
+            </div>
+            <div>
+              <p className="text-slate-500">Business Name</p>
+              <p className="text-base md:text-lg">
+                {quote?.insured?.businessName}
+              </p>
             </div>
             <div>
               <p className="text-slate-500">Business Address</p>
