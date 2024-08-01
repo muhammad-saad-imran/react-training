@@ -51,7 +51,7 @@ export const QuoteDetailsContainer = styled.div.attrs({
 
 export const DetailsContainer = styled.div.attrs({
   className:
-    'flex w-full flex-col gap-9 md:border-r border-slate-300 pr-8 text-sm md:text-base',
+    'flex w-full flex-col gap-9 text-sm md:text-base',
 })``;
 
 export const PaymentContainer = styled.div.attrs({
