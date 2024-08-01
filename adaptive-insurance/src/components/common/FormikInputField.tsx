@@ -2,7 +2,7 @@ import React from "react";
 import map from "lodash/map";
 import Input from "@/elements/inputs/Input";
 import SelectInput from "@/elements/inputs/SelectInput";
-import { ErrorMessageText, InputFieldContainer } from "./style";
+import { ErrorMessageText, InputFieldContainer } from "@/components/common/style";
 
 type Props = {
   label?: string;
@@ -31,7 +31,7 @@ const FormikInputField = (props: Props, ref: any) => {
           onChange={props.handleChange}
           value={props.value}
         >
-          <option disabled selected value="">
+          <option disabled value="">
             Select
           </option>
           {map(props.options, (item: any, index: number) => (

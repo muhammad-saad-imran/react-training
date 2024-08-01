@@ -1,37 +1,39 @@
 import React from "react";
 import map from "lodash/map";
-import { HoursCard, Title } from "./style";
+import { IAddress, IQuoteEstimate } from "@/store/api/types";
+import { HoursCard, Title } from "@/components/policy-coverage/style";
 
 type Props = {
-  coverageHourOpts: Array<{ hours: number; text: string }>;
-  selectedHours: number;
-  onPolicyHoursChange: (value: number) => void;
+  address: IAddress;
+  coverageQuotes: IQuoteEstimate[];
+  selectedQuoteId: string;
+  onPolicyQuoteChange: (value: string) => void;
 };
 
 const HourCoverage = (props: Props) => {
   return (
     <>
       <Title>Based on your area, </Title>
-      <Title>12-hour coverage is right for you</Title>
+      <Title>16-hour coverage is right for you</Title>
       <p className="my-8 text-center md:text-left">
-        Brooklyn, NY is at a{" "}
+        {props.address.city}, {props.address.state} is at a{" "}
         <span className="text-deep-blue inline">Medium</span> risk for
         experiencing power loss in the next 12 months. How long can your
         business go without power before requiring assistance?
       </p>
 
       <div className="flex flex-wrap gap-8 mb-12">
-        {map(props.coverageHourOpts, (coverage, index) => (
+        {map(props.coverageQuotes, (coverage: IQuoteEstimate) => (
           <HoursCard
-            key={index}
-            selectedHours={props.selectedHours}
-            hours={coverage.hours}
-            onClick={() => props.onPolicyHoursChange(coverage.hours)}
+            key={coverage.productId}
+            $selectedId={props.selectedQuoteId}
+            $id={coverage.productId}
+            onClick={() => props.onPolicyQuoteChange(coverage.productId)}
           >
             <p className="font-bold text-xl lg:text-4xl mt-auto mb-auto">
-              {coverage.hours} hours
+              {coverage.duration} hours
             </p>
-            <p className="text-center text-sm mb-auto">{coverage.text}</p>
+            {/* <p className="text-center text-sm mb-auto">{coverage.text}</p> */}
           </HoursCard>
         ))}
       </div>

@@ -3,7 +3,7 @@ import LeftArrowIcon from "@/elements/icons/LeftArrowIcon";
 import PhoneIcon from "@/elements/icons/PhoneIcon";
 import Image from "next/image";
 import React from "react";
-import { InfoContainer, NavbarIconContainer, NavbarWrapper } from "./style";
+import { InfoContainer, NavbarIconContainer, NavbarWrapper } from "@/components/common/style";
 
 type Props = {};
 

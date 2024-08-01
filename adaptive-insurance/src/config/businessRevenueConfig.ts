@@ -1,18 +1,18 @@
-export const businessRevenueConfig: { initialValues: any; inputs: any } = {
+export const businessRevenueConfig = {
   initialValues: {
     revenueFrom: "",
     revenueTo: "",
   },
   inputs: {
-    revenueFrom: {
+    revenueRangeFrom: {
       type: "number",
       label: "Revernue From",
-      name: "revenueFrom",
+      name: "revenueRangeFrom",
     },
-    revenueTo: {
+    revenueRangeTo: {
       type: "number",
       label: "Revenue To",
-      name: "revenueTo",
+      name: "revenueRangeTo",
     },
   },
 };

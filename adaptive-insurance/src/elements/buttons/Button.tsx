@@ -6,7 +6,7 @@ const Button = styled.button<{ width?: string }>`
   font-weight: 700;
   line-height: 16px;
   text-align: center;
-  padding: 20px 30px 20px 30px;
+  padding: 12px;
   border-radius: 6px;
   width: ${(props) => props.width};
 `;
