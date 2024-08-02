@@ -1,23 +1,20 @@
 'use client';
 import React, { useEffect, useMemo } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
-import { find, isEmpty } from 'lodash';
+import { find, isArray, isEmpty } from 'lodash';
 import { useGetQuoteQuery } from '@/store/api/adaptiveApiSlice';
-import { currencyFormat } from '@/utils/quoteUtils';
 import { getAddressFromQuote } from '@/utils/adaptiveApiUtils';
 import {
   Title,
-  DetailsContainer,
   QuoteDetailsContainer,
   PageWrapper,
   PaymentContainer,
 } from '@/components/quotes/style';
-import Link from 'next/link';
-import Button from '@/elements/buttons/Button';
 import Loader from '@/components/common/Loader';
 import PaymentDetails from '@/components/quotes/PaymentDetails';
 import QuoteDetails from '@/components/quotes/QuoteDetails';
 import BillableDetails from '@/components/quotes/BillableDetails';
+import AgentDetails from '@/components/quotes/AgentDetails';
 
 type Props = {};
 
@@ -41,18 +38,17 @@ const QuoteDetailsPage = (props: Props) => {
       }),
     [quote]
   );
+  const billableData = useMemo(
+    () =>
+      isArray(quote?.programInfo[0]?.billableData)
+        ? quote?.programInfo[0]?.billableData[0]
+        : (quote?.programInfo[0]?.billableData as any)?.data[0],
+    [quote]
+  );
   const fullAddress = useMemo(
     () =>
-      `${address.street}, ${address.street2}${address.street2 === '' ? '' : ','} ${address.city}, ${address.state}, ${address.zipCode}`,
+      `${address.street}, ${address.street2}${address.street2 === '' ? '' : ','} ${address.city} ${address.state} ${address.zipCode}`,
     [address]
-  );
-  const documentUrl = useMemo(
-    () => quote?.documents?.quote[0]?.documentUrl || '#',
-    [quote]
-  );
-  const programUrl = useMemo(
-    () => quote?.programInfo[0]?.data?.program_url || '#',
-    [quote]
   );
 
   useEffect(() => {
@@ -86,7 +82,7 @@ const QuoteDetailsPage = (props: Props) => {
 
       <QuoteDetailsContainer className="text-sm md:hidden md:text-base">
         <PaymentDetails
-          programUrl={programUrl}
+          programUrl={quote?.programInfo[0]?.data?.program_url || '#'}
           selectedEstimate={selectedEstimate}
         />
       </QuoteDetailsContainer>
@@ -96,14 +92,15 @@ const QuoteDetailsPage = (props: Props) => {
           <QuoteDetails
             quote={quote}
             selectedEstimate={selectedEstimate}
-            documentUrl={documentUrl}
+            programInfo={quote?.programInfo[0]}
+            documentUrl={quote?.documents?.quote[0]?.documentUrl || '#'}
             fullAddress={fullAddress}
           />
 
           <div className="hidden md:block">
             <PaymentContainer>
               <PaymentDetails
-                programUrl={programUrl}
+                programUrl={quote?.programInfo[0]?.data?.program_url || '#'}
                 selectedEstimate={selectedEstimate}
               />
             </PaymentContainer>
@@ -111,9 +108,14 @@ const QuoteDetailsPage = (props: Props) => {
         </div>
       </QuoteDetailsContainer>
 
-      <QuoteDetailsContainer>
-        <BillableDetails />
-      </QuoteDetailsContainer>
+      <div className="flex w-full max-w-6xl flex-col gap-5 md:flex-row">
+        <QuoteDetailsContainer>
+          <BillableDetails billableData={billableData} />
+        </QuoteDetailsContainer>
+        <QuoteDetailsContainer>
+          <AgentDetails agent={quote?.agent} />
+        </QuoteDetailsContainer>
+      </div>
     </PageWrapper>
   );
 };

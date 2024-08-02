@@ -1,31 +1,44 @@
-import { DetailsContainer } from '@/components/quotes/style';
 import React from 'react';
+import { IBillableData } from '@/store/api/types';
+import { DetailsContainer } from '@/components/quotes/style';
 
-type Props = {};
+type Props = {
+  billableData: IBillableData | undefined;
+};
 
-const BillableDetails = (props: Props) => {
+const BillableDetails = ({ billableData }: Props) => {
   return (
     <DetailsContainer>
       <div>
-        <p className="text-slate-500">Quote Id </p>
-        <p className="text-base md:text-lg">{'quote?.id'}</p>
+        <p className="text-slate-500">Program Id </p>
+        <p className="text-base md:text-lg">{billableData?.program_id}</p>
       </div>
       <div>
-        <p className="text-slate-500">Quote Number</p>
-        <p className="text-base md:text-lg">{'quote?.quoteNumber'}</p>
-      </div>
-      <div>
-        <p className="text-slate-500">Business Name</p>
-        <p className="text-base md:text-lg">{'quote?.insured?.businessName'}</p>
-      </div>
-      <div>
-        <p className="text-slate-500">Business Address</p>
-        <p className="text-base md:text-lg">{'fullAddress'}</p>
-      </div>
-      <div>
-        <p className="text-slate-500">Coverage Amount </p>
+        <p className="text-slate-500">Coverage Type </p>
         <p className="text-base md:text-lg">
-          {'currencyFormat(selectedEstimate?.coverageAmount || 0)'}
+          {billableData?.coverage_type?.title}
+        </p>
+      </div>
+      <div>
+        <p className="text-slate-500">Carrier Title </p>
+        <p className="text-base md:text-lg">{billableData?.carrier?.title}</p>
+      </div>
+      <div>
+        <p className="text-slate-500">Carrier Address</p>
+        <p className="text-base md:text-lg">
+          {billableData?.carrier?.formatted_address}
+        </p>
+      </div>
+      <div>
+        <p className="text-slate-500">Wholesaler Title</p>
+        <p className="text-base md:text-lg">
+          {billableData?.wholesaler?.title}
+        </p>
+      </div>
+      <div>
+        <p className="text-slate-500">Wholesaler Address</p>
+        <p className="text-base md:text-lg">
+          {billableData?.wholesaler?.formatted_address}
         </p>
       </div>
     </DetailsContainer>

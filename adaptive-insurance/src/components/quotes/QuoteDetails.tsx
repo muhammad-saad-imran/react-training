@@ -1,11 +1,12 @@
-import { DetailsContainer } from '@/components/quotes/style';
-import { IQuote, IQuoteEstimate } from '@/store/api/types';
-import { currencyFormat } from '@/utils/quoteUtils';
-import Link from 'next/link';
 import React from 'react';
+import Link from 'next/link';
+import { IProgramInfo, IQuote, IQuoteEstimate } from '@/store/api/types';
+import { currencyFormat } from '@/utils/quoteUtils';
+import { DetailsContainer } from '@/components/quotes/style';
 
 type Props = {
   quote: IQuote | undefined;
+  programInfo: IProgramInfo | undefined;
   selectedEstimate: IQuoteEstimate | undefined;
   documentUrl: string;
   fullAddress: string;
@@ -16,6 +17,7 @@ const QuoteDetails = ({
   selectedEstimate,
   documentUrl,
   fullAddress,
+  programInfo,
 }: Props) => {
   return (
     <DetailsContainer className="border-slate-300 pr-8 md:border-r">
@@ -26,6 +28,10 @@ const QuoteDetails = ({
       <div>
         <p className="text-slate-500">Quote Number</p>
         <p className="text-base md:text-lg">{quote?.quoteNumber}</p>
+      </div>
+      <div>
+        <p className="text-slate-500">Status</p>
+        <p className="text-base md:text-lg">{programInfo?.data?.status}</p>
       </div>
       <div>
         <p className="text-slate-500">Business Name</p>

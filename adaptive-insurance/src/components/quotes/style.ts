@@ -46,7 +46,7 @@ export const PageWrapper = styled.div.attrs({
 
 export const QuoteDetailsContainer = styled.div.attrs({
   className:
-    'flex w-full max-w-6xl h-fit flex-col gap-8 rounded-xl bg-white p-8 shadow-md',
+    'flex w-full max-w-6xl flex-col gap-8 rounded-xl bg-white p-8 shadow-md',
 })``;
 
 export const DetailsContainer = styled.div.attrs({
