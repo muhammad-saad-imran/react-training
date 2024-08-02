@@ -1,7 +1,8 @@
 'use client';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { find, isArray, isEmpty } from 'lodash';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import { useGetQuoteQuery } from '@/store/api/adaptiveApiSlice';
 import { getAddressFromQuote } from '@/utils/adaptiveApiUtils';
 import {
@@ -10,7 +11,6 @@ import {
   PageWrapper,
   PaymentContainer,
 } from '@/components/quotes/style';
-import Loader from '@/components/common/Loader';
 import PaymentDetails from '@/components/quotes/PaymentDetails';
 import QuoteDetails from '@/components/quotes/QuoteDetails';
 import BillableDetails from '@/components/quotes/BillableDetails';
@@ -21,6 +21,7 @@ type Props = {};
 const QuoteDetailsPage = (props: Props) => {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const loadingRef = useRef<LoadingBarRef>(null);
 
   const {
     data: quote,
@@ -52,6 +53,9 @@ const QuoteDetailsPage = (props: Props) => {
   );
 
   useEffect(() => {
+    if (!quote) loadingRef.current?.continuousStart();
+    if (quote) loadingRef.current?.complete();
+
     if (isError || (!isLoading && isEmpty(quote))) {
       if (
         isEmpty(quote) ||
@@ -77,7 +81,7 @@ const QuoteDetailsPage = (props: Props) => {
 
   return (
     <PageWrapper>
-      {isLoading && <Loader />}
+      <LoadingBar ref={loadingRef} />
       <Title>Quote Details</Title>
 
       <QuoteDetailsContainer className="text-sm md:hidden md:text-base">
@@ -110,10 +114,10 @@ const QuoteDetailsPage = (props: Props) => {
 
       <div className="flex w-full max-w-6xl flex-col gap-5 md:flex-row">
         <QuoteDetailsContainer>
-          <BillableDetails billableData={billableData} />
+          <AgentDetails agent={quote?.agent} />
         </QuoteDetailsContainer>
         <QuoteDetailsContainer>
-          <AgentDetails agent={quote?.agent} />
+          <BillableDetails billableData={billableData} />
         </QuoteDetailsContainer>
       </div>
     </PageWrapper>

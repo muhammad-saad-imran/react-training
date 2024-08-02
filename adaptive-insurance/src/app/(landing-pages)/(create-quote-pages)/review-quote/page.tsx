@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { isEmpty } from 'lodash';
 import toast from 'react-hot-toast';
@@ -10,7 +10,10 @@ import {
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
 import { useAppDispatch } from '@/store/hooks';
 import { ICreateQuoteParams } from '@/store/api/types';
-import { setBusinessInformation } from '@/store/feature/business-info';
+import {
+  initAddressState,
+  setBusinessInformation,
+} from '@/store/feature/business-info';
 import { currencyFormat, getCompleteAddress } from '@/utils/quoteUtils';
 import {
   getAddressFromQuote,
@@ -22,12 +25,14 @@ import { Title } from '@/components/business-info/style';
 import BottomNavBar from '@/components/common/BottomNavBar';
 import Loader from '@/components/common/Loader';
 import DisabledInputField from '@/components/common/DisabledInputField';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 
 type Props = {};
 
 const ReviewPage = (props: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const loadingRef = useRef<LoadingBarRef>(null);
 
   const dispatch = useAppDispatch();
 
@@ -38,8 +43,6 @@ const ReviewPage = (props: Props) => {
 
   const { data: quote, ...quoteQueryResult } = useGetQuoteQuery(quoteId);
   const [createQuote, createQuoteResult] = useCreateQuoteMutation();
-
-  const [loading, setLoading] = useState(quote ? false : true);
 
   const address = useMemo(() => getAddressFromQuote(quote), [quote]);
   const policy = useMemo(() => getPolicyFromQuote(quote), [quote]);
@@ -52,45 +55,36 @@ const ReviewPage = (props: Props) => {
   const createQuoteParams: ICreateQuoteParams = useMemo(
     () => ({
       quoteId,
-      address,
-      coverage,
-      businessInformation,
       checkout: {},
       step: 'checkout',
       product: 'Outage',
     }),
-    [quoteId, address, coverage, businessInformation]
+    [quoteId]
   );
 
   useEffect(() => {
     const completeQuoteCheckout = async () => {
       try {
+        loadingRef.current?.continuousStart();
         await createQuote(createQuoteParams).unwrap();
       } catch (error: any) {
         if (error?.status === 400 && Array.isArray(error?.data?.message)) {
           error?.data?.message.map((err: string) => toast.error(err));
         } else toast.error('An error ocurred while checking out');
+      } finally {
+        loadingRef.current?.complete();
       }
     };
 
+    completeQuoteCheckout();
+  }, [dispatch, createQuote, createQuoteParams]);
+
+  useEffect(() => {
     if (!quoteQueryResult.isFetching && quote) {
-      const completed = quote.data.metadata.completed_sections;
       dispatch(changeCoveragePolicy(policy));
       dispatch(setBusinessInformation(businessInformation));
-      if (!completed.checkout) {
-        completeQuoteCheckout();
-      }
-      setLoading(false);
     }
-  }, [
-    quote,
-    policy,
-    businessInformation,
-    createQuoteParams,
-    quoteQueryResult.isFetching,
-    dispatch,
-    createQuote,
-  ]);
+  }, [quote, policy, businessInformation, quoteQueryResult.isFetching]);
 
   useEffect(() => {
     // Quotes query error handling
@@ -128,8 +122,7 @@ const ReviewPage = (props: Props) => {
 
   return (
     <div className="flex flex-col gap-5">
-      {loading && <Loader />}
-
+      <LoadingBar ref={loadingRef} />
       <Title>Review Information</Title>
       <DisabledInputField
         label="Business Name"

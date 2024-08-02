@@ -1,8 +1,9 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty } from 'lodash';
 import toast from 'react-hot-toast';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import {
   useCreateQuoteMutation,
   useGetQuoteQuery,
@@ -11,7 +12,6 @@ import { ICreateQuoteParams } from '@/store/api/types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   changeCoveragePolicy,
-  initPolicyState,
   selectPolicyCoverage,
 } from '@/store/feature/policy-coverage';
 import {
@@ -22,7 +22,6 @@ import { getCoverage } from '@/utils/quoteUtils';
 import BottomNavBar from '@/components/common/BottomNavBar';
 import InstructionModal from '@/components/policy-coverage/InstructionModal';
 import PolicyCoverageUI from '@/components/policy-coverage/PolicyCoverageUI';
-import Loader from '@/components/common/Loader';
 
 type Props = {};
 
@@ -30,6 +29,7 @@ const PolicyCoveragePage = (props: Props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const loadingRef = useRef<LoadingBarRef>(null);
 
   const [isModelHidden, setIsModelHidden] = useState(true);
   const [dateInputError, setDateInputError] = useState('');
@@ -42,8 +42,6 @@ const PolicyCoveragePage = (props: Props) => {
   const { data: quote, ...quoteQueryResult } = useGetQuoteQuery(quoteId);
   const [createQuote, createQuoteResult] = useCreateQuoteMutation();
 
-  const [loading, setLoading] = useState(quote ? false : true);
-
   const address = useMemo(() => getAddressFromQuote(quote), [quote]);
 
   const policy = useAppSelector(selectPolicyCoverage);
@@ -51,12 +49,11 @@ const PolicyCoveragePage = (props: Props) => {
   let createQuoteParams: ICreateQuoteParams = useMemo(
     () => ({
       quoteId,
-      address,
       coverage: getCoverage(policy),
       step: 'coverage',
       product: 'Outage',
     }),
-    [quoteId, address, policy]
+    [quoteId, policy]
   );
 
   // Initialize the policy state in redux that UI uses
@@ -64,7 +61,6 @@ const PolicyCoveragePage = (props: Props) => {
     if (quote && quote.data.quoteEstimates && quote.data.selectedEstimateId) {
       const quotePolicy = getPolicyFromQuote(quote);
       dispatch(changeCoveragePolicy(quotePolicy));
-      setLoading(false);
     } else if (
       quote &&
       (!quote.data.quoteEstimates || !quote.data.selectedEstimateId)
@@ -121,9 +117,12 @@ const PolicyCoveragePage = (props: Props) => {
 
   async function updatePolicy() {
     try {
+      loadingRef.current?.continuousStart();
       const res = await createQuote(createQuoteParams).unwrap();
+      loadingRef.current?.complete();
       return res;
     } catch (error: any) {
+      loadingRef.current?.complete();
       if (error?.status === 400 && Array.isArray(error?.data?.message)) {
         error?.data?.message.forEach((err: string) => toast.error(err));
       } else {
@@ -131,7 +130,7 @@ const PolicyCoveragePage = (props: Props) => {
       }
       throw error;
     }
-  };
+  }
 
   async function onSubmit() {
     try {
@@ -155,7 +154,7 @@ const PolicyCoveragePage = (props: Props) => {
 
   return (
     <>
-      {loading && <Loader />}
+      <LoadingBar ref={loadingRef} />
       <PolicyCoverageUI
         onShowModal={() => setIsModelHidden(false)}
         address={address}

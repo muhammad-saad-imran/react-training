@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { useFormik } from 'formik';
 import { isEmpty, isEqual } from 'lodash';
@@ -27,12 +27,14 @@ import FormikInputField from '@/components/common/FormikInputField';
 import BottomNavBar from '@/components/common/BottomNavBar';
 import Loader from '@/components/common/Loader';
 import { IAddress } from '@/store/api/types';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 
 type Props = {};
 
 const BusinessMailingPage = (props: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const loadingRef = useRef<LoadingBarRef>(null);
 
   const dispatch = useAppDispatch();
   const businessAddress = useAppSelector(selectBusinessMailingAddress);
@@ -51,8 +53,6 @@ const BusinessMailingPage = (props: Props) => {
     isFetching,
   } = useGetQuoteQuery(quoteId);
 
-  const [loading, setLoading] = useState(quote ? false : true);
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: businessAddress,
@@ -67,6 +67,8 @@ const BusinessMailingPage = (props: Props) => {
   const zipMaskRef = useMask({ mask: '_____', replacement: { _: /\d/ } });
 
   useEffect(() => {
+    if (!quote) loadingRef.current?.continuousStart();
+
     if (quote) {
       const policy = getPolicyFromQuote(quote);
       dispatch(changeCoveragePolicy(policy));
@@ -80,7 +82,7 @@ const BusinessMailingPage = (props: Props) => {
         const address = getAddressFromQuote(quote);
         dispatch(setBusinessMailingAddress(address));
       }
-      setLoading(false);
+      loadingRef.current?.complete();
     }
   }, [quote, businessAddress, businessInformation, dispatch]);
 
@@ -117,8 +119,8 @@ const BusinessMailingPage = (props: Props) => {
 
   return (
     <BusinessInfoFormsContainer title="Enter your business mailing address">
+      <LoadingBar ref={loadingRef} />
       <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
-        {loading && <Loader />}
         <FormikInputField {...getFieldAttrs('street')} />
         <FormikInputField {...getFieldAttrs('street2')} />
         <FormikInputField {...getFieldAttrs('city')} />
