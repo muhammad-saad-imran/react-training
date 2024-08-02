@@ -28,8 +28,8 @@ export interface IBusinessInformation {
 export interface ICreateQuoteParams {
   step: "address" | "coverage" | "businessInformation" | "checkout";
   quoteId?: string;
-  product: string;
-  address: IAddress;
+  product?: string;
+  address?: IAddress;
   coverage?: ICoverage;
   businessInformation?: IBusinessInformation;
   checkout?: {};

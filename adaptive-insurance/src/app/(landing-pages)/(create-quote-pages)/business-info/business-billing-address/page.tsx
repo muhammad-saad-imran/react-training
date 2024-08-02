@@ -1,17 +1,18 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { useFormik } from 'formik';
 import { isEmpty, isEqual } from 'lodash';
 import { useMask } from '@react-input/mask';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   initAddressState,
   initBusinessInfoState,
+  selectBusinessBillingAddress,
   selectBusinessInformation,
-  selectBusinessMailingAddress,
+  setBusinessBillingAddress,
   setBusinessInformation,
-  setBusinessMailingAddress,
 } from '@/store/feature/business-info';
 import { useGetQuoteQuery } from '@/store/api/adaptiveApiSlice';
 import {
@@ -19,24 +20,24 @@ import {
   getBusinessInfoFromQuote,
   getPolicyFromQuote,
 } from '@/utils/adaptiveApiUtils';
+import { IAddress } from '@/store/api/types';
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
 import { businessAddressConfig } from '@/config/businessAddressConfig';
 import { businessAddressSchema } from '@/validations/quoteValidations';
 import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoFormsContainer';
 import FormikInputField from '@/components/common/FormikInputField';
 import BottomNavBar from '@/components/common/BottomNavBar';
-import Loader from '@/components/common/Loader';
-import { IAddress } from '@/store/api/types';
 
 type Props = {};
 
-const BusinessMailingPage = (props: Props) => {
+const BusinessBillingPage = (props: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const loadingRef = useRef<LoadingBarRef>(null);
 
   const dispatch = useAppDispatch();
-  const businessAddress = useAppSelector(selectBusinessMailingAddress);
   const businessInformation = useAppSelector(selectBusinessInformation);
+  const businessAddress = useAppSelector(selectBusinessBillingAddress);
 
   const quoteId = useMemo(
     () => searchParams.get('quoteId') || '',
@@ -51,22 +52,21 @@ const BusinessMailingPage = (props: Props) => {
     isFetching,
   } = useGetQuoteQuery(quoteId);
 
-  const [loading, setLoading] = useState(quote ? false : true);
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: businessAddress,
     validationSchema: businessAddressSchema,
     onSubmit: (values, { setSubmitting }) => {
-      dispatch(setBusinessMailingAddress(values));
+      dispatch(setBusinessBillingAddress(values));
       setSubmitting(false);
-      router.push(`business-billing-address?quoteId=${quoteId}`);
+      router.push(`business-revenue?quoteId=${quoteId}`);
     },
   });
 
   const zipMaskRef = useMask({ mask: '_____', replacement: { _: /\d/ } });
 
   useEffect(() => {
+    if (!quote) loadingRef.current?.continuousStart();
     if (quote) {
       const policy = getPolicyFromQuote(quote);
       dispatch(changeCoveragePolicy(policy));
@@ -78,11 +78,11 @@ const BusinessMailingPage = (props: Props) => {
         dispatch(setBusinessInformation(businessInfo));
       } else if (isEqual(businessAddress, initAddressState)) {
         const address = getAddressFromQuote(quote);
-        dispatch(setBusinessMailingAddress(address));
+        dispatch(setBusinessBillingAddress(address));
       }
-      setLoading(false);
+      loadingRef.current?.complete();
     }
-  }, [quote]);
+  }, [quote, dispatch, businessInformation, businessAddress]);
 
   useEffect(() => {
     // Quotes query error handling
@@ -116,9 +116,9 @@ const BusinessMailingPage = (props: Props) => {
   });
 
   return (
-    <BusinessInfoFormsContainer title="Enter your business mailing address">
+    <BusinessInfoFormsContainer title="Enter your business billing address">
+      <LoadingBar ref={loadingRef} />
       <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
-        {loading && <Loader />}
         <FormikInputField {...getFieldAttrs('street')} />
         <FormikInputField {...getFieldAttrs('street2')} />
         <FormikInputField {...getFieldAttrs('city')} />
@@ -137,4 +137,4 @@ const BusinessMailingPage = (props: Props) => {
   );
 };
 
-export default BusinessMailingPage;
+export default BusinessBillingPage;

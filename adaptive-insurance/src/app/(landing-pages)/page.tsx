@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import { map } from 'lodash';
@@ -32,18 +32,18 @@ import { ErrorMessageText } from '@/components/common/style';
 import Image from 'next/image';
 import Button from '@/elements/buttons/Button';
 import FormikInputField from '@/components/common/FormikInputField';
-import Loader from '@/components/common/Loader';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 
 export default function Home() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const loadingRef = useRef<LoadingBarRef>(null);
 
   const [createQuote, _] = useCreateQuoteMutation();
 
   const [address, setAddress] = useState<IAddress>(initAddressState);
   const [autocompleteOptions, setAutocompleteOptions] = useState<string[]>([]);
   const [inputError, setInputError] = useState<string | undefined>();
-  const [apiLoading, setApiLoading] = useState(false);
 
   const createQuoteParams: ICreateQuoteParams = useMemo(
     () => ({
@@ -59,18 +59,19 @@ export default function Home() {
     validationSchema: getQuoteSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        setApiLoading(true);
+        loadingRef.current?.continuousStart();
         const res = await createQuote(createQuoteParams).unwrap();
         dispatch(changeCoveragePolicy(initPolicyState));
         dispatch(setBusinessInformation(initBusinessInfoState));
         router.push(`policy-coverage?quoteId=${res.id}`);
       } catch (error: any) {
-        setApiLoading(false);
-        setSubmitting(false);
         if (error?.status === 400) {
           toast.error('Please provide a valid address');
           setInputError('Please provide a valid address');
         } else toast.error('Something went wrong. Try again.');
+      } finally {
+        setSubmitting(false);
+        loadingRef.current?.complete();
       }
     },
   });
@@ -116,7 +117,7 @@ export default function Home() {
 
   return (
     <PageWrapper>
-      {apiLoading && <Loader />}
+      <LoadingBar ref={loadingRef} />
       <Wrapper>
         <LogoContainer>
           <Image
@@ -161,10 +162,7 @@ export default function Home() {
             className="w-full text-sm md:w-2/5"
             type="submit"
             disabled={
-              apiLoading ||
-              isFetching ||
-              formik.isSubmitting ||
-              address === initAddressState
+              isFetching || formik.isSubmitting || address === initAddressState
             }
           >
             Get Your Quote
