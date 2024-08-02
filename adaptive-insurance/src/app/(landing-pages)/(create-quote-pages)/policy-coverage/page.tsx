@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { isEmpty, isEqual } from 'lodash';
 import toast from 'react-hot-toast';
@@ -59,13 +59,67 @@ const PolicyCoveragePage = (props: Props) => {
     [quoteId, address, policy]
   );
 
-  const disableSubmit =
-    quoteQueryResult.isLoading ||
-    createQuoteResult.isLoading ||
-    !quote?.data.quoteEstimates ||
-    !quote?.data.selectedEstimateId;
+  // Initialize the policy state in redux that UI uses
+  useEffect(() => {
+    if (quote && quote.data.quoteEstimates && quote.data.selectedEstimateId) {
+      const quotePolicy = getPolicyFromQuote(quote);
+      dispatch(changeCoveragePolicy(quotePolicy));
+      setLoading(false);
+    } else if (
+      quote &&
+      (!quote.data.quoteEstimates || !quote.data.selectedEstimateId)
+    ) {
+      // init policy coverage & quote estimates
+      updatePolicy();
+    }
+  }, [quote]);
 
-  const updatePolicy = async () => {
+  // Updates quote estimates when coverage amount changes
+  useEffect(() => {
+    if (
+      quote &&
+      quote.data.quoteEstimates &&
+      quote.data.quoteEstimates[0].coverageAmount !== policy.amount
+    ) {
+      updatePolicy();
+    }
+  }, [policy.amount]);
+
+  useEffect(() => {
+    // Quotes query error handling
+    if (
+      quoteQueryResult.isError ||
+      (!quoteQueryResult.isLoading && isEmpty(quote))
+    ) {
+      if (
+        isEmpty(quote) ||
+        (quoteQueryResult.error &&
+          'status' in quoteQueryResult.error &&
+          quoteQueryResult.error.status === 404)
+      )
+        notFound();
+      else throw quoteQueryResult.error;
+    }
+
+    if (!quoteQueryResult.isFetching && quote) {
+      const completed = quote.data.metadata.completed_sections;
+      if (!completed.address) {
+        router.push('/');
+      } else if (!completed.coverage) {
+        router.push(`/policy-coverage?quoteId=${quoteId}`);
+      }
+    }
+  }, [
+    quote,
+    quoteQueryResult.isError,
+    quoteQueryResult.isFetching,
+    quoteQueryResult.error,
+    quoteQueryResult.isLoading,
+    quoteId,
+    router,
+  ]);
+
+  async function updatePolicy() {
     try {
       const res = await createQuote(createQuoteParams).unwrap();
       return res;
@@ -78,27 +132,6 @@ const PolicyCoveragePage = (props: Props) => {
       throw error;
     }
   };
-
-  // Initialize the policy state in redux that UI uses
-  useEffect(() => {
-    if (quote && quote.data.quoteEstimates) {
-      const quotePolicy = getPolicyFromQuote(quote);
-      dispatch(changeCoveragePolicy(quotePolicy));
-      setLoading(false);
-    }
-  }, [quote, dispatch]);
-
-  useEffect(() => {
-    const hasQuote = !!quote;
-    const hasQuoteEstimates = !!quote?.data?.quoteEstimates;
-    const coverageAmountMismatch =
-      hasQuoteEstimates &&
-      quote.data.quoteEstimates[0].coverageAmount !== policy.amount;
-
-    if (hasQuote && (coverageAmountMismatch || !hasQuoteEstimates)) {
-      updatePolicy();
-    }
-  }, [policy.amount]);
 
   async function onSubmit() {
     try {
@@ -120,24 +153,6 @@ const PolicyCoveragePage = (props: Props) => {
     }
   }
 
-  // Quotes query error handling
-  if (
-    quoteQueryResult.isError ||
-    (!quoteQueryResult.isLoading && isEmpty(quote))
-  ) {
-    const error = quoteQueryResult.error;
-    if (isEmpty(quote) || (error && 'status' in error && error.status === 404))
-      return notFound();
-    else throw error;
-  }
-
-  if (!quoteQueryResult.isFetching && quote) {
-    const completed = quote.data.metadata.completed_sections;
-    if (!completed.address) {
-      router.push('/');
-    }
-  }
-
   return (
     <>
       {loading && <Loader />}
@@ -149,7 +164,12 @@ const PolicyCoveragePage = (props: Props) => {
       <BottomNavBar
         buttonLabel="Next: Business Information"
         onButtonClick={onSubmit}
-        disabled={disableSubmit}
+        disabled={
+          quoteQueryResult.isLoading ||
+          createQuoteResult.isLoading ||
+          !quote?.data.quoteEstimates ||
+          !quote?.data.selectedEstimateId
+        }
       />
       <InstructionModal
         hide={isModelHidden}
