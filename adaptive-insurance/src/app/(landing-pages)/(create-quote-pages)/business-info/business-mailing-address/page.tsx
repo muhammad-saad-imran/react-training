@@ -25,7 +25,6 @@ import { businessAddressSchema } from '@/validations/quoteValidations';
 import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoFormsContainer';
 import FormikInputField from '@/components/common/FormikInputField';
 import BottomNavBar from '@/components/common/BottomNavBar';
-import Loader from '@/components/common/Loader';
 import { IAddress } from '@/store/api/types';
 import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 

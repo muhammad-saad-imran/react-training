@@ -10,16 +10,13 @@ import {
   selectBusinessInformation,
   selectBusinessRevenue,
   setBusinessInformation,
-  setBusinessRevenue,
 } from '@/store/feature/business-info';
 import {
   useCreateQuoteMutation,
   useGetQuoteQuery,
 } from '@/store/api/adaptiveApiSlice';
 import {
-  getAddressFromQuote,
   getBusinessInfoFromQuote,
-  getCoverageFromQuote,
   getPolicyFromQuote,
 } from '@/utils/adaptiveApiUtils';
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
@@ -30,7 +27,6 @@ import { businessRevenueConfig } from '@/config/businessRevenueConfig';
 import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoFormsContainer';
 import FormikInputField from '@/components/common/FormikInputField';
 import BottomNavBar from '@/components/common/BottomNavBar';
-import Loader from '@/components/common/Loader';
 import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 
 type Props = {};
