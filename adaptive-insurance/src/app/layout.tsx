@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { DM_Sans } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
-import './globals.css';
+import '../globals.css';
 import Navbar from '@/components/common/Navbar';
 import StoreProvider from '@/app/StoreProvider';
 

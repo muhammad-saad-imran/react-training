@@ -1,9 +1,10 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { useFormik } from 'formik';
 import { isEmpty, isEqual } from 'lodash';
 import { useMask } from '@react-input/mask';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   initBusinessInfoState,
@@ -24,13 +25,13 @@ import { businessDetailsConfig } from '@/config/businessDetailsConfig';
 import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoFormsContainer';
 import BottomNavBar from '@/components/common/BottomNavBar';
 import FormikInputField from '@/components/common/FormikInputField';
-import Loader from '@/components/common/Loader';
 
 type Props = {};
 
 const BusinessEntityPage = (props: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const loadingRef = useRef<LoadingBarRef>(null);
 
   const dispatch = useAppDispatch();
   const businessDetails = useAppSelector(selectBusinessDetails);
@@ -49,8 +50,6 @@ const BusinessEntityPage = (props: Props) => {
     isFetching,
   } = useGetQuoteQuery(quoteId);
 
-  const [loading, setLoading] = useState(quote ? false : true);
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: businessDetails,
@@ -68,6 +67,8 @@ const BusinessEntityPage = (props: Props) => {
   });
 
   useEffect(() => {
+    if (!quote) loadingRef.current?.continuousStart();
+
     if (quote) {
       const policy = getPolicyFromQuote(quote);
       dispatch(changeCoveragePolicy(policy));
@@ -78,9 +79,9 @@ const BusinessEntityPage = (props: Props) => {
         const businessInfo = getBusinessInfoFromQuote(quote);
         dispatch(setBusinessInformation(businessInfo));
       }
-      setLoading(false);
+      loadingRef.current?.complete();
     }
-  }, [quote]);
+  }, [quote, businessInformation, dispatch]);
 
   useEffect(() => {
     // Quotes query error handling
@@ -118,8 +119,8 @@ const BusinessEntityPage = (props: Props) => {
 
   return (
     <BusinessInfoFormsContainer title="Enter your business details">
+      <LoadingBar ref={loadingRef} />
       <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
-        {loading && <Loader />}
         <FormikInputField {...getFieldAttrs('businessType')} />
         <FormikInputField {...getFieldAttrs('businessName')} />
         <FormikInputField {...getFieldAttrs('contactName')} />

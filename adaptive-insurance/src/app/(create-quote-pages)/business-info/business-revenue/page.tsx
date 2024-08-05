@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import { useFormik } from 'formik';
 import { isEmpty, isEqual } from 'lodash';
@@ -10,33 +10,31 @@ import {
   selectBusinessInformation,
   selectBusinessRevenue,
   setBusinessInformation,
-  setBusinessRevenue,
 } from '@/store/feature/business-info';
 import {
   useCreateQuoteMutation,
   useGetQuoteQuery,
 } from '@/store/api/adaptiveApiSlice';
 import {
-  getAddressFromQuote,
   getBusinessInfoFromQuote,
-  getCoverageFromQuote,
   getPolicyFromQuote,
 } from '@/utils/adaptiveApiUtils';
 import { changeCoveragePolicy } from '@/store/feature/policy-coverage';
 import { IBusinessInformation, ICreateQuoteParams } from '@/store/api/types';
+import { IBusinessRevenue } from '@/store/feature/business-info/types';
 import { businessRevenueSchema } from '@/validations/quoteValidations';
 import { businessRevenueConfig } from '@/config/businessRevenueConfig';
 import BusinessInfoFormsContainer from '@/components/business-info/BusinessInfoFormsContainer';
 import FormikInputField from '@/components/common/FormikInputField';
 import BottomNavBar from '@/components/common/BottomNavBar';
-import Loader from '@/components/common/Loader';
-import { IBusinessRevenue } from '@/store/feature/business-info/types';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 
 type Props = {};
 
 const BusinessRevenuePage = (props: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const loadingRef = useRef<LoadingBarRef>(null);
 
   const quoteId = useMemo(
     () => searchParams.get('quoteId') || '',
@@ -46,27 +44,18 @@ const BusinessRevenuePage = (props: Props) => {
   const { data: quote, ...quoteQueryResult } = useGetQuoteQuery(quoteId);
   const [createQuote, createQuoteResult] = useCreateQuoteMutation();
 
-  const [loading, setLoading] = useState(quote ? false : true);
-
   const dispatch = useAppDispatch();
   const businessRevenue = useAppSelector(selectBusinessRevenue);
-  const businessInformation = useAppSelector(
-    selectBusinessInformation
-  ) as IBusinessInformation;
-
-  const address = getAddressFromQuote(quote);
-  const coverage = getCoverageFromQuote(quote);
+  const businessInformation = useAppSelector(selectBusinessInformation);
   const businessInfoFromQuote = getBusinessInfoFromQuote(quote);
 
   const createQuoteParams: ICreateQuoteParams = useMemo(
     () => ({
       quoteId,
-      address,
-      coverage,
       step: 'businessInformation',
       product: 'Outage',
     }),
-    [quoteId, address, coverage]
+    [quoteId]
   );
 
   const formik = useFormik({
@@ -75,7 +64,6 @@ const BusinessRevenuePage = (props: Props) => {
     validationSchema: businessRevenueSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        dispatch(setBusinessRevenue(values));
         const params = {
           ...createQuoteParams,
           businessInformation: { ...businessInformation, ...values },
@@ -94,6 +82,8 @@ const BusinessRevenuePage = (props: Props) => {
   });
 
   useEffect(() => {
+    if (!quote) loadingRef.current?.continuousStart();
+
     if (quote) {
       const policy = getPolicyFromQuote(quote);
       dispatch(changeCoveragePolicy(policy));
@@ -101,11 +91,12 @@ const BusinessRevenuePage = (props: Props) => {
         quote.insured &&
         isEqual(businessInformation, initBusinessInfoState)
       ) {
-        dispatch(setBusinessInformation(businessInfoFromQuote));
+        const businessInfo = getBusinessInfoFromQuote(quote);
+        dispatch(setBusinessInformation(businessInfo));
       }
-      setLoading(false);
+      loadingRef.current?.complete();
     }
-  }, [quote]);
+  }, [quote, businessInformation, dispatch]);
 
   useEffect(() => {
     // Quotes query error handling
@@ -156,8 +147,8 @@ const BusinessRevenuePage = (props: Props) => {
 
   return (
     <BusinessInfoFormsContainer title="Business Revenue Range">
+      <LoadingBar ref={loadingRef} />
       <form className="flex flex-col gap-5" onSubmit={formik.handleSubmit}>
-        {loading && <Loader />}
         <FormikInputField {...getFieldAttrs('revenueRangeFrom')} />
         <FormikInputField {...getFieldAttrs('revenueRangeTo')} />
         <BottomNavBar
